@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "618402510524",
+    "project_id": "hakbay-4c151",
+    "storage_bucket": "hakbay-4c151.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618402510524:android:435bbd0ffce32f1c0782b9",
+        "android_client_info": {
+          "package_name": "com.example.hakbay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7y-V4bVz_zETZG4lGnvRtWm8WDKy7ZiY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
