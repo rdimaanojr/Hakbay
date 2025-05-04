@@ -6,6 +6,9 @@ import 'package:hakbay/models/user_model.dart';
 class UserProvider with ChangeNotifier {
   late FirebaseUserAPI userAPI = FirebaseUserAPI();
   Map<String, dynamic>? _userData;
+  AppUser? _user;
+
+  AppUser? get user => _user;
 
   Future<Map<String, dynamic>?> fetchUserData(String uid) async {
     _userData = await userAPI.getUser(uid);
@@ -29,5 +32,17 @@ class UserProvider with ChangeNotifier {
     return await userAPI.getEmailByUsername(username);
   }
   
+  Future<void> updateUser(String uid, String fname, String lname, String phone, List<String> interests, List<String> travelStyles, bool isPrivate) async {
+    await userAPI.updateUser(
+      uid,
+      fname,
+      lname,
+      phone,
+      interests,
+      travelStyles,
+      isPrivate
+    );
+    notifyListeners();
+  }
 
 }

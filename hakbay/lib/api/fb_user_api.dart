@@ -63,4 +63,20 @@ class FirebaseUserAPI {
       return null;
     }
   }
+
+  Future<void> updateUser(String uid, String fname, String lname, String phone, List<String> interests, List<String> travelStyles, bool isPrivate) async {
+    try {
+      await db.collection('users').doc(uid).update({
+        'fname': fname,
+        'lname': lname,
+        'phone': phone,
+        'interests': interests,
+        'travelStyles': travelStyles,
+        'isPrivate': isPrivate,
+      });
+      print("User data updated successfully!");
+    } on FirebaseException catch (e) {
+      print('Error updating user data: ${e.message}');
+    }
+  }
 }
