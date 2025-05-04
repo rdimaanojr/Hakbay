@@ -1,13 +1,20 @@
+import 'coordinates_model.dart';
+
 class Location {
-  final double longitude;
-  final double latitude;
+  final String name;
+  final Coordinates? coordinates;
 
-  Location({required this.longitude, required this.latitude});
+  Location({required this.name, this.coordinates});
 
-  Location copyWith({double? latitude, double? longitude}) {
+  static const _undefined = Object();
+
+  Location copyWith({String? name, Object? coordinates = _undefined}) {
     return Location(
-      longitude: longitude ?? this.longitude,
-      latitude: latitude ?? this.latitude,
+      name: name ?? this.name,
+      coordinates:
+          coordinates == _undefined
+              ? this.coordinates
+              : coordinates as Coordinates?,
     );
   }
 }
