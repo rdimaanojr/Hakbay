@@ -1,10 +1,10 @@
-import 'coordinates_model.dart';
+import 'location_model.dart';
 
 class ItineraryItem {
   final String name;
   final String? description;
   final DateTime time;
-  final Coordinates? location;
+  final Location? location;
 
   ItineraryItem({
     required this.name,
@@ -27,7 +27,7 @@ class ItineraryItem {
       description:
           description == _undefined ? this.description : description as String?,
       location:
-          location == _undefined ? this.location : location as Coordinates?,
+          location == _undefined ? this.location : location as Location?,
     );
   }
 }
