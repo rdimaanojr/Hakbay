@@ -48,5 +48,19 @@ class FirebaseUserAPI {
     }
   }
 
-
+  // Get user data by UID
+  Future<Map<String, dynamic>?> getUser(String uid) async {
+    try {
+      final docSnapshot = await db.collection('users').doc(uid).get();
+      if (docSnapshot.exists) {
+        return docSnapshot.data();
+      } else {
+        print("User not found");
+        return null;
+      }
+    } on FirebaseException catch (e) {
+      print('Error retrieving user data: ${e.message}');
+      return null;
+    }
+  }
 }

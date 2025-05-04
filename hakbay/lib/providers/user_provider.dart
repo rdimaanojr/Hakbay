@@ -5,6 +5,13 @@ import 'package:hakbay/models/user_model.dart';
 // Our provider class
 class UserProvider with ChangeNotifier {
   late FirebaseUserAPI userAPI = FirebaseUserAPI();
+  Map<String, dynamic>? _userData;
+
+  Future<Map<String, dynamic>?> fetchUserData(String uid) async {
+    _userData = await userAPI.getUser(uid);
+    notifyListeners();
+    return _userData;
+  }
 
   // Save a new user and store it in Firestore
   Future<void> saveUser(String uid, AppUser user) async {
