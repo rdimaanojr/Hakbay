@@ -17,15 +17,15 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
       appBar: AppBar(
         title: const Text("Travel Plans"),
       ),
-      body: Center(
+      body: Center( 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: [ 
             const Text("Travel Plan Page"),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavbar(currentIndex: 0),
+      bottomNavigationBar: BottomNavbar(currentIndex: 0), // Bottom navigation bar
     );
   }
 }

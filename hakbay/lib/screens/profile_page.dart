@@ -23,12 +23,14 @@ class _ProfileState extends State<ProfilePage> {
   AppUser? user;
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
+  // Fetch user data from the database
   @override
   void initState() {
     super.initState();
     _loadUserData();
   }
 
+  // Load user data from the database
   Future<void> _loadUserData() async {
     try {
       final userData = await context.read<UserProvider>().fetchUserData(uid);
@@ -45,6 +47,7 @@ class _ProfileState extends State<ProfilePage> {
     }
   }
 
+  // Pick an image from the camera or gallery
   Future<void> pickImage() async {
     final image = await ImagePicker().pickImage(
       source: await showDialog<ImageSource>(
@@ -89,17 +92,19 @@ class _ProfileState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return const Scaffold(
+      return const Scaffold( // Loading state
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
+    // Display the profile picture or a default icon if not available
     final imageWidget = base64Image != null
         ? Image.memory(
             base64Decode(base64Image!),
             fit: BoxFit.cover,
           )
         : const Icon(Icons.person, size: 50);
+
 
     return Scaffold(
       body: Padding(
@@ -109,7 +114,7 @@ class _ProfileState extends State<ProfilePage> {
             child: Column(
                 children: [
                 GestureDetector(
-                  onTap: pickImage,
+                  onTap: pickImage, // Open image picker on tap
                   child: CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.grey[300],
@@ -119,15 +124,15 @@ class _ProfileState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Center(
+                Center(  
                   child: Column(
-                  children: [
-                    Text(
+                  children: [  
+                    Text( // Display user's full name
                     "${user!.fname} ${user!.lname}",
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
                     ),
                     const SizedBox(height: 5),
-                    Text(
+                    Text( // Display user's username
                     "@${user!.username}",
                     style: const TextStyle(fontSize: 16, color: Colors.grey),
                     ),
@@ -138,29 +143,29 @@ class _ProfileState extends State<ProfilePage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                  Text(
+                  Text( // Display user's phone number
                     "Phone Number: ${user!.phone}",
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 10),
-                  Text(
+                  Text( // Display user's email address
                     "Email: ${user!.email}",
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 10),
-                  Text(
+                  Text( // Display user's interests
                     "Interests: ${user!.interests.join(', ')}",
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 10),
-                  Text(
+                  Text( // Display user's travel styles
                     "Travel Styles: ${user!.travelStyles.join(', ')}",
                     style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                   const SizedBox(height: 20),
                   ],
                 ),
-                ElevatedButton(
+                ElevatedButton( // Edit Profile button
                   onPressed: () async{
                     final result = Navigator.push(
                       context,
@@ -188,7 +193,7 @@ class _ProfileState extends State<ProfilePage> {
                 const SizedBox(height: 20),
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: ListTile(
+                  child: ListTile( // Logout button
                   onTap: () async {
                     await context.read<UserAuthProvider>().signOut();
                     Navigator.pushNamedAndRemoveUntil(
@@ -206,7 +211,7 @@ class _ProfileState extends State<ProfilePage> {
             ),
         ),
       ),),
-      bottomNavigationBar: BottomNavbar(currentIndex: 2),
+      bottomNavigationBar: BottomNavbar(currentIndex: 2), // Bottom navigation bar
     );
   }
 }

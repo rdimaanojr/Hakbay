@@ -48,6 +48,7 @@ class _SignUpState extends State<SignUpPage> {
     );
   }
 
+  // Widgets for the sign-up form
   Widget get heading => const Padding(
         padding: EdgeInsets.only(bottom: 30),
         child: Text(
@@ -56,6 +57,7 @@ class _SignUpState extends State<SignUpPage> {
         ),
       );
 
+  // Text fields for first name, last name, username, email, and password
   Widget get fNameField => Padding(
         padding: const EdgeInsets.only(bottom: 30),
         child: TextFormField(

@@ -64,6 +64,7 @@ class FirebaseUserAPI {
     }
   }
 
+  // Update user data in the database
   Future<void> updateUser(String uid, String fname, String lname, String phone, List<String> interests, List<String> travelStyles, bool isPrivate) async {
     try {
       await db.collection('users').doc(uid).update({

@@ -7,14 +7,14 @@ class BottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationBar(
+    return NavigationBar( // Bottom navigation bar
       onDestinationSelected: (int index) {
         if (index == 0) {
-          Navigator.pushReplacementNamed(context, "/home");
+          Navigator.pushReplacementNamed(context, "/home"); // Navigate to home page
         } else if (index == 1) {
-          Navigator.pushReplacementNamed(context, "/people");
+          Navigator.pushReplacementNamed(context, "/people"); // Navigate to find similar people page
         } else if (index == 2) {
-          Navigator.pushReplacementNamed(context, "/profile");
+          Navigator.pushReplacementNamed(context, "/profile"); // Navigate to profile page
         }
       },
       indicatorColor: Colors.blue,

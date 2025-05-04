@@ -10,6 +10,7 @@ class UserProvider with ChangeNotifier {
 
   AppUser? get user => _user;
 
+  // Get user data from Firestore
   Future<Map<String, dynamic>?> fetchUserData(String uid) async {
     _userData = await userAPI.getUser(uid);
     notifyListeners();
@@ -32,6 +33,7 @@ class UserProvider with ChangeNotifier {
     return await userAPI.getEmailByUsername(username);
   }
   
+  // Update user data in Firestore
   Future<void> updateUser(String uid, String fname, String lname, String phone, List<String> interests, List<String> travelStyles, bool isPrivate) async {
     await userAPI.updateUser(
       uid,

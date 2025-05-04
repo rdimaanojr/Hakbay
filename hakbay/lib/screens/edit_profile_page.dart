@@ -13,7 +13,8 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>(); // Form key for validation
+  // TextEditingControllers for each field
   final TextEditingController _fnameController = TextEditingController();
   final TextEditingController _lnameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -21,6 +22,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _travelStylesController = TextEditingController();
   bool _isPrivate = false;
 
+  // Initialize the form with existing user data if available
   @override
   void initState() {
     super.initState();
@@ -34,6 +36,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
+  // Dispose of the controllers to free up resources
   @override
   void dispose() {
     _fnameController.dispose();
@@ -58,7 +61,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               const Text("Edit your profile information", style: TextStyle(fontSize: 20)),
               const SizedBox(height: 16),
-              TextFormField(
+              TextFormField( // Text field for first name
                 controller: _fnameController,
                 decoration: const InputDecoration(labelText: "First Name"),
                 validator: (value) {
@@ -69,7 +72,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              TextFormField( // Text field for last name
                 controller: _lnameController,
                 decoration: const InputDecoration(labelText: "Last Name"),
                 validator: (value) {
@@ -80,23 +83,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              TextFormField( // Text field for phone number
                 controller: _phoneController,
                 decoration: const InputDecoration(labelText: "Phone Number"),
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              TextFormField( // Text field for interests
                 controller: _interestsController,
                 decoration: const InputDecoration(labelText: "Interests (comma-separated)"),
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              TextFormField( // Text field for travel styles
                 controller: _travelStylesController,
                 decoration: const InputDecoration(labelText: "Travel Styles (comma-separated)"),
               ),
               const SizedBox(height: 16),
-              SwitchListTile(
+              SwitchListTile( // Switch for private account option
                 title: const Text("Private Account"),
                 value: _isPrivate,
                 onChanged: (value) {
@@ -106,7 +109,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
+              ElevatedButton( // Button to save changes
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     Provider.of<UserProvider>(context, listen: false).updateUser(

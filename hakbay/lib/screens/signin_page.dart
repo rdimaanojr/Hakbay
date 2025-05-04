@@ -42,6 +42,7 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  // Widgets for the sign-in form
   Widget get heading => const Padding(
     padding: EdgeInsets.only(bottom: 30),
     child: Text(
@@ -50,6 +51,7 @@ class _SignInPageState extends State<SignInPage> {
     ),
   );
 
+  // Text fields for username and password
   Widget get usernameField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(

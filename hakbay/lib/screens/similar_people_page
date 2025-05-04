@@ -25,7 +25,7 @@ class _SimilarPeoplePageState extends State<SimilarPeoplePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavbar(currentIndex: 1)
+      bottomNavigationBar: BottomNavbar(currentIndex: 1) // Bottom navigation bar
     );
   }
 }
