@@ -48,6 +48,16 @@ class FirebaseUserAPI {
     }
   }
 
+  Future<String> getCurrentUserUID() async {
+    try {
+      final user = await db.collection('users').doc().get();
+      return user.id; // Return the UID of the current user
+    } on FirebaseException catch (e) {
+      print('Error retrieving current user UID: ${e.message}');
+      return "";
+    }
+  }
+
   // Get user data by UID
   Future<Map<String, dynamic>?> getUser(String uid) async {
     try {

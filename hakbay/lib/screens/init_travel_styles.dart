@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/models/util_models.dart';
+import 'package:hakbay/screens/travel_plan_page.dart';
 
 class InitTravelStylesScreen extends StatefulWidget {
   const InitTravelStylesScreen({super.key});
@@ -102,7 +103,9 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
               padding: const EdgeInsets.only(top: 16),
               child: GestureDetector(
                 onTap: () {
-                  // logic
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => const TravelPlanPage(),
+                  ));
                 },
                 child: const Text(
                   "Skip for Now",

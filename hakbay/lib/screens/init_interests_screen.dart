@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/models/util_models.dart';
+import 'package:hakbay/screens/init_travel_styles.dart';
 
 class InitInterestsScreen extends StatefulWidget {
   const InitInterestsScreen({super.key});
@@ -102,7 +103,9 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
               padding: const EdgeInsets.only(top: 16),
               child: GestureDetector(
                 onTap: () {
-                  // logic
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => InitTravelStylesScreen(),
+                  ));
                 },
                 child: const Text(
                   "Skip for Now",

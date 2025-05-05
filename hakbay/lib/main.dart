@@ -35,7 +35,7 @@ class RootWidget extends StatelessWidget {
       routes: {
         "/": (context) => const HomePage(),
         "/home": (context) => const TravelPlanPage(),
-        "/profile": (context) => const ProfilePage(),
+        "/profile": (context) => ProfilePage(),
         "/people": (context) => const SimilarPeoplePage(),
       }
     );

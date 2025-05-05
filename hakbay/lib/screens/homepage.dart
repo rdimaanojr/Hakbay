@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hakbay/providers/auth_provider.dart';
+import 'package:hakbay/screens/init_interests_screen.dart';
 import 'package:hakbay/screens/signin_page.dart';
-import 'package:hakbay/screens/travel_plan_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
         }
 
         // if user is logged in, display the travel plans
-        return TravelPlanPage();
+        return InitInterestsScreen();
       },
     );
   }
