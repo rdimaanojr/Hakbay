@@ -235,7 +235,7 @@ class _SignUpState extends State<SignUpPage> {
         await context.read<UserProvider>().saveUser(uid!, newUser);
 
         // Navigate back if successful
-        if (mounted) Navigator.popAndPushNamed(context, '/home');
+        if (mounted) Navigator.popAndPushNamed(context, '/init-interests');
       }
     },
   );
