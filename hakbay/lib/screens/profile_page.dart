@@ -194,8 +194,16 @@ class _ProfileState extends State<ProfilePage> {
                   alignment: Alignment.bottomCenter,
                   child: ListTile(
                     onTap: () async {
-                      await context.read<UserAuthProvider>().signOut();
-                      Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
+                      try {
+                        await context.read<UserAuthProvider>().signOut();
+                        if (mounted) {
+                          Navigator.popAndPushNamed(context, '/');
+                        }
+                      } catch (e) {
+                        print("Error during logout: $e");
+                      } finally {
+                        Navigator.pop(context); // Close the loading dialog
+                      }
                     },
                     title: const Center(
                       child: Text(

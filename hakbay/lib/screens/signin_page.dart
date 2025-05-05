@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:hakbay/screens/signup_page.dart';
+import 'package:hakbay/screens/travel_plan_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 
@@ -110,9 +111,20 @@ class _SignInPageState extends State<SignInPage> {
           });
           return;
         }
-
+          
         // Sign in
-        await context.read<UserAuthProvider>().signIn(email, password!);
+        String message = await context.read<UserAuthProvider>().signIn(email, password!);
+      
+        // Check if the sign-in was successful or if there was an error
+        if (message.isNotEmpty) {
+          setState(() {
+            showSignInErrorMessage = true;
+          });
+          return;
+        }
+
+        if(mounted) Navigator.push(context, MaterialPageRoute(builder: (context) => const TravelPlanPage()));
+      
       }
     },
     child: const Text("Sign In"),

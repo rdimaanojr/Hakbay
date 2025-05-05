@@ -17,9 +17,9 @@ class FirebaseAuthAPI {
   Future<String> signIn(String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
-      return "Successfully signed in!";
-    } on FirebaseAuthException catch (e) {
-      return "Failed at error ${e.code}";
+      return "";
+    } on FirebaseAuthException {
+      return "Invalid Credentials!";
     }
   }
 
@@ -40,7 +40,7 @@ class FirebaseAuthAPI {
         case 'password-does-not-meet-requirements':
           return "Password must contain at least 6 characters";
         default:
-          return "An unknown error occured. Try Again";
+          return "Password must contain at least 6 characters";
       }
     }
   }
