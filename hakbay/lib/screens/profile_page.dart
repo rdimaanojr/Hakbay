@@ -96,12 +96,12 @@ class _ProfileState extends State<ProfilePage> {
       );
     }
 
-    final imageWidget = base64Image != null
-        ? Image.memory(
-            base64Decode(base64Image!),
-            fit: BoxFit.cover,
-          )
-        : const Icon(Icons.person, size: 50);
+    final imageWidget = (base64Image != null && base64Image!.isNotEmpty)
+    ? Image.memory(
+        base64Decode(base64Image!),
+        fit: BoxFit.cover,
+      )
+    : const Icon(Icons.person, size: 50);
 
     return Scaffold(
       body: Padding(
