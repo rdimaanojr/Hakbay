@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/models/util_models.dart';
+import 'package:provider/provider.dart';
+import 'package:hakbay/screens/travel_plan_page.dart';
+import 'package:hakbay/models/user_model.dart';
+import '../providers/auth_provider.dart';
+import '../providers/user_provider.dart';
 
 class InitTravelStylesScreen extends StatefulWidget {
   const InitTravelStylesScreen({super.key});
@@ -10,6 +15,26 @@ class InitTravelStylesScreen extends StatefulWidget {
 
 class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
   final List<String> selectedTravelStyles = [];
+  late String uid;
+  late AppUser? user;
+
+  @override
+  void initState() {
+    super.initState();
+    uid = context.read<UserAuthProvider>().getCurrentUserUID() ?? '';
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = await context.read<UserProvider>().fetchUserData(uid);
+      if (userData != null && userData.isNotEmpty) {
+        setState(() {
+          user = AppUser.fromJson(userData);
+        });
+      }
+    } catch (e) {}
+  }
 
   void toggleTravelStyle(String travelStyle) {
     setState(() {
@@ -44,7 +69,9 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                   runSpacing: 8,
                   children:
                       TravelStyle.all.map((travelStyle) {
-                        final isSelected = selectedTravelStyles.contains(travelStyle);
+                        final isSelected = selectedTravelStyles.contains(
+                          travelStyle,
+                        );
                         return GestureDetector(
                           onTap: () => toggleTravelStyle(travelStyle),
                           child: Chip(
@@ -72,7 +99,7 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
               alignment: Alignment.center,
               child:
                   selectedTravelStyles.isNotEmpty
-                      ? const Text( 
+                      ? const Text(
                         "Your Travel Styles:",
                         style: TextStyle(
                           fontSize: 16,
@@ -100,13 +127,49 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16),
+              child: TextButton(
+                onPressed: () async {
+                  if (user != null) {
+                    await Provider.of<UserProvider>(
+                      context,
+                      listen: false,
+                    ).updateUser(
+                      uid,
+                      user!.fname,
+                      user!.lname,
+                      user!.phone,
+                      user!.interests,
+                      selectedTravelStyles,
+                      user!.isPrivate,
+                    );
+
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      "/home",
+                      (route) => false,
+                    );
+                  }
+                },
+                child: const Text("Continue"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
               child: GestureDetector(
                 onTap: () {
                   // logic
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                   Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
 >>>>>>> a800b17 (chore: ADD profile init screen routing)
+=======
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    "/home",
+                    (route) => false,
+                  );
+>>>>>>> 9dc5dae (chore: INTEGRATE interest and travel style to db)
                 },
                 child: const Text(
                   "Skip for Now",

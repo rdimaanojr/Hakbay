@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/models/util_models.dart';
+import 'package:hakbay/screens/init_travel_styles.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+import '../providers/user_provider.dart';
+import '../models/user_model.dart';
 
 class InitInterestsScreen extends StatefulWidget {
   const InitInterestsScreen({super.key});
@@ -10,6 +15,26 @@ class InitInterestsScreen extends StatefulWidget {
 
 class _InitInterestsScreenState extends State<InitInterestsScreen> {
   final List<String> selectedInterests = [];
+  late String uid;
+  late AppUser? user;
+
+  @override
+  void initState() {
+    super.initState();
+    uid = context.read<UserAuthProvider>().getCurrentUserUID() ?? '';
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = await context.read<UserProvider>().fetchUserData(uid);
+      if (userData != null && userData.isNotEmpty) {
+        setState(() {
+          user = AppUser.fromJson(userData);
+        });
+      }
+    } catch (e) {}
+  }
 
   void toggleInterest(String interest) {
     setState(() {
@@ -100,13 +125,50 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16),
+              child: TextButton(
+                onPressed: () async {
+                  if (user != null) {
+                    await Provider.of<UserProvider>(
+                      context,
+                      listen: false,
+                    ).updateUser(
+                      uid,
+                      user!.fname,
+                      user!.lname,
+                      user!.phone,
+                      selectedInterests,
+                      user!.travelStyles,
+                      user!.isPrivate,
+                    );
+
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      "/init-travel-styles",
+                      (route) => false,
+                    );
+                  }
+                },
+                child: const Text("Continue"),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
               child: GestureDetector(
                 onTap: () {
                   // logic
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                   Navigator.pushNamedAndRemoveUntil(context, "/init-travel-styles", (route) => false);
 >>>>>>> a800b17 (chore: ADD profile init screen routing)
+=======
+
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    "/init-travel-styles",
+                    (route) => false,
+                  );
+>>>>>>> 9dc5dae (chore: INTEGRATE interest and travel style to db)
                 },
                 child: const Text(
                   "Skip for Now",
