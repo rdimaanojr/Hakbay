@@ -80,4 +80,16 @@ class FirebaseUserAPI {
       print('Error updating user data: ${e.message}');
     }
   }
+
+  Future<void> updateUserProfilePic(String uid, String base64Image) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .update({'profilePic': base64Image});
+      print("Profile picture updated in Firestore"); 
+    } catch (e) {
+      print("Error updating profile picture: $e");
+    }
+  }
 }

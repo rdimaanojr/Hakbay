@@ -20,6 +20,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfileState extends State<ProfilePage> {
   
   String? base64Image;
+  File? imageFile;
   AppUser? user;
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -37,7 +38,7 @@ class _ProfileState extends State<ProfilePage> {
       if (userData != null && userData.isNotEmpty) {
         setState(() {
           user = AppUser.fromJson(userData);
-          //base64Image = user?.profilePic;
+          base64Image = user?.profilePic;
         });
       } else {
         print("User data is null or empty.");
@@ -84,7 +85,16 @@ class _ProfileState extends State<ProfilePage> {
       // } as String);
 
       setState(() {
+        imageFile = file;
         base64Image = encoded;
+        user?.profilePic = encoded; // Update the profile picture in the user object
+
+        // Save the updated profile picture to the database
+        context.read<UserProvider>().updateUserProfilePic(uid, encoded).then((_) {
+          print("Profile picture updated successfully!");
+        }).catchError((error) {
+          print("Error updating profile picture: $error");
+        });
       });
     }
   }

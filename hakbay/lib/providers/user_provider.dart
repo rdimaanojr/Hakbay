@@ -46,5 +46,9 @@ class UserProvider with ChangeNotifier {
     );
     notifyListeners();
   }
-
+  
+  Future<void> updateUserProfilePic(String uid, String profilePic) async {
+    await userAPI.updateUserProfilePic(uid, profilePic);
+    notifyListeners();
+  }
 }
