@@ -43,13 +43,13 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                   spacing: 8,
                   runSpacing: 8,
                   children:
-                      TravelStyle.all.map((TravelStyle) {
-                        final isSelected = selectedTravelStyles.contains(TravelStyle);
+                      TravelStyle.all.map((travelStyle) {
+                        final isSelected = selectedTravelStyles.contains(travelStyle);
                         return GestureDetector(
-                          onTap: () => toggleTravelStyle(TravelStyle),
+                          onTap: () => toggleTravelStyle(travelStyle),
                           child: Chip(
                             label: Text(
-                              TravelStyle,
+                              travelStyle,
                               style: TextStyle(
                                 color: isSelected ? Colors.white : Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -94,7 +94,7 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                 runSpacing: 8,
                 children:
                     selectedTravelStyles
-                        .map((TravelStyle) => Chip(label: Text(TravelStyle)))
+                        .map((travelStyle) => Chip(label: Text(travelStyle)))
                         .toList(),
               ),
             ),
@@ -103,6 +103,10 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
               child: GestureDetector(
                 onTap: () {
                   // logic
+<<<<<<< HEAD
+=======
+                  Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
+>>>>>>> a800b17 (chore: ADD profile init screen routing)
                 },
                 child: const Text(
                   "Skip for Now",

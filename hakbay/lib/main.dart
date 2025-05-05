@@ -3,6 +3,8 @@ import 'package:hakbay/firebase_options.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:hakbay/screens/homepage.dart';
+import 'package:hakbay/screens/init_interests_screen.dart';
+import 'package:hakbay/screens/init_travel_styles.dart';
 import 'package:hakbay/screens/profile_page.dart';
 import 'package:hakbay/screens/similar_people_page';
 import 'package:hakbay/screens/travel_plan_page.dart';
@@ -37,6 +39,8 @@ class RootWidget extends StatelessWidget {
         "/home": (context) => const TravelPlanPage(),
         "/profile": (context) => ProfilePage(),
         "/people": (context) => const SimilarPeoplePage(),
+        "/init-interests": (context) => const InitInterestsScreen(),
+        "/init-travel-styles": (context) => const InitTravelStylesScreen(),
       }
     );
   }

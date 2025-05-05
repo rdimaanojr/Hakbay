@@ -103,6 +103,10 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
               child: GestureDetector(
                 onTap: () {
                   // logic
+<<<<<<< HEAD
+=======
+                  Navigator.pushNamedAndRemoveUntil(context, "/init-travel-styles", (route) => false);
+>>>>>>> a800b17 (chore: ADD profile init screen routing)
                 },
                 child: const Text(
                   "Skip for Now",
