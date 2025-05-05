@@ -223,9 +223,15 @@ class _ProfileState extends State<ProfilePage> {
                     child: Text(
                     "Logout",
                     style: TextStyle(color: Colors.red),
+<<<<<<< HEAD
 >>>>>>> 96555be (fix: Rerouting with logout and pages)
+=======
+
+
+>>>>>>> d376e6f (fix: bug in signing in)
                     ),
                   ),
+                ),
                 ),
               ],
             ),

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hakbay/firebase_options.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
-import 'package:hakbay/screens/homepage.dart';
 import 'package:hakbay/screens/init_interests_screen.dart';
 import 'package:hakbay/screens/init_travel_styles.dart';
 import 'package:hakbay/screens/profile_page.dart';
+import 'package:hakbay/screens/signin_page.dart';
 import 'package:hakbay/screens/similar_people_page';
 import 'package:hakbay/screens/travel_plan_page.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +35,7 @@ class RootWidget extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: "/",
       routes: {
-        "/": (context) => const HomePage(),
+        "/": (context) => const SignInPage(),
         "/home": (context) => const TravelPlanPage(),
         "/profile": (context) => ProfilePage(),
         "/people": (context) => const SimilarPeoplePage(),

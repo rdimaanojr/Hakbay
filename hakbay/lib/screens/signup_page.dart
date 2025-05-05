@@ -147,9 +147,16 @@ class _SignUpState extends State<SignUpPage> {
       );
 
   Widget get submitButton => ElevatedButton(
+<<<<<<< HEAD
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           _formKey.currentState!.save();
+=======
+    child: const Text("Sign Up"),
+    onPressed: () async {
+      if (_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
+>>>>>>> d376e6f (fix: bug in signing in)
 
           // Check if username is unique         
           final isTaken = await context.read<UserProvider>().isUsernameTaken(username);
@@ -191,9 +198,48 @@ class _SignUpState extends State<SignUpPage> {
           // Navigate back if successful
           if (mounted) Navigator.popAndPushNamed(context, '/home');
         }
+<<<<<<< HEAD
       },
       child: const Text("Sign Up")
     );
+=======
+
+        // Sign up the user
+        String? message = await context.read<UserAuthProvider>().signUp(
+          email,
+          password,
+        );
+
+        // Check if the sign-up was successful or if there was an error
+        if (message.isNotEmpty) {
+          setState(() {
+            showSignUpErrorMessage = true;
+            errorMessage = message; // Display the error message from the API
+          });
+          return;
+        }
+
+        // Get the user's UID
+        final uid = context.read<UserAuthProvider>().getCurrentUserUID();
+
+        // Create a new AppUser object
+        final newUser = AppUser(
+          uid: uid,
+          fname: fname,
+          lname: lname,
+          username: username,
+          email: email,
+        );
+
+        // Save the user in Firestore
+        await context.read<UserProvider>().saveUser(uid!, newUser);
+
+        // Navigate back if successful
+        if (mounted) Navigator.popAndPushNamed(context, '/home');
+      }
+    },
+  );
+>>>>>>> d376e6f (fix: bug in signing in)
 
   Widget get signUpErrorMessage => Padding(
     padding: const EdgeInsets.only(bottom: 30),
