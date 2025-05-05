@@ -192,6 +192,7 @@ class _ProfileState extends State<ProfilePage> {
                 const SizedBox(height: 20),
                 Align(
                   alignment: Alignment.bottomCenter,
+<<<<<<< HEAD
                   child: ListTile(
                     onTap: () async {
                       try {
@@ -210,6 +211,19 @@ class _ProfileState extends State<ProfilePage> {
                         "Logout",
                         style: TextStyle(color: Colors.red),
                       ),
+=======
+                  child: ListTile( // Logout button
+                  onTap: () async {
+                    await context.read<UserAuthProvider>().signOut();
+                    if (mounted) {
+                      Navigator.popAndPushNamed(context, '/');
+                    };
+                  },
+                  title: const Center(
+                    child: Text(
+                    "Logout",
+                    style: TextStyle(color: Colors.red),
+>>>>>>> 96555be (fix: Rerouting with logout and pages)
                     ),
                   ),
                 ),
