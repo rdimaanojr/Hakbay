@@ -13,6 +13,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+
   final _formKey = GlobalKey<FormState>(); // Form key for validation
   // TextEditingControllers for each field
   final TextEditingController _fnameController = TextEditingController();
@@ -121,7 +122,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       _travelStylesController.text.split(',').map((e) => e.trim()).toList(),
                       _isPrivate,
                     );
-                    Navigator.pop(context, true);
+
+                    setState(() {
+                      widget.user!.fname = _fnameController.text;
+                      widget.user!.lname = _lnameController.text;
+                      widget.user!.phone = _phoneController.text;
+                      widget.user!.interests = _interestsController.text.split(',').map((e) => e.trim()).toList();
+                      widget.user!.travelStyles = _travelStylesController.text.split(',').map((e) => e.trim()).toList();
+                      widget.user!.isPrivate = _isPrivate;
+                    });
+                    
+                    Navigator.pop(context, widget.user); // Return updated user data
                   }
                 },
                 child: const Text("Save Changes"),

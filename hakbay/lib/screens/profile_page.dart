@@ -167,15 +167,17 @@ class _ProfileState extends State<ProfilePage> {
                 ),
                 ElevatedButton( // Edit Profile button
                   onPressed: () async{
-                    final result = Navigator.push(
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                       builder: (context) => EditProfilePage(user: user),
                       ),
                     );
 
-                    if (result == true) {
-                      await _loadUserData(); // Refresh user data after editing
+                    if (result != null) {
+                      setState(() {
+                        user = result; // Update the user data after editing
+                      });
                     }
                   },
                   style: ElevatedButton.styleFrom(
