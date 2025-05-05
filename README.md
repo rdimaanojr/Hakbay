@@ -8,3 +8,5 @@
 - https://api.flutter.dev/flutter/widgets/Navigator/pushNamedAndRemoveUntil.html
 - https://docs.flutter.dev/release/breaking-changes/buttons
 - https://api.flutter.dev/flutter/material/NavigationBar-class.html
+- https://medium.com/@mustafatahirhussein/converting-image-to-base64-and-vice-versa-flutter-guide-79618db596c8
+- https://medium.com/@rajflutter/image-to-base64-in-flutter-1d4e933f5a3f

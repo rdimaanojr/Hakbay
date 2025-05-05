@@ -78,12 +78,6 @@ class _ProfileState extends State<ProfilePage> {
       final file = File(image.path);
       final bytes = await file.readAsBytes();
       final encoded = base64Encode(bytes);
-
-      // // Save the profile picture to the database
-      // await context.read<UserProvider>().fireBaseService.updateUser(uid, {
-      //   'profilePic': encoded,
-      // } as String);
-
       setState(() {
         imageFile = file;
         base64Image = encoded;
