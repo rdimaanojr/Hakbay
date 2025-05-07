@@ -60,5 +60,46 @@ class AppUser {
       'isPrivate': isPrivate,
     };
   }
+}
 
+class FriendRequest {
+  final String senderId;
+  final String receiverId;
+  final String type;
+  final String status;
+  final String timestamp;
+
+  static const String send = "send";
+  static const String receive = "receive";
+  static const String pending = "pending";
+  static const String accepted = "accepted";
+  static const String rejected = "rejected";
+
+  FriendRequest({
+    required this.senderId,
+    required this.receiverId,
+    required this.status,
+    required this.type,
+    required this.timestamp,
+  });
+
+  factory FriendRequest.fromJson(Map<String, dynamic> json) {
+    return FriendRequest(
+      senderId: json['senderId'],
+      receiverId: json['receiverId'],
+      status: json['status'],
+      type: json['type'],
+      timestamp: json['timestamp'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'senderId': senderId,
+      'receiverId': receiverId,
+      'status': status,
+      'type': type,
+      'timestamp': timestamp,
+    };
+  }
 }

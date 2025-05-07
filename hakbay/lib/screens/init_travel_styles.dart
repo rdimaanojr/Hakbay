@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hakbay/models/util_models.dart';
+import 'package:hakbay/commons/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:hakbay/models/user_model.dart';
 import '../providers/auth_provider.dart';
@@ -67,7 +67,7 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                   spacing: 8,
                   runSpacing: 8,
                   children:
-                      TravelStyle.all.map((travelStyle) {
+                      TravelStyles.all.map((travelStyle) {
                         final isSelected = selectedTravelStyles.contains(
                           travelStyle,
                         );

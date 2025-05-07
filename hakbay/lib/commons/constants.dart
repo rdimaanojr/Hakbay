@@ -1,4 +1,4 @@
-class Interest {
+class Interests {
   static const String hiking = "Hiking";
   static const String food = "Food";
   static const String art = "Art";
@@ -20,7 +20,7 @@ class Interest {
   ];
 }
 
-class TravelStyle {
+class TravelStyles {
   static const String lightPacker = "Light Packer";
   static const String adventurer = "Adventurer";
   static const String frequentFlyer = "Frequent Flyer";

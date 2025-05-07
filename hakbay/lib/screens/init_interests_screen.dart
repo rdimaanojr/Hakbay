@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:hakbay/models/util_models.dart';
+=======
+import 'package:hakbay/commons/constants.dart';
+import 'package:hakbay/screens/init_travel_styles.dart';
+>>>>>>> 1e454cf (feat: IMPLEMENT models)
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
@@ -67,7 +72,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                   spacing: 8,
                   runSpacing: 8,
                   children:
-                      Interest.all.map((interest) {
+                      Interests.all.map((interest) {
                         final isSelected = selectedInterests.contains(interest);
                         return GestureDetector(
                           onTap: () => toggleInterest(interest),

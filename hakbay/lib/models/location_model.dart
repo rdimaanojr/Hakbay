@@ -16,8 +16,29 @@ class Location {
       name: name ?? this.name,
       longitude:
           longitude == _undefined ? this.longitude : longitude as double?,
-      latitude:
-          latitude == _undefined ? this.latitude : latitude as double?,
+      latitude: latitude == _undefined ? this.latitude : latitude as double?,
     );
   }
+<<<<<<< HEAD
 }
+=======
+
+  factory Location.fromJson(Map<String, dynamic> json) {
+    return Location(
+      name: json['name'],
+      longitude:
+          json['longitude'] != null
+              ? double.tryParse(json['longitude'].toString())
+              : null,
+      latitude:
+          json['latitude'] != null
+              ? double.tryParse(json['latitude'].toString())
+              : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'longitude': longitude, 'latitude': latitude};
+  }
+}
+>>>>>>> 1e454cf (feat: IMPLEMENT models)
