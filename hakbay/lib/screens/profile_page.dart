@@ -8,6 +8,7 @@ import 'package:hakbay/commons/bottom_navbar.dart';
 import 'package:hakbay/screens/edit_profile_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:hakbay/utils/logger.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -19,7 +20,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfileState extends State<ProfilePage> {
   String? base64Image;
   File? imageFile;
-  AppUser? user;
+  late AppUser user;
   late String uid;
 
   @override
@@ -31,41 +32,47 @@ class _ProfileState extends State<ProfilePage> {
 
   Future<void> _loadUserData() async {
     try {
-      final userData = await context.read<UserProvider>().fetchUserData(uid);
-      if (userData != null && userData.isNotEmpty) {
+      await context.read<UserProvider>().fetchUserData(uid);
+      final fetchedUser = context.read<UserProvider>().user;
+
+      if (fetchedUser != null) {
         setState(() {
-          user = AppUser.fromJson(userData);
-          base64Image = user?.profilePic;
+          user = fetchedUser;
+          base64Image = user.profilePic;
         });
       } else {
-        print("User data is null or empty.");
+        logger.w("User data is null or empty.");
       }
     } catch (e) {
-      print("Error loading user data: $e");
+      logger.e("Error loading user data", error: e);
     }
   }
 
   Future<void> pickImage() async {
     final image = await ImagePicker().pickImage(
-      source: await showDialog<ImageSource>(
+      source:
+          await showDialog<ImageSource>(
             context: context,
-            builder: (context) => AlertDialog(
-              title: const Text("Select Image Source"),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, ImageSource.camera),
-                  child: const Text("Camera"),
+            builder:
+                (context) => AlertDialog(
+                  title: const Text("Select Image Source"),
+                  actions: [
+                    TextButton(
+                      onPressed:
+                          () => Navigator.pop(context, ImageSource.camera),
+                      child: const Text("Camera"),
+                    ),
+                    TextButton(
+                      onPressed:
+                          () => Navigator.pop(context, ImageSource.gallery),
+                      child: const Text("Gallery"),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Cancel"),
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, ImageSource.gallery),
-                  child: const Text("Gallery"),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("Cancel"),
-                ),
-              ],
-            ),
           ) ??
           ImageSource.camera,
     );
@@ -77,13 +84,17 @@ class _ProfileState extends State<ProfilePage> {
       setState(() {
         imageFile = file;
         base64Image = encoded;
-        user?.profilePic = encoded;
+        user = user.copyWith(profilePic: encoded);
 
-        context.read<UserProvider>().updateUserProfilePic(uid, encoded).then((_) {
-          print("Profile picture updated successfully!");
-        }).catchError((error) {
-          print("Error updating profile picture: $error");
-        });
+        context
+            .read<UserProvider>()
+            .updateUserProfilePic(uid, encoded)
+            .then((_) {
+              print("Profile picture updated successfully!");
+            })
+            .catchError((error) {
+              print("Error updating profile picture: $error");
+            });
       });
     }
   }
@@ -91,17 +102,13 @@ class _ProfileState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final imageWidget = (base64Image != null && base64Image!.isNotEmpty)
-    ? Image.memory(
-        base64Decode(base64Image!),
-        fit: BoxFit.cover,
-      )
-    : const Icon(Icons.person, size: 50);
+    final imageWidget =
+        (base64Image != null && base64Image!.isNotEmpty)
+            ? Image.memory(base64Decode(base64Image!), fit: BoxFit.cover)
+            : const Icon(Icons.person, size: 50);
 
     return Scaffold(
       body: Padding(
@@ -116,7 +123,11 @@ class _ProfileState extends State<ProfilePage> {
                     radius: 50,
                     backgroundColor: Colors.grey[300],
                     child: ClipOval(
-                      child: SizedBox(width: 100, height: 100, child: imageWidget),
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: imageWidget,
+                      ),
                     ),
                   ),
                 ),
@@ -126,12 +137,19 @@ class _ProfileState extends State<ProfilePage> {
                     children: [
                       Text(
                         "${user!.fname} ${user!.lname}",
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
                       const SizedBox(height: 5),
                       Text(
                         "@${user!.username}",
-                        style: const TextStyle(fontSize: 16, color: Colors.grey),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
@@ -142,22 +160,34 @@ class _ProfileState extends State<ProfilePage> {
                   children: [
                     Text(
                       "Phone Number: ${user!.phone}",
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       "Email: ${user!.email}",
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       "Interests: ${user!.interests.join(', ')}",
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       "Travel Styles: ${user!.travelStyles.join(', ')}",
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -179,7 +209,10 @@ class _ProfileState extends State<ProfilePage> {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -193,6 +226,7 @@ class _ProfileState extends State<ProfilePage> {
                 Align(
                   alignment: Alignment.bottomCenter,
 <<<<<<< HEAD
+<<<<<<< HEAD
                   child: ListTile(
                     onTap: () async {
                       try {
@@ -205,12 +239,24 @@ class _ProfileState extends State<ProfilePage> {
                       } finally {
                         Navigator.pop(context); // Close the loading dialog
                       }
+=======
+
+                  child: ListTile(
+                    // Logout button
+                    onTap: () async {
+                      await context.read<UserAuthProvider>().signOut();
+                      if (mounted) {
+                        Navigator.popAndPushNamed(context, '/');
+                      }
+                      ;
+>>>>>>> a3ce398 (refactor: REFACTOR code base)
                     },
                     title: const Center(
                       child: Text(
                         "Logout",
                         style: TextStyle(color: Colors.red),
                       ),
+<<<<<<< HEAD
 =======
                   child: ListTile( // Logout button
                   onTap: () async {
@@ -229,9 +275,10 @@ class _ProfileState extends State<ProfilePage> {
 
 
 >>>>>>> d376e6f (fix: bug in signing in)
+=======
+>>>>>>> a3ce398 (refactor: REFACTOR code base)
                     ),
                   ),
-                ),
                 ),
               ],
             ),

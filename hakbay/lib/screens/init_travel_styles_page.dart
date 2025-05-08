@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:hakbay/models/util_models.dart';
-=======
 import 'package:hakbay/commons/constants.dart';
-import 'package:hakbay/screens/init_travel_styles.dart';
->>>>>>> 1e454cf (feat: IMPLEMENT models)
 import 'package:provider/provider.dart';
+import 'package:hakbay/models/user_model.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
-import '../models/user_model.dart';
+import 'package:hakbay/utils/logger.dart';
 
-class InitInterestsScreen extends StatefulWidget {
-  const InitInterestsScreen({super.key});
+class InitTravelStylesScreen extends StatefulWidget {
+  const InitTravelStylesScreen({super.key});
 
   @override
-  State<InitInterestsScreen> createState() => _InitInterestsScreenState();
+  State<InitTravelStylesScreen> createState() => _InitTravelStylesScreenState();
 }
 
-class _InitInterestsScreenState extends State<InitInterestsScreen> {
-  final List<String> selectedInterests = [];
+class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
+  final List<String> selectedTravelStyles = [];
   late String uid;
   late AppUser? user;
 
@@ -31,21 +27,27 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
 
   Future<void> _loadUserData() async {
     try {
-      final userData = await context.read<UserProvider>().fetchUserData(uid);
-      if (userData != null && userData.isNotEmpty) {
+      await context.read<UserProvider>().fetchUserData(uid);
+      final fetchedUser = context.read<UserProvider>().user;
+
+      if (fetchedUser != null) {
         setState(() {
-          user = AppUser.fromJson(userData);
+          user = fetchedUser;
         });
+      } else {
+        logger.w("User data is null or empty.");
       }
-    } catch (e) {}
+    } catch (e) {
+      logger.e("Error loading user data", error: e);
+    }
   }
 
-  void toggleInterest(String interest) {
+  void toggleTravelStyle(String travelStyle) {
     setState(() {
-      if (selectedInterests.contains(interest)) {
-        selectedInterests.remove(interest);
+      if (selectedTravelStyles.contains(travelStyle)) {
+        selectedTravelStyles.remove(travelStyle);
       } else {
-        selectedInterests.add(interest);
+        selectedTravelStyles.add(travelStyle);
       }
     });
   }
@@ -61,7 +63,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
               padding: EdgeInsets.only(top: 50, bottom: 50),
               child: Center(
                 child: Text(
-                  "Select Interests",
+                  "Select TravelStyles",
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -72,13 +74,15 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                   spacing: 8,
                   runSpacing: 8,
                   children:
-                      Interests.all.map((interest) {
-                        final isSelected = selectedInterests.contains(interest);
+                      TravelStyles.all.map((travelStyle) {
+                        final isSelected = selectedTravelStyles.contains(
+                          travelStyle,
+                        );
                         return GestureDetector(
-                          onTap: () => toggleInterest(interest),
+                          onTap: () => toggleTravelStyle(travelStyle),
                           child: Chip(
                             label: Text(
-                              interest,
+                              travelStyle,
                               style: TextStyle(
                                 color: isSelected ? Colors.white : Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -100,9 +104,9 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
               height: 30,
               alignment: Alignment.center,
               child:
-                  selectedInterests.isNotEmpty
+                  selectedTravelStyles.isNotEmpty
                       ? const Text(
-                        "Your interests:",
+                        "Your Travel Styles:",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -122,8 +126,8 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                 spacing: 8,
                 runSpacing: 8,
                 children:
-                    selectedInterests
-                        .map((interest) => Chip(label: Text(interest)))
+                    selectedTravelStyles
+                        .map((travelStyle) => Chip(label: Text(travelStyle)))
                         .toList(),
               ),
             ),
@@ -136,18 +140,18 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                       context,
                       listen: false,
                     ).updateUser(
-                      uid,
-                      user!.fname,
-                      user!.lname,
-                      user!.phone,
-                      selectedInterests,
-                      user!.travelStyles,
-                      user!.isPrivate,
+                      uid: uid,
+                      fname: user!.fname,
+                      lname: user!.lname,
+                      phone: user!.phone,
+                      interests: user!.interests,
+                      travelStyles: selectedTravelStyles,
+                      isPrivate: user!.isPrivate,
                     );
 
                     Navigator.pushNamedAndRemoveUntil(
                       context,
-                      "/init-travel-styles",
+                      "/home",
                       (route) => false,
                     );
                   }
@@ -163,13 +167,12 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
-                  Navigator.pushNamedAndRemoveUntil(context, "/init-travel-styles", (route) => false);
+                  Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
 >>>>>>> a800b17 (chore: ADD profile init screen routing)
 =======
-
                   Navigator.pushNamedAndRemoveUntil(
                     context,
-                    "/init-travel-styles",
+                    "/home",
                     (route) => false,
                   );
 >>>>>>> 9dc5dae (chore: INTEGRATE interest and travel style to db)

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 // API for our User Authentication
 class FirebaseAuthAPI {
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  static final FirebaseAuth auth = FirebaseAuth.instance;
 
   Stream<User?> getUserStream() {
     return auth.authStateChanges();

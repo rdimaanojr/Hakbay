@@ -13,7 +13,6 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-
   final _formKey = GlobalKey<FormState>(); // Form key for validation
   // TextEditingControllers for each field
   final TextEditingController _fnameController = TextEditingController();
@@ -48,21 +47,53 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
+  void _saveChanges() {
+    if (_formKey.currentState!.validate()) {
+      final updatedUser = widget.user!.copyWith(
+        fname: _fnameController.text,
+        lname: _lnameController.text,
+        phone: _phoneController.text,
+        interests:
+            _interestsController.text.split(',').map((e) => e.trim()).toList(),
+        travelStyles:
+            _travelStylesController.text
+                .split(',')
+                .map((e) => e.trim())
+                .toList(),
+        isPrivate: _isPrivate,
+      );
+
+      Provider.of<UserProvider>(context, listen: false).updateUser(
+        uid: updatedUser.uid!,
+        fname: updatedUser.fname,
+        lname: updatedUser.lname,
+        phone: updatedUser.phone,
+        interests: updatedUser.interests,
+        travelStyles: updatedUser.travelStyles,
+        isPrivate: updatedUser.isPrivate,
+      );
+
+      Navigator.pop(context, updatedUser);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Profile"),
-      ),
+      appBar: AppBar(title: const Text("Edit Profile")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              const Text("Edit your profile information", style: TextStyle(fontSize: 20)),
+              const Text(
+                "Edit your profile information",
+                style: TextStyle(fontSize: 20),
+              ),
               const SizedBox(height: 16),
-              TextFormField( // Text field for first name
+              TextFormField(
+                // Text field for first name
                 controller: _fnameController,
                 decoration: const InputDecoration(labelText: "First Name"),
                 validator: (value) {
@@ -73,7 +104,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField( // Text field for last name
+              TextFormField(
+                // Text field for last name
                 controller: _lnameController,
                 decoration: const InputDecoration(labelText: "Last Name"),
                 validator: (value) {
@@ -84,23 +116,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField( // Text field for phone number
+              TextFormField(
+                // Text field for phone number
                 controller: _phoneController,
                 decoration: const InputDecoration(labelText: "Phone Number"),
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 16),
-              TextFormField( // Text field for interests
+              TextFormField(
+                // Text field for interests
                 controller: _interestsController,
-                decoration: const InputDecoration(labelText: "Interests (comma-separated)"),
+                decoration: const InputDecoration(
+                  labelText: "Interests (comma-separated)",
+                ),
               ),
               const SizedBox(height: 16),
-              TextFormField( // Text field for travel styles
+              TextFormField(
+                // Text field for travel styles
                 controller: _travelStylesController,
-                decoration: const InputDecoration(labelText: "Travel Styles (comma-separated)"),
+                decoration: const InputDecoration(
+                  labelText: "Travel Styles (comma-separated)",
+                ),
               ),
               const SizedBox(height: 16),
-              SwitchListTile( // Switch for private account option
+              SwitchListTile(
+                // Switch for private account option
                 title: const Text("Private Account"),
                 value: _isPrivate,
                 onChanged: (value) {
@@ -110,31 +150,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 },
               ),
               const SizedBox(height: 16),
-              ElevatedButton( // Button to save changes
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Provider.of<UserProvider>(context, listen: false).updateUser(
-                      widget.user!.uid ?? '',
-                      _fnameController.text,
-                      _lnameController.text,
-                      _phoneController.text,
-                      _interestsController.text.split(',').map((e) => e.trim()).toList(),
-                      _travelStylesController.text.split(',').map((e) => e.trim()).toList(),
-                      _isPrivate,
-                    );
-
-                    setState(() {
-                      widget.user!.fname = _fnameController.text;
-                      widget.user!.lname = _lnameController.text;
-                      widget.user!.phone = _phoneController.text;
-                      widget.user!.interests = _interestsController.text.split(',').map((e) => e.trim()).toList();
-                      widget.user!.travelStyles = _travelStylesController.text.split(',').map((e) => e.trim()).toList();
-                      widget.user!.isPrivate = _isPrivate;
-                    });
-                    
-                    Navigator.pop(context, widget.user); // Return updated user data
-                  }
-                },
+              ElevatedButton(
+                // Button to save changes
+                onPressed: _saveChanges,
                 child: const Text("Save Changes"),
               ),
             ],

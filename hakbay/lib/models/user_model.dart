@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 class AppUser {
-  String? uid;
-  String fname;
-  String lname;
-  String username;
-  String email;
-  String phone;
-  List<String> interests;
-  List<String> travelStyles;
-  String? profilePic;
-  bool isPrivate;
+  final String? uid;
+  final String fname;
+  final String lname;
+  final String username;
+  final String email;
+  final String phone;
+  final List<String> interests;
+  final List<String> travelStyles;
+  final String? profilePic;
+  final bool isPrivate;
 
   AppUser({
     this.uid,
@@ -24,6 +24,34 @@ class AppUser {
     this.profilePic,
     this.isPrivate = false,
   });
+
+  static const _undefined = Object();
+
+  AppUser copyWith({
+    Object? uid = _undefined,
+    String? fname,
+    String? lname,
+    String? username,
+    String? email,
+    String? phone,
+    List<String>? interests,
+    List<String>? travelStyles,
+    Object? profilePic = _undefined,
+    bool? isPrivate,
+  }) {
+    return AppUser(
+      uid: uid == _undefined ? null : uid as String?,
+      fname: fname ?? '',
+      lname: lname ?? '',
+      username: username ?? '',
+      email: email ?? '',
+      phone: phone ?? '',
+      interests: interests ?? [],
+      travelStyles: travelStyles ?? [],
+      profilePic: profilePic == _undefined ? null : profilePic as String?,
+      isPrivate: isPrivate ?? false,
+    );
+  }
 
   // Factory constructor to instantiate object from json format
   factory AppUser.fromJson(Map<String, dynamic> json) {
@@ -67,7 +95,7 @@ class FriendRequest {
   final String receiverId;
   final String type;
   final String status;
-  final String timestamp;
+  final DateTime timestamp;
 
   static const String send = "send";
   static const String receive = "receive";
@@ -83,13 +111,29 @@ class FriendRequest {
     required this.timestamp,
   });
 
+  FriendRequest copyWith({
+    String? senderId,
+    String? receiverId,
+    String? status,
+    String? type,
+    DateTime? timestamp,
+  }) {
+    return FriendRequest(
+      senderId: senderId ?? this.senderId,
+      receiverId: receiverId ?? this.receiverId,
+      status: status ?? this.status,
+      type: type ?? this.type,
+      timestamp: timestamp ?? this.timestamp,
+    );
+  }
+
   factory FriendRequest.fromJson(Map<String, dynamic> json) {
     return FriendRequest(
       senderId: json['senderId'],
       receiverId: json['receiverId'],
       status: json['status'],
       type: json['type'],
-      timestamp: json['timestamp'],
+      timestamp: DateTime.parse(json['timestamp']),
     );
   }
 
@@ -99,7 +143,28 @@ class FriendRequest {
       'receiverId': receiverId,
       'status': status,
       'type': type,
-      'timestamp': timestamp,
+      'timestamp': timestamp.toIso8601String(),
     };
   }
+}
+
+class UserState {
+  final bool isLoading;
+  final bool isSuccess;
+  final String? error;
+
+  const UserState._({
+    required this.isLoading,
+    required this.isSuccess,
+    this.error,
+  });
+
+  factory UserState.initial() =>
+      const UserState._(isLoading: false, isSuccess: false);
+  factory UserState.loading() =>
+      const UserState._(isLoading: true, isSuccess: false);
+  factory UserState.success() =>
+      const UserState._(isLoading: false, isSuccess: true);
+  factory UserState.error(String error) =>
+      UserState._(isLoading: false, isSuccess: false, error: error);
 }

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../utils/logger.dart';
 
 // This API manages our users collection data
 class FirebaseUserAPI {
@@ -18,43 +20,47 @@ class FirebaseUserAPI {
   // Check if a username already exists in the database
   Future<bool> isUsernameTaken(String username) async {
     try {
-      final querySnapshot = await db
-          .collection('users')
-          .where('username', isEqualTo: username)
-          .get();
+      final querySnapshot =
+          await db
+              .collection('users')
+              .where('username', isEqualTo: username)
+              .get();
 
       return querySnapshot.docs.isNotEmpty; // Returns true if username exists
     } on FirebaseException catch (e) {
-      print('Error checking username: ${e.message}');
-      return false; 
+      logger.e("Error checking username", error: e);
+      return false;
     }
   }
 
   // Get email by the username
   Future<String> getEmailByUsername(String username) async {
     try {
-      final querySnapshot = await db
-          .collection('users')
-          .where('username', isEqualTo: username)
-          .get();
+      final querySnapshot =
+          await db
+              .collection('users')
+              .where('username', isEqualTo: username)
+              .get();
 
       if (querySnapshot.docs.isNotEmpty) {
         return querySnapshot.docs.first['email']; // Return the email if found
       }
       return "";
     } on FirebaseException catch (e) {
-      print('Error retrieving email by username: ${e.message}');
+      logger.e("Error retrieving email by username", error: e);
       return "";
     }
   }
 
-  Future<String> getCurrentUserUID() async {
+  // Return the UID of the current user
+  // returns null if the user is not logged in
+  Future<String?> getCurrentUserUID() async {
     try {
-      final user = await db.collection('users').doc().get();
-      return user.id; // Return the UID of the current user
+      final user = FirebaseAuth.instance.currentUser;
+      return user?.uid; 
     } on FirebaseException catch (e) {
-      print('Error retrieving current user UID: ${e.message}');
-      return "";
+      logger.e("Error retrieving current user UID", error: e);
+      return null;
     }
   }
 
@@ -65,41 +71,53 @@ class FirebaseUserAPI {
       if (docSnapshot.exists) {
         return docSnapshot.data();
       } else {
-        print("User not found");
+        logger.w("User with UID $uid does not exist");
         return null;
       }
     } on FirebaseException catch (e) {
-      print('Error retrieving user data: ${e.message}');
+      logger.e("Error retrieving user data", error: e);
       return null;
     }
   }
 
   // Update user data in the database
-  Future<void> updateUser(String uid, String fname, String lname, String phone, List<String> interests, List<String> travelStyles, bool isPrivate) async {
+  Future<void> updateUser({
+    required String uid,
+    String? fname,
+    String? lname,
+    String? phone,
+    String? profilePic,
+    List<String>? interests,
+    List<String>? travelStyles,
+    bool? isPrivate,
+  }) async {
     try {
-      await db.collection('users').doc(uid).update({
-        'fname': fname,
-        'lname': lname,
-        'phone': phone,
-        'interests': interests,
-        'travelStyles': travelStyles,
-        'isPrivate': isPrivate,
-      });
-      print("User data updated successfully!");
+      // updated user data
+      final updatedData = <String, dynamic>{};
+      if (fname != null) updatedData['fname'] = fname;
+      if (lname != null) updatedData['lname'] = lname;
+      if (phone != null) updatedData['phone'] = phone;
+      if (interests != null) updatedData['interests'] = interests;
+      if (travelStyles != null) updatedData['travelStyles'] = travelStyles;
+      if (isPrivate != null) updatedData['isPrivate'] = isPrivate;
+
+      // Update the user document with the new data
+      await db.collection('users').doc(uid).update(updatedData);
+
+      logger.i("User data updated successfully");
     } on FirebaseException catch (e) {
-      print('Error updating user data: ${e.message}');
+      logger.e("Error updating user data", error: e);
     }
   }
 
   Future<void> updateUserProfilePic(String uid, String base64Image) async {
     try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .update({'profilePic': base64Image});
-      print("Profile picture updated in Firestore"); 
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'profilePic': base64Image,
+      });
+      logger.i("Profile picture updated successfully");
     } catch (e) {
-      print("Error updating profile picture: $e");
+      logger.e("Error updating profile picture", error: e);
     }
   }
 }
