@@ -8,6 +8,7 @@ import 'package:hakbay/commons/bottom_navbar.dart';
 import 'package:hakbay/screens/edit_profile_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hakbay/utils/logger.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -59,16 +60,16 @@ class _ProfileState extends State<ProfilePage> {
                   actions: [
                     TextButton(
                       onPressed:
-                          () => Navigator.pop(context, ImageSource.camera),
+                          () => context.pop(ImageSource.camera),
                       child: const Text("Camera"),
                     ),
                     TextButton(
                       onPressed:
-                          () => Navigator.pop(context, ImageSource.gallery),
+                          () => context.pop(ImageSource.gallery),
                       child: const Text("Gallery"),
                     ),
                     TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => context.pop(),
                       child: const Text("Cancel"),
                     ),
                   ],
@@ -194,11 +195,9 @@ class _ProfileState extends State<ProfilePage> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditProfilePage(user: user),
-                      ),
+                    final result = await context.push<AppUser?>(
+                      '/edit-profile',
+                      extra: user,
                     );
 
                     if (result != null) {
@@ -246,7 +245,7 @@ class _ProfileState extends State<ProfilePage> {
                     onTap: () async {
                       await context.read<UserAuthProvider>().signOut();
                       if (mounted) {
-                        Navigator.popAndPushNamed(context, '/');
+                        context.go('/');
                       }
                       ;
 >>>>>>> a3ce398 (refactor: REFACTOR code base)
@@ -285,7 +284,6 @@ class _ProfileState extends State<ProfilePage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavbar(currentIndex: 2),
     );
   }
 }

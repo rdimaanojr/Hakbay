@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
 import '../models/user_model.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hakbay/utils/logger.dart';
 
 class InitInterestsScreen extends StatefulWidget {
@@ -155,11 +156,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                       isPrivate: user!.isPrivate,
                     );
 
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      "/init-travel-styles",
-                      (route) => false,
-                    );
+                    context.go('/init-travel-styles');
                   }
                 },
                 child: const Text("Continue"),
@@ -170,6 +167,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
               child: GestureDetector(
                 onTap: () {
                   // logic
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -183,6 +181,10 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                     (route) => false,
                   );
 >>>>>>> 9dc5dae (chore: INTEGRATE interest and travel style to db)
+=======
+                  context.go('/init-travel-styles');
+
+>>>>>>> b5a4cd3 (refactor: UPGRADE app to use go_router)
                 },
                 child: const Text(
                   "Skip for Now",

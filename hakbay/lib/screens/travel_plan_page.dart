@@ -25,7 +25,6 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavbar(currentIndex: 0), // Bottom navigation bar
     );
   }
 }

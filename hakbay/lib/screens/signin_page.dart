@@ -4,6 +4,7 @@ import 'package:hakbay/screens/signup_page.dart';
 import 'package:hakbay/screens/travel_plan_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -131,10 +132,7 @@ class _SignInPageState extends State<SignInPage> {
 
           // Navigate to the next page if sign-in is successful
           if (mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const TravelPlanPage()),
-            );
+            context.go('/home');
           }
         } catch (e) {
           // Handle unexpected errors
@@ -155,10 +153,7 @@ class _SignInPageState extends State<SignInPage> {
         const Text("No account yet?"),
         TextButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SignUpPage()),
-            );
+            context.push('/signup');
           },
           child: const Text("Sign Up"),
         ),

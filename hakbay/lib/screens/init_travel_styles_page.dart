@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:hakbay/models/user_model.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hakbay/utils/logger.dart';
 
 class InitTravelStylesScreen extends StatefulWidget {
@@ -148,12 +149,8 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                       travelStyles: selectedTravelStyles,
                       isPrivate: user!.isPrivate,
                     );
-
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      "/home",
-                      (route) => false,
-                    );
+                  
+                    context.go('/home');
                   }
                 },
                 child: const Text("Continue"),
@@ -166,6 +163,7 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                   // logic
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                   Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
 >>>>>>> a800b17 (chore: ADD profile init screen routing)
@@ -176,6 +174,9 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                     (route) => false,
                   );
 >>>>>>> 9dc5dae (chore: INTEGRATE interest and travel style to db)
+=======
+                  context.go('/home');
+>>>>>>> b5a4cd3 (refactor: UPGRADE app to use go_router)
                 },
                 child: const Text(
                   "Skip for Now",

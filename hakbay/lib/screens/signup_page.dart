@@ -4,6 +4,7 @@ import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:hakbay/screens/init_interests_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hakbay/utils/logger.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -200,7 +201,9 @@ class _SignUpState extends State<SignUpPage> {
           if (mounted) Navigator.popAndPushNamed(context, '/home');
 =======
         // Check if username is unique
-        final isTaken = await context.read<UserProvider>().isUsernameTaken(username);
+        final isTaken = await context.read<UserProvider>().isUsernameTaken(
+          username,
+        );
         logger.d("Is username taken: $isTaken");
         if (isTaken) {
           setState(() {
@@ -217,7 +220,10 @@ class _SignUpState extends State<SignUpPage> {
 =======
 
         // Sign up the user
-        String message = await context.read<UserAuthProvider>().signUp(email, password);
+        String message = await context.read<UserAuthProvider>().signUp(
+          email,
+          password,
+        );
         logger.d("Sign-up result: $message");
 
         // Check if the sign-up was successful
@@ -249,7 +255,7 @@ class _SignUpState extends State<SignUpPage> {
         // Navigate forward if successful
         if (mounted) {
           logger.d("Navigating to /init-interests");
-          Navigator.popAndPushNamed(context, '/init-interests');
+          context.go('/init-interests'); // Use GoRouter to navigate
         }
       }
     },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 class EditProfilePage extends StatefulWidget {
   final AppUser? user;
@@ -73,7 +74,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         isPrivate: updatedUser.isPrivate,
       );
 
-      Navigator.pop(context, updatedUser);
+      context.pop(updatedUser);
     }
   }
 

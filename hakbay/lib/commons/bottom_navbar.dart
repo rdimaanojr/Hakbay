@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BottomNavbar extends StatelessWidget {
   final int currentIndex;
@@ -9,12 +10,16 @@ class BottomNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return NavigationBar( // Bottom navigation bar
       onDestinationSelected: (int index) {
-        if (index == 0) {
-          Navigator.pushReplacementNamed(context, "/home"); // Navigate to home page
-        } else if (index == 1) {
-          Navigator.pushReplacementNamed(context, "/people"); // Navigate to find similar people page
-        } else if (index == 2) {
-          Navigator.pushReplacementNamed(context, "/profile"); // Navigate to profile page
+        switch (index) {
+          case 0:
+            context.go('/home'); // Navigate to the Home page
+            break;
+          case 1:
+            context.go('/people'); // Navigate to the Find Similar People page
+            break;
+          case 2:
+            context.go('/profile'); // Navigate to the Profile page
+            break;
         }
       },
       indicatorColor: Colors.blue,
