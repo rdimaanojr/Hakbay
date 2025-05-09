@@ -21,7 +21,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfileState extends State<ProfilePage> {
   String? base64Image;
   File? imageFile;
-  late AppUser user;
+  AppUser? user;
   late String uid;
 
   @override
@@ -39,7 +39,7 @@ class _ProfileState extends State<ProfilePage> {
       if (fetchedUser != null) {
         setState(() {
           user = fetchedUser;
-          base64Image = user.profilePic;
+          base64Image = user!.profilePic;
         });
       } else {
         logger.w("User data is null or empty.");
@@ -85,7 +85,7 @@ class _ProfileState extends State<ProfilePage> {
       setState(() {
         imageFile = file;
         base64Image = encoded;
-        user = user.copyWith(profilePic: encoded);
+        user = user!.copyWith(profilePic: encoded);
 
         context
             .read<UserProvider>()
