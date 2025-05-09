@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hakbay/commons/bottom_navbar.dart';
 
 class TravelPlanPage extends StatefulWidget{
   const TravelPlanPage({super.key});
