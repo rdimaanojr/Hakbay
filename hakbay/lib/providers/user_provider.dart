@@ -13,6 +13,10 @@ class UserProvider with ChangeNotifier {
   AppUser? get user => _user;
   UserState get status => _status;
 
+  UserProvider() {
+    userAPI = FirebaseUserAPI();
+  }
+
   // Get user data from Firestore
   Future<void> fetchUserData(String uid) async {
     _status = UserState.loading();

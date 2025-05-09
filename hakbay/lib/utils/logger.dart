@@ -1,6 +1,7 @@
 import 'package:logger/logger.dart';
 
 final logger = Logger(
+  level: Level.debug,
   printer: PrettyPrinter(
     methodCount: 2, // no. of method calls to be called
     errorMethodCount: 8, // methods for stacktrace

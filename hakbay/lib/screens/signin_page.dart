@@ -100,31 +100,48 @@ class _SignInPageState extends State<SignInPage> {
     onPressed: () async {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
-  
-        // Check if username already signed up
-        final email = await context.read<UserProvider>().getEmailByUsername(username!);
 
-        if(email.isEmpty){
-          // Username does not exist
+        try {
+          // Check if username already signed up
+          final email = await context.read<UserProvider>().getEmailByUsername(
+            username!,
+          );
+
+          if (email.isEmpty) {
+            // Username does not exist
+            setState(() {
+              showSignInErrorMessage = true;
+            });
+            return;
+          }
+
+          // Sign in
+          String message = await context.read<UserAuthProvider>().signIn(
+            email,
+            password!,
+          );
+
+          // Check if the sign-in was successful or if there was an error
+          if (message.isNotEmpty) {
+            setState(() {
+              showSignInErrorMessage = true;
+            });
+            return;
+          }
+
+          // Navigate to the next page if sign-in is successful
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TravelPlanPage()),
+            );
+          }
+        } catch (e) {
+          // Handle unexpected errors
           setState(() {
             showSignInErrorMessage = true;
           });
-          return;
         }
-          
-        // Sign in
-        String message = await context.read<UserAuthProvider>().signIn(email, password!);
-      
-        // Check if the sign-in was successful or if there was an error
-        if (message.isNotEmpty) {
-          setState(() {
-            showSignInErrorMessage = true;
-          });
-          return;
-        }
-
-        if(mounted) Navigator.push(context, MaterialPageRoute(builder: (context) => const TravelPlanPage()));
-      
       }
     },
     child: const Text("Sign In"),

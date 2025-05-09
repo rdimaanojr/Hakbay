@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:hakbay/screens/init_interests_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:hakbay/utils/logger.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -158,6 +158,7 @@ class _SignUpState extends State<SignUpPage> {
         _formKey.currentState!.save();
 >>>>>>> d376e6f (fix: bug in signing in)
 
+<<<<<<< HEAD
           // Check if username is unique         
           final isTaken = await context.read<UserProvider>().isUsernameTaken(username);
           if (isTaken) {
@@ -197,6 +198,17 @@ class _SignUpState extends State<SignUpPage> {
 
           // Navigate back if successful
           if (mounted) Navigator.popAndPushNamed(context, '/home');
+=======
+        // Check if username is unique
+        final isTaken = await context.read<UserProvider>().isUsernameTaken(username);
+        logger.d("Is username taken: $isTaken");
+        if (isTaken) {
+          setState(() {
+            showSignUpErrorMessage = true;
+            errorMessage = "Username is already taken. Please choose another.";
+          });
+          return;
+>>>>>>> a28a555 (fix: FIX signup logic)
         }
 <<<<<<< HEAD
       },
@@ -205,13 +217,11 @@ class _SignUpState extends State<SignUpPage> {
 =======
 
         // Sign up the user
-        String? message = await context.read<UserAuthProvider>().signUp(
-          email,
-          password,
-        );
+        String message = await context.read<UserAuthProvider>().signUp(email, password);
+        logger.d("Sign-up result: $message");
 
-        // Check if the sign-up was successful or if there was an error
-        if (message.isNotEmpty) {
+        // Check if the sign-up was successful
+        if (message != "success") {
           setState(() {
             showSignUpErrorMessage = true;
             errorMessage = message; // Display the error message from the API
@@ -221,6 +231,7 @@ class _SignUpState extends State<SignUpPage> {
 
         // Get the user's UID
         final uid = context.read<UserAuthProvider>().getCurrentUserUID();
+        logger.d("Retrieved UID: $uid");
 
         // Create a new AppUser object
         final newUser = AppUser(
@@ -232,10 +243,14 @@ class _SignUpState extends State<SignUpPage> {
         );
 
         // Save the user in Firestore
+        logger.d("Saving user: ${newUser.toJson()}");
         await context.read<UserProvider>().saveUser(uid!, newUser);
 
-        // Navigate back if successful
-        if (mounted) Navigator.popAndPushNamed(context, '/init-interests');
+        // Navigate forward if successful
+        if (mounted) {
+          logger.d("Navigating to /init-interests");
+          Navigator.popAndPushNamed(context, '/init-interests');
+        }
       }
     },
   );

@@ -30,17 +30,17 @@ class FirebaseAuthAPI {
         email: email,
         password: password,
       );
-      return "";
+      return "success"; // Return "success" on successful sign-up
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':
           return "Invalid Email Address";
         case 'email-already-in-use':
           return "The email address is already in use.";
-        case 'password-does-not-meet-requirements':
+        case 'weak-password':
           return "Password must contain at least 6 characters";
         default:
-          return "Password must contain at least 6 characters";
+          return e.message ?? "An unknown error occurred.";
       }
     }
   }

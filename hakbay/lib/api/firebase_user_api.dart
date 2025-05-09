@@ -9,10 +9,11 @@ class FirebaseUserAPI {
   // Save the new user in the database
   Future<String> saveUser(String uid, Map<String, dynamic> user) async {
     try {
-      // Save user with the UID
+      logger.d("Saving user with UID: $uid and data: $user");
       await db.collection('users').doc(uid).set(user);
       return "Successfully saved user!";
     } on FirebaseException catch (e) {
+      logger.e("Error saving user to Firestore", error: e);
       return 'Error on ${e.message}';
     }
   }
