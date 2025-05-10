@@ -1,7 +1,64 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/_xlxIeVs)
+# Hakbay
 
+## go_route
+Import the package in your dart file.
+```dart
+import 'package:go_router/go_router.dart';
+```
+Add your route in the router configuration in `main.dart`
+```dart
+final GoRouter _router = GoRouter(
+  initialLocation: "/",
+  routes: [
+    ...
+    GoRoute(
+      path: "/init-travel-styles",
+      builder: (context, state) => const InitTravelStylesScreen(),
+    ),
+    // add it here. like this one above ^^
+  ],
+);
+```
 
-# References
+To use it, simply call `.go()`
+```dart
+context.go('/path');
+```
+
+If you need to go insert a screen on top of another screen, (e.g. edit profile page on top of profile page), use `.push()` and `.pop()`
+```dart
+// push screen on top
+context.push('/edit-profile');
+
+// go back
+context.pop();
+```
+
+And just like `Navigator` you can pass objects inside it. Examples below.
+```dart
+context.push('/path', userData);
+context.pop(userData);
+```
+
+## logger
+For easy debugging, use the logging system in `utils/logger.dart`. 
+
+Import the logger in your dart file.
+```dart
+import 'package:hakbay/utils/logger.dart';
+```
+
+To use, call the appropriate "letter" methods.
+```dart
+logger.t("trace log");
+logger.d("debug log");
+logger.i("info log");
+logger.w("warning log");
+logger.e("error log", error: error);
+logger.f("fatal log", error: error, stackTrace, stackTrace);
+```
+
+## References
 - https://www.geeksforgeeks.org/flutter-changing-app-icon/
 - https://api.flutter.dev/flutter/material/BottomNavigationBar-class.html
 - https://api.flutter.dev/flutter/widgets/Navigator/pushReplacementNamed.html
