@@ -41,7 +41,7 @@ context.pop(userData);
 ```
 
 ## logger
-For easy debugging, use the logging system in `utils/logger.dart`. 
+For easy debugging, use the logging system in `utils/logger.dart` instead of printing. 
 
 Import the logger in your dart file.
 ```dart
@@ -55,7 +55,7 @@ logger.d("debug log");
 logger.i("info log");
 logger.w("warning log");
 logger.e("error log", error: error);
-logger.f("fatal log", error: error, stackTrace, stackTrace);
+logger.f("fatal log", error: error, stackTrace: stackTrace);
 ```
 
 ## References
