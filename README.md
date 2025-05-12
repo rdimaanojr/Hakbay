@@ -109,6 +109,37 @@ context.push('/path', userData);
 context.pop(userData);
 ```
 
+## Screens
+**Authentication**
+- [ ] sign-in `/`
+- [ ] sign-up `/sign-up`
+
+**Initialization**
+- [ ] init interests `/init/interests`
+- [ ] init travel styles`/init/travel-styles`
+
+**Main Interface**
+- [ ] home `/home`
+- [ ] find similar people `/explore`
+- [ ] friends `/friends`
+- [ ] all friend requests `/friends/requests`
+- [ ] profile `/profile`
+- [ ] edit profile `/profile/edit`
+- [ ] profile qr code `/profile/qr`
+
+**Travel Plan**
+- [ ] add travel plan `/travels/new`
+- [ ] view travel plan `/travels/view/:planId`
+- [ ] edit travel plan `/travels/edit/:planId`
+- [ ] expand itinerary `/travels/view/:planId/itinerary`
+- [ ] travel plan qr `/travels/view/:planId/qr`
+
+**Users**
+- [ ] view (another) user profile `/user/:uid`
+	- [ ] public/friend
+	- [ ] locked (private)
+
+
 ## logger
 For easy debugging, use the logging system in `utils/logger.dart` instead of printing. 
 
