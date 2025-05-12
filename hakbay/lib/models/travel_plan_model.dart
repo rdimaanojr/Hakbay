@@ -51,7 +51,7 @@ class ItineraryItem {
 }
 
 class TravelPlan {
-  final String? id;
+  final String? planId;
   final String name;
   final DateTime startDate;
   final DateTime endDate;
@@ -62,7 +62,7 @@ class TravelPlan {
   final Map<int, ItineraryItem>? itinerary;
 
   TravelPlan({
-    this.id,
+    this.planId,
     required this.name,
     required this.startDate,
     required this.endDate,
@@ -87,7 +87,7 @@ class TravelPlan {
     Object? itinerary = _undefined,
   }) {
     return TravelPlan(
-      id: id == _undefined ? this.id : id as String?,
+      planId: id == _undefined ? this.planId : id as String?,
       name: name ?? this.name,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
@@ -103,7 +103,7 @@ class TravelPlan {
 
   factory TravelPlan.fromJson(Map<String, dynamic> json) {
     return TravelPlan(
-      id: json['id'],
+      planId: json['planId'],
       name: json['name'],
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
@@ -119,7 +119,7 @@ class TravelPlan {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'planId': planId,
       'name': name,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
