@@ -51,6 +51,7 @@ class ItineraryItem {
 }
 
 class TravelPlan {
+  final String? id;
   final String name;
   final DateTime startDate;
   final DateTime endDate;
@@ -61,6 +62,7 @@ class TravelPlan {
   final List<ItineraryItem>? itinerary;
 
   TravelPlan({
+    this.id,
     required this.name,
     required this.startDate,
     required this.endDate,
@@ -74,6 +76,7 @@ class TravelPlan {
   static const _undefined = Object();
 
   TravelPlan copyWith({
+    Object? id = _undefined,
     String? name,
     DateTime? startDate,
     DateTime? endDate,
@@ -84,6 +87,7 @@ class TravelPlan {
     Object itinerary = _undefined,
   }) {
     return TravelPlan(
+      id: id == _undefined ? this.id : id as String?,
       name: name ?? this.name,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,

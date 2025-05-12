@@ -9,6 +9,10 @@ class AppUser {
   final String phone;
   final List<String> interests;
   final List<String> travelStyles;
+  final List<String> travelPlans;
+  final List<String> friends;
+  final List<String> outgoingFriendRequests;
+  final List<String> incomingFriendRequests;
   final String? profilePic;
   final bool isPrivate;
 
@@ -21,6 +25,10 @@ class AppUser {
     this.phone = '',
     this.interests = const [],
     this.travelStyles = const [],
+    this.travelPlans = const [],
+    this.friends = const [],
+    this.outgoingFriendRequests = const [],
+    this.incomingFriendRequests = const [],
     this.profilePic,
     this.isPrivate = false,
   });
@@ -36,20 +44,31 @@ class AppUser {
     String? phone,
     List<String>? interests,
     List<String>? travelStyles,
+    List<String>? travelPlans,
+    List<String>? friends,
+    List<String>? outgoingFriendRequests,
+    List<String>? incomingFriendRequests,
     Object? profilePic = _undefined,
     bool? isPrivate,
   }) {
     return AppUser(
-      uid: uid == _undefined ? null : uid as String?,
-      fname: fname ?? '',
-      lname: lname ?? '',
-      username: username ?? '',
-      email: email ?? '',
-      phone: phone ?? '',
-      interests: interests ?? [],
-      travelStyles: travelStyles ?? [],
-      profilePic: profilePic == _undefined ? null : profilePic as String?,
-      isPrivate: isPrivate ?? false,
+      uid: uid == _undefined ? this.uid : uid as String?,
+      fname: fname ?? this.fname,
+      lname: lname ?? this.lname,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      interests: interests ?? this.interests,
+      travelStyles: travelStyles ?? this.travelStyles,
+      travelPlans: travelPlans ?? this.travelPlans,
+      friends: friends ?? this.friends,
+      outgoingFriendRequests:
+          outgoingFriendRequests ?? this.outgoingFriendRequests,
+      incomingFriendRequests:
+          incomingFriendRequests ?? this.incomingFriendRequests,
+      profilePic:
+          profilePic == _undefined ? this.profilePic : profilePic as String?,
+      isPrivate: isPrivate ?? this.isPrivate,
     );
   }
 
@@ -64,6 +83,14 @@ class AppUser {
       phone: json['phone'] ?? '',
       interests: List<String>.from(json['interests'] ?? []),
       travelStyles: List<String>.from(json['travelStyles'] ?? []),
+      travelPlans: List<String>.from(json['travelPlans'] ?? []),
+      friends: List<String>.from(json['friends'] ?? []),
+      outgoingFriendRequests: List<String>.from(
+        json['outgoingFriendRequests'] ?? [],
+      ),
+      incomingFriendRequests: List<String>.from(
+        json['incomingFriendRequests'] ?? [],
+      ),
       profilePic: json['profilePic'],
       isPrivate: json['isPrivate'] ?? false,
     );
@@ -84,6 +111,10 @@ class AppUser {
       'phone': phone,
       'interests': interests,
       'travelStyles': travelStyles,
+      'travelPlans': travelPlans,
+      'friends': friends,
+      'outgoingFriendRequests': outgoingFriendRequests,
+      'incomingFriendRequests': incomingFriendRequests,
       'profilePic': profilePic,
       'isPrivate': isPrivate,
     };
@@ -93,12 +124,9 @@ class AppUser {
 class FriendRequest {
   final String senderId;
   final String receiverId;
-  final String type;
   final String status;
   final DateTime timestamp;
 
-  static const String send = "send";
-  static const String receive = "receive";
   static const String pending = "pending";
   static const String accepted = "accepted";
   static const String rejected = "rejected";
@@ -107,9 +135,11 @@ class FriendRequest {
     required this.senderId,
     required this.receiverId,
     required this.status,
-    required this.type,
     required this.timestamp,
   });
+
+  bool get isPending => status == FriendRequest.pending;
+  bool get isAccepted => status == FriendRequest.accepted;
 
   FriendRequest copyWith({
     String? senderId,
@@ -122,7 +152,6 @@ class FriendRequest {
       senderId: senderId ?? this.senderId,
       receiverId: receiverId ?? this.receiverId,
       status: status ?? this.status,
-      type: type ?? this.type,
       timestamp: timestamp ?? this.timestamp,
     );
   }
@@ -132,7 +161,6 @@ class FriendRequest {
       senderId: json['senderId'],
       receiverId: json['receiverId'],
       status: json['status'],
-      type: json['type'],
       timestamp: DateTime.parse(json['timestamp']),
     );
   }
@@ -142,7 +170,6 @@ class FriendRequest {
       'senderId': senderId,
       'receiverId': receiverId,
       'status': status,
-      'type': type,
       'timestamp': timestamp.toIso8601String(),
     };
   }
