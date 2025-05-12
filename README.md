@@ -1,5 +1,74 @@
 # Hakbay
 
+## Database Model
+This is how the database should look like in the Firestore. The main collections are `users`, `travel_plans`, and `friend_requests`.
+```bash
+/
+├── users (collection)
+│   └── {uid} (document)
+│       ├── uid: string
+│       ├── fname: string
+│       ├── lname: string
+│       ├── username: string
+│       ├── email: string
+│       ├── phone: string
+│       ├── profilePic: string?
+│       ├── isPrivate: bool
+│       ├── interests: [string]
+│       ├── travelStyles: [string]
+│       ├── travelPlans: [string]   // references to travelPlans/{planId}
+│       ├── friends: [string]       // uid of accepted friends
+│       ├── outgoingFriendRequests: [string] // requestId of sent requests
+│       └── incomingFriendRequests: [string] // requestId of received requests
+
+├── friendRequests (collection)
+│   └── {requestId} (document)
+│       ├── senderId: string
+│       ├── receiverId: string
+│       ├── status: string ("pending" | "accepted" | "rejected")
+│       └── timestamp: datetime
+
+├── travelPlans (collection)
+│   └── {planId} (document)
+│       ├── planId: string
+│       ├── name: string
+│       ├── startDate: datetime
+│       ├── endDate: datetime
+│       ├── location: map
+│       │   ├── name: string
+│       │   ├── latitude: double?
+│       │   └── longitude: double?
+│       ├── accomodation: string?
+│       ├── notes: string?
+│       ├── checklist: [string]
+│       └── itinerary: map?
+│           ├── "0": map
+│           │   ├── name: string
+│           │   ├── time: datetime
+│           │   ├── description: string?
+│           │   └── location: map?
+│           ├── "1": map
+│           │   ├── name: string
+│           │   ├── time: datetime
+│           │   ├── description: string?
+│           │   └── location: map?
+│           └── ...
+```
+
+## use of `.copyWith()` method
+To promote immutability and clean state management, please use `.copyWith()` implemented in each model when you need to update an object. This allows to create a modified copy with changing the original object.
+
+You only need to pass the parameters you want to change. You can **update more than one parameters at once**.
+
+Refer to these examples to know how to use them.
+```dart
+// To update a user's first name and last name
+final updatedUser = user.copyWith(fname: "First", lname: "Last");
+
+// To change a friend request from pending to accepted
+final updatedRequest = request.copyWith(status: "accepted");
+```
+
 ## go_route
 Import the package in your dart file.
 ```dart
@@ -57,6 +126,7 @@ logger.w("warning log");
 logger.e("error log", error: error);
 logger.f("fatal log", error: error, stackTrace: stackTrace);
 ```
+
 
 ## References
 - https://www.geeksforgeeks.org/flutter-changing-app-icon/
