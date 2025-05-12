@@ -32,6 +32,8 @@ Future<void> main() async {
   );
 }
 
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final GoRouter _router = GoRouter(
   initialLocation: "/",
   routes: [
@@ -76,27 +78,19 @@ final GoRouter _router = GoRouter(
             GoRoute(
               path: "/profile",
               builder: (context, state) => ProfilePage(),
+              routes: [
+                GoRoute(
+                  path: "edit",
+                  builder: (context, state) {
+                    final user = context.read<UserProvider>().user;
+                    return EditProfilePage(user: user);
+                  },
+                ),
+              ],
             ),
           ],
         ),
       ],
-    ),
-    GoRoute(
-      path: "/profile",
-      builder: (context, state) => ProfilePage(),
-      routes: [
-        GoRoute(
-          path: "edit",
-          builder: (context, state) {
-            final user = context.read<UserProvider>().user;
-            return EditProfilePage(user: user);
-          },
-        ),
-      ],
-    ),
-    GoRoute(
-      path: "/people",
-      builder: (context, state) => const SimilarPeoplePage(),
     ),
     GoRoute(
       path: "/init-interests",

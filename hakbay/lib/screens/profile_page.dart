@@ -194,7 +194,7 @@ class _ProfileState extends State<ProfilePage> {
                 ElevatedButton(
                   onPressed: () async {
                     final result = await context.push<AppUser?>(
-                      '/edit-profile',
+                      '/profile/edit',
                       extra: user,
                     );
 
