@@ -59,7 +59,7 @@ class TravelPlan {
   final String? accomodation;
   final String? notes;
   final List<String>? checklist;
-  final List<ItineraryItem>? itinerary;
+  final Map<int, ItineraryItem>? itinerary;
 
   TravelPlan({
     this.id,
@@ -84,7 +84,7 @@ class TravelPlan {
     Object? accomodation = _undefined,
     Object? notes = _undefined,
     Object? checklist = _undefined,
-    Object itinerary = _undefined,
+    Object? itinerary = _undefined,
   }) {
     return TravelPlan(
       id: id == _undefined ? this.id : id as String?,
@@ -92,24 +92,18 @@ class TravelPlan {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       location: location ?? this.location,
-      accomodation:
-          accomodation == _undefined
-              ? this.accomodation
-              : accomodation as String?,
+      accomodation: accomodation == _undefined ? this.accomodation : accomodation as String?,
       notes: notes == _undefined ? this.notes : notes as String?,
-      checklist:
-          checklist == _undefined
-              ? this.checklist
-              : (checklist as List<String>?)?.toList(),
-      itinerary:
-          itinerary == _undefined
-              ? this.itinerary
-              : (checklist as List<ItineraryItem>?)?.toList(),
+      checklist: checklist == _undefined ? this.checklist : (checklist as List<String>?)?.toList(),
+      itinerary: itinerary == _undefined
+          ? this.itinerary
+          : (itinerary as Map<int, ItineraryItem>?),
     );
   }
 
   factory TravelPlan.fromJson(Map<String, dynamic> json) {
     return TravelPlan(
+      id: json['id'],
       name: json['name'],
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
@@ -117,15 +111,15 @@ class TravelPlan {
       accomodation: json['accomodation'],
       notes: json['notes'],
       checklist: List<String>.from(json['checklist'] ?? []),
-      itinerary:
-          (json['itinerary'] as List<dynamic>?)
-              ?.map((item) => ItineraryItem.fromJson(item))
-              .toList(),
+      itinerary: (json['itinerary'] as Map<String, dynamic>?)?.map(
+        (key, value) => MapEntry(int.parse(key), ItineraryItem.fromJson(value)),
+      ),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
@@ -133,7 +127,9 @@ class TravelPlan {
       'accomodation': accomodation,
       'notes': notes,
       'checklist': checklist,
-      'itinerary': itinerary?.map((item) => item.toJson()).toList(),
+      'itinerary': itinerary?.map(
+        (key, value) => MapEntry(key.toString(), value.toJson()),
+      ),
     };
   }
 }
