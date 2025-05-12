@@ -1,8 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hakbay/api/firebase_user_api.dart';
 import 'package:hakbay/firebase_options.dart';
-import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/utils/logger.dart';
 
 void main() async {

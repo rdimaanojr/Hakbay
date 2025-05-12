@@ -8,6 +8,10 @@ class FirebaseAuthAPI {
     return auth.authStateChanges();
   }
 
+  Future<User?> getCurrentUser() async {
+    return auth.currentUser;
+  }
+  
   // Get the UID
   String? getCurrentUserUID() {
     return auth.currentUser?.uid;

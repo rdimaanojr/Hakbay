@@ -51,17 +51,21 @@ class ItineraryItem {
 }
 
 class TravelPlan {
+  final String? uid;
   final String? planId;
   final String name;
   final DateTime startDate;
   final DateTime endDate;
-  final Location location;
+  // Temporarily set it to String
+  final String location;
+  // final Location location;
   final String? accomodation;
   final String? notes;
   final List<String>? checklist;
   final Map<int, ItineraryItem>? itinerary;
 
   TravelPlan({
+    required this.uid,
     this.planId,
     required this.name,
     required this.startDate,
@@ -76,17 +80,20 @@ class TravelPlan {
   static const _undefined = Object();
 
   TravelPlan copyWith({
+    String? uid,
     Object? id = _undefined,
     String? name,
     DateTime? startDate,
     DateTime? endDate,
-    Location? location,
+    String? location,
+    // Location? location,
     Object? accomodation = _undefined,
     Object? notes = _undefined,
     Object? checklist = _undefined,
     Object? itinerary = _undefined,
   }) {
     return TravelPlan(
+      uid: uid ?? this.uid,
       planId: id == _undefined ? this.planId : id as String?,
       name: name ?? this.name,
       startDate: startDate ?? this.startDate,
@@ -103,11 +110,13 @@ class TravelPlan {
 
   factory TravelPlan.fromJson(Map<String, dynamic> json) {
     return TravelPlan(
+      uid: json['uid'],
       planId: json['planId'],
       name: json['name'],
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
-      location: Location.fromJson(json['location']),
+      location: json['location'],
+      // location: Location.fromJson(json['location']),
       accomodation: json['accomodation'],
       notes: json['notes'],
       checklist: List<String>.from(json['checklist'] ?? []),
@@ -119,11 +128,13 @@ class TravelPlan {
 
   Map<String, dynamic> toJson() {
     return {
+      'uid': uid,
       'planId': planId,
       'name': name,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate.toIso8601String(),
-      'location': location.toJson(),
+      'location': location,
+      // 'location': location.toJson(),
       'accomodation': accomodation,
       'notes': notes,
       'checklist': checklist,
