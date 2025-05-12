@@ -122,7 +122,7 @@ class AppUser {
 }
 
 class FriendRequest {
-  final String? frId;
+  final String? requestId;
   final String senderId;
   final String receiverId;
   final String status;
@@ -133,7 +133,7 @@ class FriendRequest {
   static const String rejected = "rejected";
 
   FriendRequest({
-    this.frId,
+    this.requestId,
     required this.senderId,
     required this.receiverId,
     required this.status,
@@ -146,7 +146,7 @@ class FriendRequest {
   static const _undefined = Object();
 
   FriendRequest copyWith({
-    Object? frId = _undefined,
+    Object? requestId = _undefined,
     String? senderId,
     String? receiverId,
     String? status,
@@ -154,7 +154,7 @@ class FriendRequest {
     DateTime? timestamp,
   }) {
     return FriendRequest(
-      frId: frId == _undefined ? this.frId : frId as String?,
+      requestId: requestId == _undefined ? this.requestId : requestId as String?,
       senderId: senderId ?? this.senderId,
       receiverId: receiverId ?? this.receiverId,
       status: status ?? this.status,
@@ -164,7 +164,7 @@ class FriendRequest {
 
   factory FriendRequest.fromJson(Map<String, dynamic> json) {
     return FriendRequest(
-      frId: json['frId'],
+      requestId: json['requestId'],
       senderId: json['senderId'],
       receiverId: json['receiverId'],
       status: json['status'],
@@ -174,7 +174,7 @@ class FriendRequest {
 
   Map<String, dynamic> toJson() {
     return {
-      'frId': frId,
+      'requestId': requestId,
       'senderId': senderId,
       'receiverId': receiverId,
       'status': status,
