@@ -32,8 +32,6 @@ Future<void> main() async {
   );
 }
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
-
 final GoRouter _router = GoRouter(
   initialLocation: "/",
   routes: [
@@ -113,6 +111,10 @@ class RootWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      theme: ThemeData(
+        fontFamily: 'Poppins',
+        useMaterial3: true,
+      ),
       debugShowCheckedModeBanner: false,
       routerConfig: _router,
     );
