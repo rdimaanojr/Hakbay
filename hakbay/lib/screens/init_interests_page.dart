@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import 'package:hakbay/models/util_models.dart';
 =======
 import 'package:hakbay/commons/constants.dart';
@@ -8,6 +9,9 @@ import 'package:hakbay/screens/init_travel_styles.dart';
 >>>>>>> 1e454cf (feat: IMPLEMENT models)
 =======
 >>>>>>> a3ce398 (refactor: REFACTOR code base):hakbay/lib/screens/init_interests_page.dart
+=======
+import 'package:hakbay/commons/constants.dart';
+>>>>>>> 559569a (chore: merge)
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
@@ -170,6 +174,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                   Navigator.pushNamedAndRemoveUntil(context, "/init-travel-styles", (route) => false);
 >>>>>>> a800b17 (chore: ADD profile init screen routing)
@@ -185,6 +190,10 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                   context.go('/init-travel-styles');
 
 >>>>>>> b5a4cd3 (refactor: UPGRADE app to use go_router)
+=======
+                  context.go('/init-travel-styles');
+
+>>>>>>> 559569a (chore: merge)
                 },
                 child: const Text(
                   "Skip for Now",
@@ -201,4 +210,8 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
       ),
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 559569a (chore: merge)
