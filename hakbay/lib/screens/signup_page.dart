@@ -167,6 +167,7 @@ class _SignUpState extends State<SignUpPage> {
   Widget get fNameField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
+      style: const TextStyle(color: Colors.white),
       decoration: const InputDecoration(
         label: Text("First Name"),
       ),
@@ -183,6 +184,7 @@ class _SignUpState extends State<SignUpPage> {
   Widget get lNameField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
+      style: const TextStyle(color: Colors.white),
       decoration: const InputDecoration(
         label: Text("Last Name"),
       ),
@@ -199,6 +201,7 @@ class _SignUpState extends State<SignUpPage> {
   Widget get usernameField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
+      style: const TextStyle(color: Colors.white),
       decoration: const InputDecoration(
         label: Text("Username"),
         hintText: "Enter a unique username",
@@ -216,6 +219,7 @@ class _SignUpState extends State<SignUpPage> {
   Widget get emailField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
+      style: const TextStyle(color: Colors.white),
       decoration: const InputDecoration(
         label: Text("Email"),
         hintText: "Enter a valid email",
@@ -233,6 +237,7 @@ class _SignUpState extends State<SignUpPage> {
   Widget get passwordField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
+      style: const TextStyle(color: Colors.white),
       decoration: const InputDecoration(
         label: Text("Password"),
         hintText: "Enter a valid password",

@@ -55,6 +55,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget get usernameField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
+      style: const TextStyle(color: Colors.white),
       decoration: const InputDecoration(
         label: Text("Username"),
       ),
@@ -71,6 +72,7 @@ class _SignInPageState extends State<SignInPage> {
   Widget get passwordField => Padding(
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
+      style: const TextStyle(color: Colors.white),
       decoration: const InputDecoration(
         label: Text("Password"),
       ),
