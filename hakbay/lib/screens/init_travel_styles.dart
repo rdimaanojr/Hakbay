@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/models/util_models.dart';
 import 'package:provider/provider.dart';
-import 'package:hakbay/screens/travel_plan_page.dart';
 import 'package:hakbay/models/user_model.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';

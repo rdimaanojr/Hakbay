@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/models/util_models.dart';
-import 'package:hakbay/screens/init_travel_styles.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
