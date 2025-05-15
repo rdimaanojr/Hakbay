@@ -7,6 +7,7 @@ import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:hakbay/utils/logger.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 // This class shows our list of travel pages
@@ -46,6 +47,13 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
     }
   }
 
+  // Formatting stuff
+  String formatDateRange(DateTimeRange range) {
+    final start = DateFormat('MMM d, yyyy').format(range.start);
+    final end = DateFormat('MMM d, yyyy').format(range.end);
+    return "$start - $end";
+  }
+
   @override
   Widget build(BuildContext context) {
     if (user == null) {
@@ -55,16 +63,11 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
     Stream<QuerySnapshot> travelStream = context.read<TravelPlanProvider>().getTravels;
     
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: Text("My Travels"),
-      ),
-
+      appBar: AppBar(title: Text("My Travels"),),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           context.push('/add-travel');
         },
-        foregroundColor: Colors.blue,
         child: Icon(Icons.add),
       ),
 
@@ -82,77 +85,80 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
           }
 
           // Build a gridview for the travel plans  
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Number of columns in the grid
-              crossAxisSpacing: 10.0, // Spacing between columns
-              mainAxisSpacing: 10.0, // Spacing between rows
-              childAspectRatio: 3 / 2, // Aspect ratio of each grid item
-            ),
-            itemCount: snapshot.data?.docs.length,
-            itemBuilder: (context, index) {
-              // Convert from JSON per travel plan
-              TravelPlan travel = TravelPlan.fromJson(
-                snapshot.data?.docs[index].data() as Map<String, dynamic>,
-              );
+          return Padding(
+            padding: EdgeInsets.all(12),
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, 
+                crossAxisSpacing: 10.0, 
+                mainAxisSpacing: 10.0,
+                childAspectRatio: 3 / 2, 
+              ),
+              itemCount: snapshot.data?.docs.length,
+              itemBuilder: (context, index) {
+                // Convert from JSON per travel plan
+                TravelPlan travel = TravelPlan.fromJson(
+                  snapshot.data?.docs[index].data() as Map<String, dynamic>,
+                );
 
-              // Use a Card to display each travel plan in the grid
-              return Card(
-                elevation: 4.0,
-                margin: const EdgeInsets.all(8.0),
-                child: InkWell(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) => SizedBox()
-                        // TravelPlanDetails(travel: travelplan),
-                    );
+                // Use a Card to display each travel plan in the grid
+                return GestureDetector(
+                  onTap: (){
+                    context.push('/travel-details', extra: travel);
                   },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        travel.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8.0),
-                      Text(
-                        travel.startDate.toString(),
-                        style: const TextStyle(color: Colors.grey),
-                        textAlign: TextAlign.center,
-                      ),
-                      const Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  onLongPress: () {
+                    // TODO; Delete the travel plan by holding it down 
+                  },
+                  child: Card(
+                    color: Theme.of(context).cardColor,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    child: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) => SizedBox()
-                                  // TravelModal(type: 'Edit', entry: travel),
-                              );
-                            },
-                            icon: const Icon(Icons.create),
+                          Text(
+                            travel.name, 
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
                           ),
-                          IconButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) => SizedBox()
-                                  // TravelModal(type: 'Delete', entry: travel),
-                              );
-                            },
-                            icon: const Icon(Icons.delete),
+                          Row(
+                            children: [
+                              Icon(Icons.location_on, size: 16, color: Colors.white70,),
+                              SizedBox(width: 4,),
+                              Expanded(
+                                child: Text(
+                                  travel.location, 
+                                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 1,
+                                ),
+                              )
+                            ],
+                          ),
+                          SizedBox(height: 4,),
+                          Row(
+                            children: [
+                              Icon(Icons.calendar_today, size: 16, color: Colors.white70,),
+                              SizedBox(width: 4,),
+                              Expanded(
+                                child: Text(
+                                  formatDateRange(travel.travelDate), 
+                                  style: TextStyle(color: Colors.white70, fontSize: 12,),
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
+                    ),
+                  )
+                );
+              },
+            ),
           );
         },
       ),
@@ -167,7 +173,7 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
         children: [
           Text(
             "No Plans Yet? Plan a new trip!",
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ],
       )

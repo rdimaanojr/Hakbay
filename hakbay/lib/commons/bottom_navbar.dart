@@ -22,16 +22,15 @@ class BottomNavbar extends StatelessWidget {
             break;
         }
       },
-      indicatorColor: Colors.blue,
       selectedIndex: currentIndex,
       destinations: const <Widget>[
         NavigationDestination(
-          icon: Icon(Icons.home),
-          label: 'Home',
+          icon: Icon(Icons.flight),
+          label: 'Travels',
         ),
         NavigationDestination(
-          icon: Icon(Icons.group),
-          label: 'Find Similar People',
+          icon: Icon(Icons.search),
+          label: 'Find',
         ),
         NavigationDestination(
           icon: Icon(Icons.person),

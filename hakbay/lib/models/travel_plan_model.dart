@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'location_model.dart';
 
 class ItineraryItem {
@@ -54,26 +56,20 @@ class TravelPlan {
   final String? uid;
   final String? planId;
   final String name;
-  final DateTime startDate;
-  final DateTime endDate;
+  final DateTimeRange travelDate;
   // Temporarily set it to String
   final String location;
   // final Location location;
-  final String? accomodation;
-  final String? notes;
-  final List<String>? checklist;
+  final String? details;
   final Map<int, ItineraryItem>? itinerary;
 
   TravelPlan({
     required this.uid,
     this.planId,
     required this.name,
-    required this.startDate,
-    required this.endDate,
+    required this.travelDate,
     required this.location,
-    this.accomodation,
-    this.notes,
-    this.checklist,
+    this.details,
     this.itinerary,
   });
 
@@ -83,25 +79,19 @@ class TravelPlan {
     String? uid,
     Object? id = _undefined,
     String? name,
-    DateTime? startDate,
-    DateTime? endDate,
+    DateTimeRange? travelDate,
     String? location,
     // Location? location,
-    Object? accomodation = _undefined,
-    Object? notes = _undefined,
-    Object? checklist = _undefined,
+    Object? details = _undefined,
     Object? itinerary = _undefined,
   }) {
     return TravelPlan(
       uid: uid ?? this.uid,
-      planId: id == _undefined ? this.planId : id as String?,
+      planId: id == _undefined ? planId : id as String?,
       name: name ?? this.name,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
+      travelDate: travelDate ?? this.travelDate,
       location: location ?? this.location,
-      accomodation: accomodation == _undefined ? this.accomodation : accomodation as String?,
-      notes: notes == _undefined ? this.notes : notes as String?,
-      checklist: checklist == _undefined ? this.checklist : (checklist as List<String>?)?.toList(),
+      details: details == _undefined ? this.details : details as String?,
       itinerary: itinerary == _undefined
           ? this.itinerary
           : (itinerary as Map<int, ItineraryItem>?),
@@ -113,13 +103,13 @@ class TravelPlan {
       uid: json['uid'],
       planId: json['planId'],
       name: json['name'],
-      startDate: DateTime.parse(json['startDate']),
-      endDate: DateTime.parse(json['endDate']),
+      travelDate: DateTimeRange(
+        start: DateTime.parse(json['start']), 
+        end: DateTime.parse(json['end'])
+      ),
       location: json['location'],
       // location: Location.fromJson(json['location']),
-      accomodation: json['accomodation'],
-      notes: json['notes'],
-      checklist: List<String>.from(json['checklist'] ?? []),
+      details: json['details'],
       itinerary: (json['itinerary'] as Map<String, dynamic>?)?.map(
         (key, value) => MapEntry(int.parse(key), ItineraryItem.fromJson(value)),
       ),
@@ -131,13 +121,11 @@ class TravelPlan {
       'uid': uid,
       'planId': planId,
       'name': name,
-      'startDate': startDate.toIso8601String(),
-      'endDate': endDate.toIso8601String(),
+      'start': travelDate.start.toIso8601String(),
+      'end': travelDate.end.toIso8601String(),
       'location': location,
       // 'location': location.toJson(),
-      'accomodation': accomodation,
-      'notes': notes,
-      'checklist': checklist,
+      'details': details,
       'itinerary': itinerary?.map(
         (key, value) => MapEntry(key.toString(), value.toJson()),
       ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/commons/bottom_navbar.dart';
 import 'package:hakbay/firebase_options.dart';
+import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
+import 'package:hakbay/screens/travel_details_page.dart';
 import 'package:hakbay/screens/travel_form_page.dart';
 import 'package:hakbay/screens/init_interests_page.dart';
 import 'package:hakbay/screens/init_travel_styles_page.dart';
@@ -102,6 +104,13 @@ final GoRouter _router = GoRouter(
       path: "/add-travel",
       builder: (context, state) => const TravelPlanFormPage(),
     ),
+    GoRoute(
+      path: "/travel-details",
+      builder: (context, state) {
+        final travel = state.extra as TravelPlan;
+        return TravelPlanDetails(travel: travel);
+      } 
+    ),
   ],
 );
 
@@ -111,9 +120,40 @@ class RootWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      title: 'Hakbay',
       theme: ThemeData(
+        scaffoldBackgroundColor: Color(0xFF101F1B),
+        primaryColor: Color(0xFF1DB954),
         fontFamily: 'Poppins',
         useMaterial3: true,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Color(0xFF101F1B),
+          foregroundColor: Colors.white,
+        ),
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFF1DB954),
+          foregroundColor: Colors.white, 
+        ),
+        cardColor: Color(0xFF1A2E28),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Color(0xFF1A2E28),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          labelStyle: TextStyle(color: Colors.white70),
+          hintStyle: TextStyle(color: Colors.white60),
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Color(0xFF1A2E28),
+          indicatorColor: Color(0xFF1DB954),
+          labelTextStyle: WidgetStateProperty.all(
+            TextStyle(color: Colors.white),),
+          iconTheme: WidgetStateProperty.all(
+            IconThemeData(color: Colors.white),
+          ),
+        )
       ),
       debugShowCheckedModeBanner: false,
       routerConfig: _router,

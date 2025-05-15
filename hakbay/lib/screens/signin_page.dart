@@ -47,7 +47,7 @@ class _SignInPageState extends State<SignInPage> {
     padding: EdgeInsets.only(bottom: 30),
     child: Text(
       "Sign In",
-      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
     ),
   );
 
@@ -56,7 +56,6 @@ class _SignInPageState extends State<SignInPage> {
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
       decoration: const InputDecoration(
-        border: OutlineInputBorder(),
         label: Text("Username"),
       ),
       onSaved: (value) => setState(() => username = value),
@@ -73,7 +72,6 @@ class _SignInPageState extends State<SignInPage> {
     padding: const EdgeInsets.only(bottom: 30),
     child: TextFormField(
       decoration: const InputDecoration(
-        border: OutlineInputBorder(),
         label: Text("Password"),
       ),
       obscureText: true,
@@ -96,6 +94,13 @@ class _SignInPageState extends State<SignInPage> {
   );
 
   Widget get submitButton => ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Color(0xFF1DB954),
+      padding: EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30)
+      )
+    ),
     onPressed: () async {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
@@ -140,7 +145,7 @@ class _SignInPageState extends State<SignInPage> {
         }
       }
     },
-    child: const Text("Sign In"),
+    child: const Text("Sign In", style: TextStyle(color: Colors.white, fontSize: 18),),
   );
 
   Widget get signUpButton => Padding(
@@ -148,11 +153,15 @@ class _SignInPageState extends State<SignInPage> {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("No account yet?"),
+        const Text("No account yet?", style: TextStyle(color: Colors.white),),
         TextButton(
           onPressed: () {
             context.push('/signup');
           },
+          style: TextButton.styleFrom(
+            foregroundColor: Color(0xFF1DB954),
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           child: const Text("Sign Up"),
         ),
       ],

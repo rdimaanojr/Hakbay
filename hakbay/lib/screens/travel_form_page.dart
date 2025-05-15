@@ -4,6 +4,7 @@ import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 // This class is our add an expense page form
 class TravelPlanFormPage extends StatefulWidget {
@@ -20,8 +21,8 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
   // Using controllers for the text fields
   final TextEditingController nameController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
-  DateTime? _startDate;
-  DateTime? _endDate;
+  final TextEditingController detailsController = TextEditingController();
+  DateTimeRange? travelDate;
 
   // Something to hold our new travelplan for the provider
   late TravelPlan newTravelPlan;
@@ -40,9 +41,9 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
       // Create an instance of a travel plan
       newTravelPlan = TravelPlan(
         name: nameController.text,
-        startDate: _startDate!,
-        endDate: _endDate!,
+        travelDate: travelDate!,
         location: locationController.text,
+        details: detailsController.text,
         uid: userUID
       );
       
@@ -66,28 +67,15 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
       // Clear the values of the textfields
       nameController.clear();
       locationController.clear();
-      _startDate = null;
-      _endDate = null;
+      detailsController.clear();
+      travelDate = null;
     });
   }
 
-  // Function to pick our start and end date
-  Future<void> pickDate(BuildContext context, bool isStartDate) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() {
-        if (isStartDate) {
-          _startDate = picked;
-        } else {
-          _endDate = picked;
-        }
-      });
-    }
+  String formatDateRange(DateTimeRange range) {
+    final start = DateFormat('MMM d, yyyy').format(range.start);
+    final end = DateFormat('MMM d, yyyy').format(range.end);
+    return "$start - $end";
   }
 
   @override 
@@ -95,6 +83,7 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
   void dispose() {
     nameController.dispose();
     locationController.dispose();
+    detailsController.dispose();
     super.dispose();
   }
 
@@ -104,108 +93,130 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
     return Scaffold(
       // The appbar section
       appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: const Text('Create Travel Plan'),
+        title: Text('Add Travel Plan'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            context.pop();
-          }
+          onPressed: () => context.pop(),
         ),
       ),
       
-      // The main body will be the Form Widget (SingleChildScrollView to make it scrollable)
-      body: SingleChildScrollView(
+      // The main body will be the Form Widget
+      body: Padding(
+        padding: EdgeInsets.all(16),
         child: Form(
           key: formGlobalKey,
-          child: Column(
+          child: ListView(
             children: [
-              const SizedBox(height: 16),
-              createNameField(),
-              const SizedBox(height: 16),
-              createLocationField(),
-              const SizedBox(height: 16),
-              createDatePickerField('Start Date', _startDate, true),
-              const SizedBox(height: 16),
-              createDatePickerField('End Date', _endDate, false),
-              const SizedBox(height: 32),
-              createAddButton(),
+              // Trip name field
+              Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: TextFormField(
+                  decoration: InputDecoration(labelText: "Trip Name"),
+                  style: TextStyle(color: Colors.white),
+                  controller: nameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter a name.";
+                    }
+                    return null;
+                  },),
+              ),
+              // Location field
+              Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: TextFormField(
+                decoration: InputDecoration(labelText: "Location",),
+                  style: TextStyle(color: Colors.white),
+                  controller: locationController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter a location.";
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              // Travel Date Range field
+              Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: GestureDetector(
+                  onTap: () async {
+                    final range = await showDateRangePicker(
+                      context: context, 
+                      firstDate: DateTime(2000), 
+                      lastDate: DateTime(3000),
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.dark(
+                              primary: Color(0xFF1DB954),
+                              surface: Color(0xFF102820),
+                              onPrimary: Colors.white,
+                              onSurface: Colors.white,
+                            ),
+                            textTheme: const TextTheme(
+                              bodyMedium: TextStyle(color: Colors.white),
+                              bodyLarge: TextStyle(color: Colors.white),
+                              bodySmall: TextStyle(color: Colors.white),
+                              titleMedium: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        child: child!,
+                        );
+                      },
+                    );
+                    if (range != null) {
+                      setState(() {
+                        travelDate = range;
+                      });
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: "Date"
+                      ),
+                      controller: TextEditingController(
+                        text: travelDate != null ? formatDateRange(travelDate!) : '',
+                      ),
+                      validator: (value) {
+                        if (travelDate == null) {
+                          return "Please select a date.";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                )
+              ),       
+              // Details (optional) field 
+              Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: TextFormField(
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(labelText: "Details", hintText: "Enter any notes..."),
+                  controller: detailsController,
+                  maxLines: 3,
+                ),
+              ),
+              SizedBox(height: 24),
+              // Save button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1DB954),
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)
+                  )
+                ),
+                onPressed: saveForm,
+                child: Text("Save", style: TextStyle(color: Colors.white,)),
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  // This widget returns a textformfield to create our name field
-  Widget createNameField(){
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: TextFormField(
-        // This part is the box design
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Name",
-        ),
-        // the nameController for the value later
-        controller: nameController,
-        // This part is for the validate feature of the form
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return "Please enter a name.";
-          }
-          return null;
-        },
-      ),
-    );
-  }
-
-  // Location Field Widget
-  Widget createLocationField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: TextFormField(
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Location",
-        ),
-        controller: locationController,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return "Please enter a location.";
-          }
-          return null;
-        },
-      ),
-    );
-  }
-
-  // This widget is to choose the date of the travel plan
-  Widget createDatePickerField(String label, DateTime? date, bool isStartDate) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              date == null
-                  ? 'No $label selected'
-                  : '$date',
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => pickDate(context, isStartDate),
-            child: Text('Select $label'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget createAddButton() {
-    return ElevatedButton(
-      onPressed: saveForm,
-      child: const Text("Create Travel Plan"),
     );
   }
 }
