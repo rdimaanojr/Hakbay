@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hakbay/api/firebase_travel_api.dart';
-import 'package:hakbay/models/location_model.dart';
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +22,6 @@ class AddItineraryPage extends StatefulWidget {
 class _AddItineraryPageState extends State<AddItineraryPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   DateTime _selectedStartTime = DateTime.now();
   DateTime _selectedEndTime = DateTime.now();
@@ -34,20 +32,15 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
     super.initState();
     if (widget.existingItem != null) {
       _nameController.text = widget.existingItem!.name;
-      _descriptionController.text = widget.existingItem!.description ?? '';
       _selectedStartTime = widget.existingItem!.startTime;
       _selectedEndTime = widget.existingItem!.endTime;
       _selectedDay = widget.existingItem!.day ?? 1;
-      if (widget.existingItem!.location != null) {
-        _locationController.text = widget.existingItem!.location!.name;
-      }
     }
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _descriptionController.dispose();
     _locationController.dispose();
     super.dispose();
   }
@@ -91,17 +84,6 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (value) => value?.isEmpty ?? true ? 'Required field' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  labelStyle: TextStyle(color: Colors.white70),
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -210,12 +192,9 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
       try {
         final newItem = ItineraryItem(
           name: _nameController.text,
-          description: _descriptionController.text.isEmpty ? null : _descriptionController.text,
           startTime: _selectedStartTime,
           endTime: _selectedEndTime,
-          location: _locationController.text.isNotEmpty 
-            ? Location(name: _locationController.text)
-            : null,
+          location: _locationController.text,
           day: _selectedDay,
         );
 
@@ -226,11 +205,7 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
             newItem.toJson(),
           );
         } else {
-          await provider.addItineraryItem(
-            travelId: widget.travelPlan.planId!,
-            item: newItem,
-            dayNumber: _selectedDay,
-          );
+          await provider.addItineraryItem(widget.travelPlan.planId!, newItem);
         }
         
         Navigator.pop(context);

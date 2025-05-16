@@ -1,51 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import 'location_model.dart';
 
 class ItineraryItem {
   String? id;
   final String name;
-  final String? description;
   final DateTime startTime;
   final DateTime endTime;
-  final Location? location;
-  int? day;
+  final String? location;
+  final int? day;
 
   ItineraryItem({
+    this.id,
     required this.name,
-    this.description,
     required this.startTime,
     required this.endTime,
     this.location,
     this.day
   });
 
-  static const _undefined = Object();
-
   ItineraryItem copyWith({
+    String? id,
     String? name,
-    DateTime? time,
-    Object? description,
-    Object? location = _undefined,
+    DateTime? startTime,
+    DateTime? endTime,
+    String? location,
+    int? day,
   }) {
     return ItineraryItem(
+      id: id ?? this.id,
       name: name ?? this.name,
-      description:
-          description == _undefined ? this.description : description as String?,
-      startTime: time ?? this.startTime,
-      endTime: time ?? this.endTime,
-      location: location == _undefined ? this.location : location as Location?,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      location: location ?? this.location,
+      day: day ?? this.day
     );
   }
 
   factory ItineraryItem.fromJson(Map<String, dynamic> json) {
     return ItineraryItem(
+      id: json['id'],
       name: json['name'],
-      description: json['description'],
       startTime: DateTime.parse(json['startTime']),
       endTime: DateTime.parse(json['endTime']),
-      location:
-          json['location'] != null ? Location.fromJson(json['location']) : null,
+      location: json['location'],
+      day: json['day']
     );
   }
 
@@ -53,10 +51,9 @@ class ItineraryItem {
     return {
       'id': id,
       'name': name,
-      'description': description,
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
-      'location': location?.toJson(),
+      'startTime': Timestamp.fromDate(startTime),
+      'endTime': Timestamp.fromDate(endTime),
+      'location': location,
       'day': day,
     };
   }
