@@ -77,7 +77,7 @@ class TravelPlan {
 
   TravelPlan copyWith({
     String? uid,
-    Object? id = _undefined,
+    String? planId,
     String? name,
     DateTimeRange? travelDate,
     String? location,
@@ -87,7 +87,7 @@ class TravelPlan {
   }) {
     return TravelPlan(
       uid: uid ?? this.uid,
-      planId: id == _undefined ? planId : id as String?,
+      planId: planId ?? this.planId,
       name: name ?? this.name,
       travelDate: travelDate ?? this.travelDate,
       location: location ?? this.location,

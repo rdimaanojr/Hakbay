@@ -5,6 +5,7 @@ import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
+import 'package:hakbay/screens/edit_travel_page.dart';
 import 'package:hakbay/screens/travel_details_page.dart';
 import 'package:hakbay/screens/travel_form_page.dart';
 import 'package:hakbay/screens/init_interests_page.dart';
@@ -110,6 +111,13 @@ final GoRouter _router = GoRouter(
         final travel = state.extra as TravelPlan;
         return TravelPlanDetails(travel: travel);
       } 
+    ),
+    GoRoute(
+      path: '/edit-travel',
+      builder: (context, state) {
+        final travel = state.extra as TravelPlan;
+        return EditTravelPlanPage(travel: travel);
+      },
     ),
   ],
 );

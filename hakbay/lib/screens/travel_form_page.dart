@@ -92,13 +92,7 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       // The appbar section
-      appBar: AppBar(
-        title: Text('Add Travel Plan'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
+      appBar: AppBar(title: Text('Add Travel Plan'),),
       
       // The main body will be the Form Widget
       body: Padding(
@@ -195,7 +189,7 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
                 padding: EdgeInsets.only(bottom: 16),
                 child: TextFormField(
                   style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(labelText: "Details", hintText: "Enter any notes..."),
+                  decoration: InputDecoration(labelText: "Details", hintText: "Enter any notes...", alignLabelWithHint: true),
                   controller: detailsController,
                   maxLines: 3,
                 ),

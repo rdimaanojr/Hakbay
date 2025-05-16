@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:intl/intl.dart';
 
@@ -12,6 +13,14 @@ class TravelPlanDetails extends StatefulWidget {
 }
 
 class _TravelPlanDetailsState extends State<TravelPlanDetails> {
+  late TravelPlan travelPlan;
+
+  @override
+  void initState() {
+    super.initState();
+    travelPlan = widget.travel;
+  }
+
   // Formatting function
   String formatDateRange(DateTimeRange range) {
     final start = DateFormat('MMM d, yyyy').format(range.start);
@@ -20,11 +29,18 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   }
 
   // Pop up menu function
-  void menuOptionSelected(String choice) {
+  void menuOptionSelected(String choice) async {
     if (choice == 'Edit') {
-      // TODO: Navigate to edit screen (antok na ako)
+      // Call edit travel plan page
+      final result = await context.push('/edit-travel', extra: travelPlan);
+
+      if (result is TravelPlan) {
+        setState(() {
+          travelPlan = result;
+        });
+      }
     } else if (choice == 'Delete') {
-      // TODO: Confirm and delete travel plan
+      // TODO: Add delete logic here
     }
   }
 
@@ -32,18 +48,17 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.travel.name),
+        title: Text(travelPlan.name),
         actions: [
           PopupMenuButton(
             onSelected: menuOptionSelected,
-            itemBuilder: (context) =>[
-              PopupMenuItem(value: 'Edit', child: Text('Edit'),),
-              PopupMenuItem(value: 'Delete', child: Text('Delete'),),
-            ]
-          )
+            itemBuilder: (context) => [
+              PopupMenuItem(value: 'Edit', child: Text('Edit')),
+              PopupMenuItem(value: 'Delete', child: Text('Delete')),
+            ],
+          ),
         ],
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // TODO: Navigate to add itinerary page
@@ -63,27 +78,29 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    widget.travel.location,
+                    travelPlan.location,
                     style: TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ),
               ],
             ),
             SizedBox(height: 16),
+
             // Dates
             Row(
               children: [
                 Icon(Icons.calendar_today, color: Colors.white70),
                 SizedBox(width: 8),
                 Text(
-                  formatDateRange(widget.travel.travelDate),
+                  formatDateRange(travelPlan.travelDate),
                   style: TextStyle(fontSize: 16, color: Colors.white70),
                 ),
               ],
             ),
             SizedBox(height: 24),
+
             // Details (optional)
-            if (widget.travel.details != null && widget.travel.details!.isNotEmpty)
+            if (travelPlan.details != null && travelPlan.details!.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -99,20 +116,19 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    widget.travel.details!,
-                    style: TextStyle(fontSize: 16, color: Colors.white70,),
+                    travelPlan.details!,
+                    style: TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                   SizedBox(height: 24),
                 ],
               ),
-            // Itineraries placeholder
+
+            // Itinerary placeholder
             Text(
               "Itinerary",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
             ),
             SizedBox(height: 12),
-
-            // Placeholder for our itineraries for now
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -126,7 +142,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 ),
               ),
             ),
-            SizedBox(height: 80), 
+            SizedBox(height: 80),
           ],
         ),
       ),

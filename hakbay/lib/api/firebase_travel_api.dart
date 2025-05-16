@@ -13,7 +13,7 @@ class FirebaseTravelApi {
     try {
       // Get the ID and set it to the entry
       travel['planId'] = db.collection('travels').doc().id;
-      await db.collection('travels').doc(travel['id']).set(travel);
+      await db.collection('travels').doc(travel['planId']).set(travel);
 
       return "Successfully added travel plan!";
     } on FirebaseException catch (e) {
@@ -22,9 +22,9 @@ class FirebaseTravelApi {
   }
 
   // Delete the travel plan in the database
-  Future<String> deleteTravel(String id) async {
+  Future<String> deleteTravel(String planId) async {
     try {
-      await db.collection('travels').doc(id).delete();
+      await db.collection('travels').doc(planId).delete();
 
       return "Successfully deleted travel plan!";
     } on FirebaseException catch (e) {
@@ -33,9 +33,9 @@ class FirebaseTravelApi {
   }
 
   // Edit the travel plan in the database
-  Future<String> editTravel(String id, Map<String, dynamic> travel) async {
+  Future<String> editTravel(String planId, Map<String, dynamic> travel) async {
     try {
-      await db.collection('travels').doc(id).set(travel);
+      await db.collection('travels').doc(planId,).update(travel);
       
       return "Successfully edited travel plan!";
     } on FirebaseException catch (e) {
