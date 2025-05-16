@@ -3,16 +3,21 @@ import 'package:flutter/material.dart';
 import 'location_model.dart';
 
 class ItineraryItem {
+  String? id;
   final String name;
   final String? description;
-  final DateTime time;
+  final DateTime startTime;
+  final DateTime endTime;
   final Location? location;
+  int? day;
 
   ItineraryItem({
     required this.name,
-    required this.time,
     this.description,
+    required this.startTime,
+    required this.endTime,
     this.location,
+    this.day
   });
 
   static const _undefined = Object();
@@ -25,9 +30,10 @@ class ItineraryItem {
   }) {
     return ItineraryItem(
       name: name ?? this.name,
-      time: time ?? this.time,
       description:
           description == _undefined ? this.description : description as String?,
+      startTime: time ?? this.startTime,
+      endTime: time ?? this.endTime,
       location: location == _undefined ? this.location : location as Location?,
     );
   }
@@ -36,7 +42,8 @@ class ItineraryItem {
     return ItineraryItem(
       name: json['name'],
       description: json['description'],
-      time: DateTime.parse(json['time']),
+      startTime: DateTime.parse(json['startTime']),
+      endTime: DateTime.parse(json['endTime']),
       location:
           json['location'] != null ? Location.fromJson(json['location']) : null,
     );
@@ -44,10 +51,13 @@ class ItineraryItem {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'description': description,
-      'time': time.toIso8601String(),
+      'startTime': startTime.toIso8601String(),
+      'endTime': endTime.toIso8601String(),
       'location': location?.toJson(),
+      'day': day,
     };
   }
 }

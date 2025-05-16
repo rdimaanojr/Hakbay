@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:go_router/go_router.dart';
+=======
+import 'package:hakbay/api/firebase_travel_api.dart';
+>>>>>>> 1766f4a (feat: added itinerary form)
 import 'package:hakbay/models/travel_plan_model.dart';
+import 'package:hakbay/providers/travel_provider.dart';
+import 'package:hakbay/screens/travel_itinerary.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TravelPlanDetails extends StatefulWidget {
   final TravelPlan travel;
@@ -61,7 +68,22 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Navigate to add itinerary page
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MultiProvider(
+                providers: [
+                  Provider<FirebaseTravelApi>.value(
+                    value: FirebaseTravelApi(),
+                  ),
+                  ChangeNotifierProvider<TravelPlanProvider>.value(
+                    value: Provider.of<TravelPlanProvider>(context, listen: false),
+                  ),
+                ],
+                child: AddItineraryPage(travelPlan: widget.travel),
+              ),
+            ),
+          );
         },
         tooltip: 'Add Itinerary',
         child: Icon(Icons.add),

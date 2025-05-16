@@ -14,6 +14,10 @@ class TravelPlanProvider with ChangeNotifier {
 
   // getter for our travel plans database
   Stream<QuerySnapshot> get getTravels => _travelStream;
+  // Get itinerary items for a specific travel plan
+  Stream<QuerySnapshot> getItineraryItems(String travelId) {
+    return firebaseService.getItineraryItems(travelId);
+  }
 
   // TODO: get travel plans from Firestore
   void fetchTravels(String uid) {
@@ -41,4 +45,15 @@ class TravelPlanProvider with ChangeNotifier {
     notifyListeners();
   }
   
+  // Add a new itinerary item
+  Future<String> addItineraryItem({
+    required String travelId,
+    required ItineraryItem item,
+    required int dayNumber,
+  }) async {
+    final result = await firebaseService.addItinerary(travelId, item, dayNumber);
+    notifyListeners();
+    return result;
+  }
 }
+

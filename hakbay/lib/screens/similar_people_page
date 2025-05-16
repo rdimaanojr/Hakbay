@@ -16,7 +16,7 @@ class _SimilarPeoplePageState extends State<SimilarPeoplePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Find Similar People"),
-      ),
+      ), 
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
