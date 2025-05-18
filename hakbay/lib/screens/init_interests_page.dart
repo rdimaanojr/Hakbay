@@ -77,7 +77,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
               child: Center(
                 child: Text(
                   "Select Interests",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ),
             ),
@@ -95,14 +95,18 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                             label: Text(
                               interest,
                               style: TextStyle(
-                                color: isSelected ? Colors.white : Colors.black,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            backgroundColor:
-                                isSelected ? Colors.blue : Colors.grey[300],
+                            backgroundColor: isSelected
+                                ? Theme.of(context).primaryColor
+                                : Theme.of(context).cardColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
+                              side: isSelected
+                                  ? BorderSide(color: Theme.of(context).primaryColor, width: 1)
+                                  : BorderSide(color: Colors.transparent),
                             ),
                           ),
                         );
@@ -121,6 +125,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white
                         ),
                       )
                       : null,
@@ -130,21 +135,35 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
               height: 150,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(color: Theme.of(context).cardColor),
                 borderRadius: BorderRadius.circular(12),
+                color: Theme.of(context).cardColor,
               ),
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children:
                     selectedInterests
-                        .map((interest) => Chip(label: Text(interest)))
-                        .toList(),
+                        .map((interest) => Chip(
+                          label: Text(
+                            interest, 
+                            style: const TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Theme.of(context).primaryColor,
+                          )
+                        ).toList(),
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16),
-              child: TextButton(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1DB954),
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)
+                  )
+                ),
                 onPressed: () async {
                   if (user != null) {
                     await Provider.of<UserProvider>(
@@ -163,7 +182,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
                     context.go('/init-travel-styles');
                   }
                 },
-                child: const Text("Continue"),
+                child: const Text("Continue", style: TextStyle(color: Colors.white,)),
               ),
             ),
             Padding(

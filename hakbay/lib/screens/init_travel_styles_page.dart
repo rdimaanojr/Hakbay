@@ -64,8 +64,8 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
               padding: EdgeInsets.only(top: 50, bottom: 50),
               child: Center(
                 child: Text(
-                  "Select TravelStyles",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  "Select Travel Styles",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ),
             ),
@@ -85,16 +85,20 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                             label: Text(
                               travelStyle,
                               style: TextStyle(
-                                color: isSelected ? Colors.white : Colors.black,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            backgroundColor:
-                                isSelected ? Colors.blue : Colors.grey[300],
+                            backgroundColor: isSelected
+                              ? Theme.of(context).primaryColor
+                              : Theme.of(context).cardColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
+                              side: isSelected
+                                ? BorderSide(color: Theme.of(context).primaryColor, width: 1)
+                                : BorderSide(color: Colors.transparent),
                             ),
-                          ),
+                          )
                         );
                       }).toList(),
                 ),
@@ -111,6 +115,7 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white
                         ),
                       )
                       : null,
@@ -120,21 +125,34 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
               height: 150,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(color: Theme.of(context).cardColor),
                 borderRadius: BorderRadius.circular(12),
+                color: Theme.of(context).cardColor,
               ),
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children:
-                    selectedTravelStyles
-                        .map((travelStyle) => Chip(label: Text(travelStyle)))
-                        .toList(),
+                  selectedTravelStyles
+                    .map((travelStyle) => Chip(
+                      label: Text(
+                        travelStyle,
+                        style: TextStyle(color: Colors.white),  
+                      ),
+                      backgroundColor: Theme.of(context).primaryColor,
+                    )).toList(),
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16),
-              child: TextButton(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1DB954),
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)
+                  )
+                ),
                 onPressed: () async {
                   if (user != null) {
                     await Provider.of<UserProvider>(
@@ -153,7 +171,7 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
                     context.go('/home');
                   }
                 },
-                child: const Text("Continue"),
+                child: const Text("Continue", style: TextStyle(color: Colors.white,)),
               ),
             ),
             Padding(
