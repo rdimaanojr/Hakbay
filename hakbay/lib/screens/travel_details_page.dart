@@ -47,7 +47,33 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
         });
       }
     } else if (choice == 'Delete') {
-      // TODO: Add delete logic here
+      final shouldDelete = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Delete Travel Plan'),
+          content: const Text('Are you sure you want to delete this travel plan?'),
+          actions: [
+            TextButton(
+              onPressed: () => context.pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => context.pop(true),
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldDelete == true) {
+        await context.read<TravelPlanProvider>().deleteTravel(travelPlan.planId!);
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Travel Plan Deleted!')),
+        );
+
+        context.pop(); // Go back after deletion
+      }
     }
   }
 

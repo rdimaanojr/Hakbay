@@ -106,9 +106,6 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
                   onTap: (){
                     context.push('/travel-details', extra: travel);
                   },
-                  onLongPress: () {
-                    // TODO; Delete the travel plan by holding it down 
-                  },
                   child: Card(
                     color: Theme.of(context).cardColor,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

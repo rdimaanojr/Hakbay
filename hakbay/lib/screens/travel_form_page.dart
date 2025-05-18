@@ -137,7 +137,7 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
                   onTap: () async {
                     final range = await showDateRangePicker(
                       context: context, 
-                      firstDate: DateTime(2000), 
+                      firstDate: DateTime.now(), 
                       lastDate: DateTime(3000),
                       builder: (context, child) {
                         return Theme(

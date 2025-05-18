@@ -1,21 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class ItineraryItem {
   String? id;
   final String name;
-  final DateTime startTime;
-  final DateTime endTime;
+  final DateTime? startTime;
+  final DateTime? endTime;
   final String? location;
-  final int? day;
+  final DateTime date;
 
   ItineraryItem({
     this.id,
     required this.name,
-    required this.startTime,
-    required this.endTime,
-    this.location,
-    this.day
+    this.startTime,
+    this.endTime,
+    required this.location,
+    required this.date
   });
 
   ItineraryItem copyWith({
@@ -24,7 +23,7 @@ class ItineraryItem {
     DateTime? startTime,
     DateTime? endTime,
     String? location,
-    int? day,
+    DateTime? date,
   }) {
     return ItineraryItem(
       id: id ?? this.id,
@@ -32,7 +31,7 @@ class ItineraryItem {
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       location: location ?? this.location,
-      day: day ?? this.day
+      date: date ?? this.date
     );
   }
 
@@ -43,7 +42,7 @@ class ItineraryItem {
       startTime: DateTime.parse(json['startTime']),
       endTime: DateTime.parse(json['endTime']),
       location: json['location'],
-      day: json['day']
+      date: DateTime.parse(json['date'])
     );
   }
 
@@ -51,10 +50,10 @@ class ItineraryItem {
     return {
       'id': id,
       'name': name,
-      'startTime': Timestamp.fromDate(startTime),
-      'endTime': Timestamp.fromDate(endTime),
+      'startTime': startTime?.toIso8601String(),
+      'endTime': endTime?.toIso8601String(),
       'location': location,
-      'day': day,
+      'date': date.toIso8601String(),
     };
   }
 }

@@ -23,18 +23,24 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
-  DateTime _selectedStartTime = DateTime.now();
-  DateTime _selectedEndTime = DateTime.now();
-  int _selectedDay = 1;
+
+  late DateTime _selectedStartTime;
+  late DateTime _selectedEndTime;
+  late DateTime _selectedDate;
 
   @override
   void initState() {
     super.initState();
     if (widget.existingItem != null) {
       _nameController.text = widget.existingItem!.name;
-      _selectedStartTime = widget.existingItem!.startTime;
-      _selectedEndTime = widget.existingItem!.endTime;
-      _selectedDay = widget.existingItem!.day ?? 1;
+      _locationController.text = widget.existingItem!.location!;
+      _selectedStartTime = widget.existingItem!.startTime ?? DateTime.now();
+      _selectedEndTime = widget.existingItem!.endTime ?? DateTime.now();
+      _selectedDate = widget.existingItem!.date;
+    } else {
+      _selectedDate = widget.travelPlan.travelDate.start;
+      _selectedStartTime = DateTime.now();
+      _selectedEndTime = DateTime.now();
     }
   }
 
@@ -45,14 +51,17 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
     super.dispose();
   }
 
+  String formatDate(DateTime date) {
+    final start = DateFormat('MMM d, yyyy').format(date);
+    return start;
+  }
+
   @override
   Widget build(BuildContext context) {
     final api = Provider.of<FirebaseTravelApi>(context);
     final provider = Provider.of<TravelPlanProvider>(context, listen: false);
-    final totalDays = widget.travelPlan.travelDate.duration.inDays + 1;
 
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: Text(
           widget.existingItem != null ? 'Edit Activity' : 'Add Activity',
@@ -73,15 +82,60 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildDayDropdown(totalDays),
-              const SizedBox(height: 20),
+              // Date For Itinerary
+              Padding(
+                padding: EdgeInsets.only(bottom: 16),
+                child: GestureDetector(
+                  onTap: () async {
+                    final picked = await showDatePicker(
+                      context: context, 
+                      initialDate: _selectedDate,
+                      firstDate: widget.travelPlan.travelDate.start, 
+                      lastDate: widget.travelPlan.travelDate.end,
+                      builder: (context, child) {
+                        return Theme(
+                          data: Theme.of(context).copyWith(
+                            colorScheme: ColorScheme.dark(
+                              primary: Color(0xFF1DB954),
+                              surface: Color(0xFF102820),
+                              onPrimary: Colors.white,
+                              onSurface: Colors.white,
+                            ),
+                            textTheme: const TextTheme(
+                              bodyMedium: TextStyle(color: Colors.white),
+                              bodyLarge: TextStyle(color: Colors.white),
+                              bodySmall: TextStyle(color: Colors.white),
+                              titleMedium: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        child: child!,
+                        );
+                      },
+                    );
+                    if (picked != null) {
+                      setState(() {
+                        _selectedDate = picked;
+                      });
+                    }
+                  },
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        labelText: "Itinerary Date"
+                      ),
+                      controller: TextEditingController(
+                        text: formatDate(_selectedDate),
+                      ),
+                    ),
+                  ),
+                )
+              ),       
               TextFormField(
                 controller: _nameController,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   labelText: 'Activity Name*',
-                  labelStyle: TextStyle(color: Colors.white70),
-                  border: OutlineInputBorder(),
                 ),
                 validator: (value) => value?.isEmpty ?? true ? 'Required field' : null,
               ),
@@ -91,12 +145,10 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
                   labelText: 'Location',
-                  labelStyle: TextStyle(color: Colors.white70),
-                  border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.location_on, color: Colors.white70),
                 ),
                 onTap: () {
-                  // TODO: Implement location picker
+                  // TODO: Location Picker
                 },
               ),
               const SizedBox(height: 16),
@@ -115,8 +167,15 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1DB954),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
                   onPressed: () => _saveItinerary(api, provider),
-                  child: const Text('Save Activity'),
+                  child: const Text('Save Activity', style: TextStyle(color: Colors.white),),
                 ),
               ),
             ],
@@ -126,41 +185,38 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
     );
   }
 
-  Widget _buildDayDropdown(int totalDays) {
-    return DropdownButtonFormField<int>(
-      value: _selectedDay,
-      decoration: const InputDecoration(
-        labelText: 'Day',
-        labelStyle: TextStyle(color: Colors.white70),
-        border: OutlineInputBorder(),
-      ),
-      items: List.generate(totalDays, (index) {
-        final day = index + 1;
-        final date = widget.travelPlan.travelDate.start.add(Duration(days: index));
-        return DropdownMenuItem<int>(
-          value: day,
-          child: Text(
-            'Day $day (${DateFormat('MMM d').format(date)})',
-            style: const TextStyle(color: Colors.white),
-          ),
-        );
-      }),
-      onChanged: (value) => setState(() => _selectedDay = value!),
-    );
-  }
 
   Widget _buildTimePicker(String label, DateTime time, Function(DateTime) onTimeSelected) {
-    return InkWell(
+    return GestureDetector(
       onTap: () async {
         final picked = await showTimePicker(
           context: context,
           initialTime: TimeOfDay.fromDateTime(time),
+          builder: (context, child) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                colorScheme: ColorScheme.dark(
+                  primary: Color(0xFF1DB954),
+                  surface: Color(0xFF102820),
+                  onPrimary: Colors.white,
+                  onSurface: Colors.white,
+                ),
+                textTheme: const TextTheme(
+                  bodyMedium: TextStyle(color: Colors.white),
+                  bodyLarge: TextStyle(color: Colors.white),
+                  bodySmall: TextStyle(color: Colors.white),
+                  titleMedium: TextStyle(color: Colors.white),
+                ),
+              ),
+            child: child!,
+            );
+          },
         );
         if (picked != null) {
           final newTime = DateTime(
-            time.year,
-            time.month,
-            time.day,
+            _selectedDate.year,
+            _selectedDate.month,
+            _selectedDate.day,
             picked.hour,
             picked.minute,
           );
@@ -168,11 +224,7 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
         }
       },
       child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.white70),
-          border: const OutlineInputBorder(),
-        ),
+        decoration: InputDecoration(labelText: label),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -195,7 +247,7 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
           startTime: _selectedStartTime,
           endTime: _selectedEndTime,
           location: _locationController.text,
-          day: _selectedDay,
+          date: _selectedDate,
         );
 
         if (widget.existingItem != null) {
@@ -207,7 +259,7 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
         } else {
           await provider.addItineraryItem(widget.travelPlan.planId!, newItem);
         }
-        
+
         Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

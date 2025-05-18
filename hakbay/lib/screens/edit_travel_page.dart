@@ -43,7 +43,9 @@ class _EditTravelPlanPageState extends State<EditTravelPlanPage> {
   Future<void> editDateRange() async {
     final newRange = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2000),
+      firstDate: dateRange.start.isBefore(DateTime.now())
+        ? dateRange.start
+        : DateTime.now(),
       lastDate: DateTime(3000),
       initialDateRange: dateRange,
       builder: (context, child) {
