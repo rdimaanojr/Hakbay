@@ -1,0 +1,49 @@
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+class ShareQrCode extends StatefulWidget {
+  final String planId;
+  const ShareQrCode({super.key, required this.planId});
+
+  @override
+  State<ShareQrCode> createState() => _ShareQrCodeState();
+}
+
+class _ShareQrCodeState extends State<ShareQrCode> {
+
+  Future<void> _saveQrImage() async {
+    // TODO: Save QR code to gallery
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Scan this QR to join this travel plan',
+              style: TextStyle(color: Colors.white),),
+          const SizedBox(height: 16),
+          QrImageView(
+              data: widget.planId,
+              version: QrVersions.auto,
+              size: 200.0,
+              backgroundColor: Colors.white,
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: _saveQrImage,
+            icon: const Icon(Icons.download),
+            label: const Text("Download QR"),
+          ),
+        ],
+      ),
+    );
+  }
+}

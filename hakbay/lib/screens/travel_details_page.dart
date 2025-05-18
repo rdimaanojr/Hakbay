@@ -7,6 +7,7 @@ import 'package:hakbay/api/firebase_travel_api.dart';
 >>>>>>> 1766f4a (feat: added itinerary form)
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/travel_provider.dart';
+import 'package:hakbay/screens/share_qr_code.dart';
 import 'package:hakbay/screens/travel_itinerary.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -77,6 +78,20 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       appBar: AppBar(
         title: Text(travelPlan.name),
         actions: [
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: () {
+              showModalBottomSheet(
+                backgroundColor: Theme.of(context).cardColor,
+                context: context, 
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (context) => ShareQrCode(planId: travelPlan.planId!),
+              );
+            },
+          ),
           PopupMenuButton<String>(
             onSelected: menuOptionSelected,
             itemBuilder: (context) => const [
@@ -84,6 +99,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               PopupMenuItem(value: 'Delete', child: Text('Delete')),
             ],
           ),
+          
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -167,55 +183,54 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               ),
               const SizedBox(height: 12),
 
-              SizedBox(
-                height: 400,
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: itineraryStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text("Error: ${snapshot.error}");
-                    } else if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Text("No itinerary items yet.", style: TextStyle(color: Colors.white70)),
-                      );
-                    }
-
-                    final items = snapshot.data!.docs.map((doc) {
-                      final data = doc.data() as Map<String, dynamic>;
-                      return ItineraryItem.fromJson(data);
-                    }).toList();
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          child: ListTile(
-                            title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (item.location != null) Text("Location: ${item.location}"),
-                                Text("Date: ${DateFormat.yMMMMd().format(item.date)}"),
-                                Text("Start: ${DateFormat.Hm().format(item.startTime)}"),
-                                Text("End: ${DateFormat.Hm().format(item.endTime)}"),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
+              StreamBuilder<QuerySnapshot>(
+                stream: itineraryStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Text("No itinerary items yet.", style: TextStyle(color: Colors.white70)),
                     );
-                  },
-                ),
+                  }
+
+                  final items = snapshot.data!.docs.map((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    return ItineraryItem.fromJson(data);
+                  }).toList();
+
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+
+                      return Card(
+                        color: Theme.of(context).cardColor,
+                        margin: const EdgeInsets.symmetric(vertical: 6),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: ListTile(
+                          title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (item.location != null)
+                                Text("Location: ${item.location}", style: TextStyle(color: Colors.white70)),
+                              Text("Date: ${DateFormat.yMMMMd().format(item.date)}", style: TextStyle(color: Colors.white70)),
+                              Text("Start: ${DateFormat.Hm().format(item.startTime)}", style: TextStyle(color: Colors.white70)),
+                              Text("End: ${DateFormat.Hm().format(item.endTime)}", style: TextStyle(color: Colors.white70)),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
               const SizedBox(height: 80),
             ],
