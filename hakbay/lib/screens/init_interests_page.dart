@@ -158,11 +158,7 @@ class _InitInterestsScreenState extends State<InitInterestsScreen> {
               padding: const EdgeInsets.only(top: 16),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF1DB954),
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)
-                  )
+                padding: EdgeInsets.all(16),
                 ),
                 onPressed: () async {
                   if (user != null) {

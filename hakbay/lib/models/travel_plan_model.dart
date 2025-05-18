@@ -67,6 +67,7 @@ class TravelPlan {
   final String location;
   // final Location location;
   final String? details;
+  final List<String> sharedWith;
 
   TravelPlan({
     required this.uid,
@@ -75,6 +76,7 @@ class TravelPlan {
     required this.travelDate,
     required this.location,
     this.details,
+    this.sharedWith = const [],
   });
 
   static const _undefined = Object();
@@ -111,6 +113,7 @@ class TravelPlan {
       location: json['location'],
       // location: Location.fromJson(json['location']),
       details: json['details'],
+      sharedWith: List<String>.from(json['sharedWith'])
     );
   }
 
@@ -124,6 +127,7 @@ class TravelPlan {
       'location': location,
       // 'location': location.toJson(),
       'details': details,
+      'sharedWith': sharedWith
     };
   }
 }

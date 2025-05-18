@@ -84,10 +84,9 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               showModalBottomSheet(
                 backgroundColor: Theme.of(context).cardColor,
                 context: context, 
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
+                // shape: const RoundedRectangleBorder(
+                //   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                // ),
                 builder: (context) => ShareQrCode(planId: travelPlan.planId!),
               );
             },
@@ -219,7 +218,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (item.location != null)
+                              if (item.location != '')
                                 Text("Location: ${item.location}", style: TextStyle(color: Colors.white70)),
                               Text("Date: ${DateFormat.yMMMMd().format(item.date)}", style: TextStyle(color: Colors.white70)),
                               Text("Start: ${DateFormat.Hm().format(item.startTime)}", style: TextStyle(color: Colors.white70)),

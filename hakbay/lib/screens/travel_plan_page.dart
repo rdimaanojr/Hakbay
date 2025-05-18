@@ -10,7 +10,6 @@ import 'package:hakbay/utils/logger.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-// This class shows our list of travel pages
 class TravelPlanPage extends StatefulWidget {
   const TravelPlanPage({super.key});
 
@@ -21,7 +20,7 @@ class TravelPlanPage extends StatefulWidget {
 class _TravelPlanPageState extends State<TravelPlanPage> {
   AppUser? user;
   late String uid;
-  
+
   @override
   void initState() {
     super.initState();
@@ -57,92 +56,154 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
 
-    Stream<QuerySnapshot> travelStream = context.read<TravelPlanProvider>().getTravels;
-    
-    return Scaffold(
-      appBar: AppBar(title: Text("My Travels"),),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push('/add-travel');
-        },
-        child: Icon(Icons.add),
-      ),
+    // get the streams
+    Stream<QuerySnapshot> travelStream =
+        context.read<TravelPlanProvider>().getTravels;
+    Stream<QuerySnapshot> sharedStream =
+        context.read<TravelPlanProvider>().getSharedPlans;
 
-      // Build the Stream
-      body: StreamBuilder<QuerySnapshot>(
-        stream: travelStream,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("My Travels"),
+          actions: [
+            IconButton(
+              // Scan QR logic
+              icon: const Icon(Icons.qr_code_scanner),
+              tooltip: 'Scan QR Code',
+              onPressed: () async {
+                final scannedPlanId = await context.push('/qr-scanner');
+                if (scannedPlanId == null || scannedPlanId is! String) return;
+                
+                final sharedTravel = await context.read<TravelPlanProvider>().fetchTravelById(scannedPlanId);
+
+                if(sharedTravel == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Travel Plan not found.")),
+                  );
+                  return;
+                }
+
+                context.push('/travel-details', extra: sharedTravel);
+              },
+            ),
+          ],
+          bottom: TabBar(
+            indicatorColor: Theme.of(context).primaryColor, 
+            labelColor: Colors.white, 
+            unselectedLabelColor: Colors.white70, 
+            tabs: const [
+              Tab(text: "My Travel Plans"),
+              Tab(text: "Shared With Me"),
+            ],
+          )
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            context.push('/add-travel');
+          },
+          child: const Icon(Icons.add),
+        ),
+        body: TabBarView(
+          children: [
+            buildTravels(stream: travelStream),
+            buildTravels(stream: sharedStream),
+          ]
+        ) 
+      ),
+    );
+  }
+
+  Widget buildTravels({required Stream<QuerySnapshot> stream}) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: stream,
         builder: (context, snapshot) {
-          // Check for errors and if the database is empty
           if (snapshot.hasError) {
-            return Center(child: Text("Error encountered! ${snapshot.error}"));
+            return Center(
+              child: Text("Error encountered! ${snapshot.error}"),
+            );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return noTravelsWidget(context);
           }
 
-          // Build a gridview for the travel plans  
           return Padding(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, 
-                crossAxisSpacing: 10.0, 
+                crossAxisCount: 2,
+                crossAxisSpacing: 10.0,
                 mainAxisSpacing: 10.0,
-                childAspectRatio: 3 / 2, 
+                childAspectRatio: 3 / 2,
               ),
-              itemCount: snapshot.data?.docs.length,
+              itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                // Convert from JSON per travel plan
                 TravelPlan travel = TravelPlan.fromJson(
-                  snapshot.data?.docs[index].data() as Map<String, dynamic>,
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>,
                 );
 
-                // Use a Card to display each travel plan in the grid
                 return GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     context.push('/travel-details', extra: travel);
                   },
                   child: Card(
                     color: Theme.of(context).cardColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     child: Padding(
-                      padding: EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            travel.name, 
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                            travel.name,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                             overflow: TextOverflow.fade,
                             maxLines: 1,
                           ),
                           Row(
                             children: [
-                              Icon(Icons.location_on, size: 16, color: Colors.white70,),
-                              SizedBox(width: 4,),
+                              const Icon(Icons.location_on,
+                                  size: 16, color: Colors.white70),
+                              const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
-                                  travel.location, 
-                                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                                  travel.location,
+                                  style: const TextStyle(
+                                      color: Colors.white70, fontSize: 14),
                                   overflow: TextOverflow.fade,
                                   maxLines: 1,
                                 ),
-                              )
+                              ),
                             ],
                           ),
-                          SizedBox(height: 4,),
+                          const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(Icons.calendar_today, size: 16, color: Colors.white70,),
-                              SizedBox(width: 4,),
+                              const Icon(Icons.calendar_today,
+                                  size: 16, color: Colors.white70),
+                              const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
-                                  formatDateRange(travel.travelDate), 
-                                  style: TextStyle(color: Colors.white70, fontSize: 12,),
+                                  formatDateRange(travel.travelDate),
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
                                   overflow: TextOverflow.fade,
                                   maxLines: 1,
                                 ),
@@ -152,28 +213,26 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
                         ],
                       ),
                     ),
-                  )
+                  ),
                 );
               },
             ),
           );
         },
-      ),
-    );
+      );
   }
 
-  // Widget to show that there are still no travel plans
   Widget noTravelsWidget(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+        children: const [
           Text(
             "No Plans Yet? Plan a new trip!",
             style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ],
-      )
-    ); 
+      ),
+    );
   }
 }

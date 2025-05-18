@@ -6,6 +6,7 @@ import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:hakbay/screens/edit_travel_page.dart';
+import 'package:hakbay/screens/scan_qr_code.dart';
 import 'package:hakbay/screens/travel_details_page.dart';
 import 'package:hakbay/screens/travel_form_page.dart';
 import 'package:hakbay/screens/init_interests_page.dart';
@@ -119,6 +120,10 @@ final GoRouter _router = GoRouter(
         return EditTravelPlanPage(travel: travel);
       },
     ),
+    GoRoute(
+      path: '/qr-scanner',
+      builder: (context, state) => QrScannerPage(),
+    ),
   ],
 );
 
@@ -160,6 +165,15 @@ class RootWidget extends StatelessWidget {
             TextStyle(color: Colors.white),),
           iconTheme: WidgetStateProperty.all(
             IconThemeData(color: Colors.white),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF1DB954),
+            padding: EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30)
+            )
           ),
         )
       ),

@@ -197,13 +197,6 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
               SizedBox(height: 24),
               // Save button
               ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF1DB954),
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)
-                  )
-                ),
                 onPressed: saveForm,
                 child: Text("Save", style: TextStyle(color: Colors.white,)),
               ),

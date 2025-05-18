@@ -8,6 +8,11 @@ class FirebaseTravelApi {
     return db.collection('travels').where('uid', isEqualTo: uid).snapshots();
   }
 
+  // Return travel plans by shared users
+  Stream<QuerySnapshot> getSharedPlans(String uid) {
+    return db.collection('travels').where('sharedWith', arrayContains: uid).snapshots();
+  }
+
   // Get all itinerary items for a specific travel plan
    Stream<QuerySnapshot> getItineraryItems(String planId) {
     return db.collection('travels').doc(planId).collection('itinerary').snapshots();
@@ -59,6 +64,12 @@ class FirebaseTravelApi {
       return 'Error: ${e.message}';
     }
   }
+
+  // Get a specific travel plan
+  Future<DocumentSnapshot<Map<String, dynamic>>> getTravelById(String planId) {
+    return db.collection('travels').doc(planId).get();
+  }
+
 
   // Add the new travel plan in the database
   Future<String> addTravel(Map<String, dynamic> travel) async {

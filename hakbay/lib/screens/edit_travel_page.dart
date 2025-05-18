@@ -174,11 +174,7 @@ class _EditTravelPlanPageState extends State<EditTravelPlanPage> {
               // Save Button
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF1DB954),
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)
-                  )
+                  padding: EdgeInsets.all(16),
                 ),
                 onPressed: _saveChanges,
                 child: Text("Save Changes", style: TextStyle(color: Colors.white),),

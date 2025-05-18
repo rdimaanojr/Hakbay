@@ -97,11 +97,7 @@ class _SignInPageState extends State<SignInPage> {
 
   Widget get submitButton => ElevatedButton(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Color(0xFF1DB954),
       padding: EdgeInsets.all(16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30)
-      )
     ),
     onPressed: () async {
       if (_formKey.currentState!.validate()) {

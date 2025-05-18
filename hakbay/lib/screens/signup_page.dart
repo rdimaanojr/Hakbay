@@ -255,11 +255,7 @@ class _SignUpState extends State<SignUpPage> {
 
   Widget get submitButton => ElevatedButton(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Color(0xFF1DB954),
       padding: EdgeInsets.all(16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30)
-      )
     ),
     child: const Text("Sign Up", style: TextStyle(color: Colors.white, fontSize: 18)),
 >>>>>>> c728cf8 (ui: frontend themes are implemented in travel plan and authentication pages)
