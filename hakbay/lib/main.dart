@@ -5,6 +5,7 @@ import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
+import 'package:hakbay/screens/edit_itinerary_page.dart';
 import 'package:hakbay/screens/edit_travel_page.dart';
 import 'package:hakbay/screens/scan_qr_code.dart';
 import 'package:hakbay/screens/travel_details_page.dart';
@@ -121,8 +122,16 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
+<<<<<<< HEAD
       path: '/qr-scanner',
       builder: (context, state) => QrScannerPage(),
+=======
+      path: '/edit-itinerary',
+      builder: (context, state) {
+        final itinerary = state.extra as ItineraryItem;
+        return EditItineraryPage(itinerary: itinerary);
+      },
+>>>>>>> f7a23c0 (feat: added edit and delete itinerary method)
     ),
   ],
 );

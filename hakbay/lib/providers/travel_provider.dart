@@ -68,9 +68,24 @@ class TravelPlanProvider with ChangeNotifier {
   
   // Add a new itinerary item
   Future<String> addItineraryItem(String travelId, ItineraryItem item) async {
-    final result = await firebaseService.addItinerary(travelId, item.toJson());
+    final message = await firebaseService.addItinerary(travelId, item.toJson());
+    print(message);
     notifyListeners();
-    return result;
+    return message;
+  }
+
+  Future<String> updateItinerary(String itineraryId, ItineraryItem item) async {
+    final message = await firebaseService.updateItinerary(itineraryId, item.toJson());
+    print(message);
+    notifyListeners();
+    return message;
+  }
+
+  Future<String> deleteItinerary(String itineraryId) async {
+    final message = await firebaseService.deleteItinerary(itineraryId);
+    print(message);
+    notifyListeners();
+    return message;
   }
 }
 

@@ -19,32 +19,75 @@ class FirebaseTravelApi {
   }
 
   Future<String> updateItinerary(
-    String travelId, 
-    String itemId, 
+    String itemId,
     Map<String, dynamic> data
   ) async {
     try {
-      await db.collection('travels')
-        .doc(travelId)
-        .collection('itinerary')
-        .doc(itemId)
-        .update(data);
+      // Find the travel document containing the itinerary item
+      final travelsSnapshot = await db.collection('travels').get();
+      bool updated = false;
 
-      return "Successfully updated itinerary item!";
+      for (var travelDoc in travelsSnapshot.docs) {
+        final itineraryDoc = await db
+            .collection('travels')
+            .doc(travelDoc.id)
+            .collection('itinerary')
+            .doc(itemId)
+            .get();
+
+        if (itineraryDoc.exists) {
+          await db
+              .collection('travels')
+              .doc(travelDoc.id)
+              .collection('itinerary')
+              .doc(itemId)
+              .update(data);
+          updated = true;
+          break;
+        }
+      }
+
+      if (updated) {
+        return "Successfully updated itinerary item!";
+      } else {
+        return "Itinerary item not found!";
+      }
     } on FirebaseException catch (e) {
       return 'Error updating itinerary: ${e.message}';
     }
   }
   
-  Future<String> deleteItinerary(String travelId, String itemId) async {
+  Future<String> deleteItinerary(String itemId) async {
     try {
-      await db.collection('travels')
-        .doc(travelId)
-        .collection('itinerary')
-        .doc(itemId)
-        .delete();
+      // Find the travel document containing the itinerary item
+      final travelsSnapshot = await db.collection('travels').get();
+      bool deleted = false;
 
-      return "Successfully deleted itinerary item!";
+      for (var travelDoc in travelsSnapshot.docs) {
+        final itineraryDoc = await db
+            .collection('travels')
+            .doc(travelDoc.id)
+            .collection('itinerary')
+            .doc(itemId)
+            .get();
+
+        if (itineraryDoc.exists) {
+          await db
+              .collection('travels')
+              .doc(travelDoc.id)
+              .collection('itinerary')
+              .doc(itemId)
+              .delete();
+          deleted = true;
+          break;
+        }
+      }
+
+      if (deleted) {
+        return "Successfully deleted itinerary item!";
+      } else {
+        return "Itinerary item not found!";
+      }
     } on FirebaseException catch (e) {
       return 'Error deleting itinerary: ${e.message}';
     }

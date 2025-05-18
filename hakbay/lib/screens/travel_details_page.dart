@@ -208,7 +208,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                     itemBuilder: (context, index) {
                       final item = items[index];
 
-                      return Card(
+                        return Card(
                         color: Theme.of(context).cardColor,
                         margin: const EdgeInsets.symmetric(vertical: 6),
                         elevation: 2,
@@ -216,6 +216,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                         child: ListTile(
                           title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                           subtitle: Column(
+<<<<<<< HEAD
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (item.location != '')
@@ -224,9 +225,49 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                               Text("Start: ${DateFormat.Hm().format(item.startTime)}", style: TextStyle(color: Colors.white70)),
                               Text("End: ${DateFormat.Hm().format(item.endTime)}", style: TextStyle(color: Colors.white70)),
                             ],
+=======
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (item.location != null)
+                            Text("Location: ${item.location}", style: TextStyle(color: Colors.white70)),
+                            Text("Date: ${DateFormat.yMMMMd().format(item.date)}", style: TextStyle(color: Colors.white70)),
+                            Text("Start: ${DateFormat.Hm().format(item.startTime)}", style: TextStyle(color: Colors.white70)),
+                            Text("End: ${DateFormat.Hm().format(item.endTime)}", style: TextStyle(color: Colors.white70)),
+                          ],
+                          ),
+                          onTap: () => context.push('/edit-itinerary', extra: item),
+                          trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.redAccent),
+                            tooltip: 'Delete',
+                            onPressed: () async {
+                              final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Delete Itinerary Item'),
+                                content: const Text('Are you sure you want to delete this itinerary item?'),
+                                actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(true),
+                                  child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                ),
+                                ],
+                              ),
+                              );
+                              if (confirm == true) {
+                              await context.read<TravelPlanProvider>().deleteItinerary(item.id!);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Itinerary item deleted')),
+                              );
+                            }
+                          },
+>>>>>>> f7a23c0 (feat: added edit and delete itinerary method)
                           ),
                         ),
-                      );
+                        );
                     },
                   );
                 },

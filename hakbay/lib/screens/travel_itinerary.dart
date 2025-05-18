@@ -245,7 +245,6 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
 
         if (widget.existingItem != null) {
           await api.updateItinerary(
-            widget.travelPlan.planId!,
             widget.existingItem!.id!,
             newItem.toJson(),
           );
