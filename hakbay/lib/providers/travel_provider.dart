@@ -6,6 +6,7 @@ import 'package:hakbay/models/travel_plan_model.dart';
 // Our provider class
 class TravelPlanProvider with ChangeNotifier {
   late Stream<QuerySnapshot> _travelStream;
+  late Stream<QuerySnapshot> _itineraryStream;
   late FirebaseTravelApi firebaseService;
 
   TravelPlanProvider() {
@@ -14,15 +15,16 @@ class TravelPlanProvider with ChangeNotifier {
 
   // getter for our travel plans database
   Stream<QuerySnapshot> get getTravels => _travelStream;
+  Stream<QuerySnapshot> get getItineraryItems => _itineraryStream;
 
-  // Get itinerary items for a specific travel plan
-  Stream<QuerySnapshot> getItineraryItems(String travelId) {
-    return firebaseService.getItineraryItems(travelId);
-  }
 
   // TODO: get travel plans from Firestore
   void fetchTravels(String uid) {
     _travelStream = firebaseService.getUserTravels(uid);
+  }
+
+  void fetchItineraries(String planId) {
+    _itineraryStream = firebaseService.getItineraryItems(planId);
   }
 
   // TODO: add a travel plan and store it in Firestore

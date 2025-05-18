@@ -34,8 +34,8 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
     if (widget.existingItem != null) {
       _nameController.text = widget.existingItem!.name;
       _locationController.text = widget.existingItem!.location!;
-      _selectedStartTime = widget.existingItem!.startTime ?? DateTime.now();
-      _selectedEndTime = widget.existingItem!.endTime ?? DateTime.now();
+      _selectedStartTime = widget.existingItem!.startTime;
+      _selectedEndTime = widget.existingItem!.endTime;
       _selectedDate = widget.existingItem!.date;
     } else {
       _selectedDate = widget.travelPlan.travelDate.start;
@@ -125,11 +125,11 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
                         labelText: "Itinerary Date"
                       ),
                       controller: TextEditingController(
-                        text: formatDate(_selectedDate),
+                        text: formatDate(_selectedDate)
                       ),
                     ),
                   ),
-                )
+                ),
               ),       
               TextFormField(
                 controller: _nameController,

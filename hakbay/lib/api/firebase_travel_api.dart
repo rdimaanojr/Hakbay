@@ -9,14 +9,8 @@ class FirebaseTravelApi {
   }
 
   // Get all itinerary items for a specific travel plan
-  Stream<QuerySnapshot> getItineraryItems(String travelId) {
-    return db
-      .collection('travels')
-      .doc(travelId)
-      .collection('itinerary')
-      .orderBy('day')
-      .orderBy('startTime')
-      .snapshots();
+   Stream<QuerySnapshot> getItineraryItems(String planId) {
+    return db.collection('travels').doc(planId).collection('itinerary').snapshots();
   }
 
   Future<String> updateItinerary(

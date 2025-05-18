@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 class ItineraryItem {
   String? id;
   final String name;
-  final DateTime? startTime;
-  final DateTime? endTime;
+  final DateTime startTime;
+  final DateTime endTime;
   final String? location;
   final DateTime date;
 
   ItineraryItem({
     this.id,
     required this.name,
-    this.startTime,
-    this.endTime,
+    required this.startTime,
+    required this.endTime,
     required this.location,
     required this.date
   });
@@ -50,8 +50,8 @@ class ItineraryItem {
     return {
       'id': id,
       'name': name,
-      'startTime': startTime?.toIso8601String(),
-      'endTime': endTime?.toIso8601String(),
+      'startTime': startTime.toIso8601String(),
+      'endTime': endTime.toIso8601String(),
       'location': location,
       'date': date.toIso8601String(),
     };
@@ -67,7 +67,6 @@ class TravelPlan {
   final String location;
   // final Location location;
   final String? details;
-  final Map<int, ItineraryItem>? itinerary;
 
   TravelPlan({
     required this.uid,
@@ -76,7 +75,6 @@ class TravelPlan {
     required this.travelDate,
     required this.location,
     this.details,
-    this.itinerary,
   });
 
   static const _undefined = Object();
@@ -98,9 +96,6 @@ class TravelPlan {
       travelDate: travelDate ?? this.travelDate,
       location: location ?? this.location,
       details: details == _undefined ? this.details : details as String?,
-      itinerary: itinerary == _undefined
-          ? this.itinerary
-          : (itinerary as Map<int, ItineraryItem>?),
     );
   }
 
@@ -116,9 +111,6 @@ class TravelPlan {
       location: json['location'],
       // location: Location.fromJson(json['location']),
       details: json['details'],
-      itinerary: (json['itinerary'] as Map<String, dynamic>?)?.map(
-        (key, value) => MapEntry(int.parse(key), ItineraryItem.fromJson(value)),
-      ),
     );
   }
 
@@ -132,9 +124,6 @@ class TravelPlan {
       'location': location,
       // 'location': location.toJson(),
       'details': details,
-      'itinerary': itinerary?.map(
-        (key, value) => MapEntry(key.toString(), value.toJson()),
-      ),
     };
   }
 }
