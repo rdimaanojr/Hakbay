@@ -113,6 +113,18 @@ class FirebaseTravelApi {
     return db.collection('travels').doc(planId).get();
   }
 
+  // Add user uid to sharedWith field of travel plan
+  Future<String> shareTravelWithUser(String planId, String userUid) async {
+    try {
+      await db.collection('travels').doc(planId).update({
+        'sharedWith': FieldValue.arrayUnion([userUid]),
+      });
+
+      return "Successfully shared travel plan!";
+    } on FirebaseException catch (e) {
+      return 'Error sharing travel plan: ${e.message}';
+    }
+  }
 
   // Add the new travel plan in the database
   Future<String> addTravel(Map<String, dynamic> travel) async {

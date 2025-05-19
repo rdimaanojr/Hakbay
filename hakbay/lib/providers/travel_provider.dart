@@ -44,6 +44,12 @@ class TravelPlanProvider with ChangeNotifier {
     }
   }
 
+  Future<String> shareTravelPlan(TravelPlan travel, String userUid) async {
+    if (travel.sharedWith.contains(userUid)) return "Already added travel plan!";
+    
+    final message = await firebaseService.shareTravelWithUser(travel.planId!, userUid);
+    return message;
+  }
 
   // TODO: add a travel plan and store it in Firestore
   Future<void> addTravel(TravelPlan entry) async {

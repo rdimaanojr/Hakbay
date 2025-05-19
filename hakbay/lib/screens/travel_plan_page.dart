@@ -85,10 +85,24 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
 
                 if(sharedTravel == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Travel Plan not found.")),
+                    SnackBar(content: Text("Travel Plan not found.")),
                   );
                   return;
                 }
+                // Add to shared travel plans
+                final userId = context.read<UserAuthProvider>().getCurrentUserUID();
+                final result = await context.read<TravelPlanProvider>().shareTravelPlan(sharedTravel, userId!);
+
+                if(result == "Already added travel plan!"){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(result)),
+                  );
+                  return;
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(result)),
+                );
 
                 context.push('/travel-details', extra: sharedTravel);
               },
