@@ -186,30 +186,35 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 StreamBuilder<QuerySnapshot>(
                   stream: itineraryStream,
                   builder: (context, snapshot) {
-                    if (snapshot.hasError) {
-                      return Text("Error: ${snapshot.error}");
-                    } else if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Text("No itinerary items yet.", style: TextStyle(color: Colors.white70)),
-                      );
-                    }
+                  if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Text("No itinerary items yet.", style: TextStyle(color: Colors.white70)),
+                    );
+                  }
 
-                    final items = snapshot.data!.docs.map((doc) {
+                  final items = snapshot.data!.docs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
-                      return ItineraryItem.fromJson(data);
-                    }).where((item) {
+                    return ItineraryItem.fromJson(data);
+                  }).where((item) {
                     // Only show items where the date is within the travel date range
-                      return item.date.isAfter(travelPlan.travelDate.start.subtract(const Duration(days: 1))) &&
-                        item.date.isBefore(travelPlan.travelDate.end.add(const Duration(days: 1)));
-                    }).toList();
+                    return item.date.isAfter(travelPlan.travelDate.start.subtract(const Duration(days: 1))) &&
+                    item.date.isBefore(travelPlan.travelDate.end.add(const Duration(days: 1)));
+                  }).toList()
+                    ..sort((a, b) {
+                    final dateCompare = a.date.compareTo(b.date);
+                    if (dateCompare != 0) return dateCompare;
+                    return a.startTime.compareTo(b.startTime);
+                    });
 
                     if (items.isEmpty) {
                       return const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Text("No itinerary items within travel dates.", style: TextStyle(color: Colors.white70)),
+                      padding: EdgeInsets.all(12),
+                      child: Text("No itinerary items within travel dates.", style: TextStyle(color: Colors.white70)),
                       );
                     }
 
