@@ -16,7 +16,7 @@ import 'package:hakbay/screens/profile_page.dart';
 import 'package:hakbay/screens/edit_profile_page.dart';
 import 'package:hakbay/screens/signin_page.dart';
 import 'package:hakbay/screens/signup_page.dart';
-import 'package:hakbay/screens/similar_people_page';
+import 'package:hakbay/screens/similar_people_page.dart';
 import 'package:hakbay/screens/travel_plan_page.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';

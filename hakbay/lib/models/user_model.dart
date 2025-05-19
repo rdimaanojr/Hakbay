@@ -15,6 +15,7 @@ class AppUser {
   final List<String> incomingFriendRequests;
   final String? profilePic;
   final bool isPrivate;
+  final String? profilePicUrl;
 
   AppUser({
     this.uid,
@@ -31,6 +32,7 @@ class AppUser {
     this.incomingFriendRequests = const [],
     this.profilePic,
     this.isPrivate = false,
+    this.profilePicUrl,
   });
 
   static const _undefined = Object();
@@ -50,6 +52,7 @@ class AppUser {
     List<String>? incomingFriendRequests,
     Object? profilePic = _undefined,
     bool? isPrivate,
+    String? profilePicUrl,
   }) {
     return AppUser(
       uid: uid == _undefined ? this.uid : uid as String?,
@@ -69,6 +72,7 @@ class AppUser {
       profilePic:
           profilePic == _undefined ? this.profilePic : profilePic as String?,
       isPrivate: isPrivate ?? this.isPrivate,
+      profilePicUrl: profilePicUrl ?? this.profilePicUrl,
     );
   }
 
@@ -93,6 +97,7 @@ class AppUser {
       ),
       profilePic: json['profilePic'],
       isPrivate: json['isPrivate'] ?? false,
+      profilePicUrl: json['profilePicUrl'],
     );
   }
 
@@ -117,6 +122,7 @@ class AppUser {
       'incomingFriendRequests': incomingFriendRequests,
       'profilePic': profilePic,
       'isPrivate': isPrivate,
+      'profilePicUrl': profilePicUrl,
     };
   }
 }
