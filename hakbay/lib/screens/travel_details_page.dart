@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 <<<<<<< HEAD
@@ -6,8 +7,13 @@ import 'package:go_router/go_router.dart';
 import 'package:hakbay/api/firebase_travel_api.dart';
 >>>>>>> 1766f4a (feat: added itinerary form)
 import 'package:hakbay/models/travel_plan_model.dart';
+import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/travel_provider.dart';
+<<<<<<< HEAD
 import 'package:hakbay/screens/notification_provider.dart';
+=======
+import 'package:hakbay/providers/user_provider.dart';
+>>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
 import 'package:hakbay/screens/share_qr_code.dart';
 import 'package:hakbay/screens/travel_itinerary.dart';
 import 'package:intl/intl.dart';
@@ -34,9 +40,15 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     super.initState();
     travelPlan = widget.travel;
     context.read<TravelPlanProvider>().fetchItineraries(travelPlan.planId!);
+<<<<<<< HEAD
 
     // initializeNotifications();
     // tz.initializeTimeZones();
+=======
+    context.read<UserProvider>().fetchSharedUsers(travelPlan.sharedWith);
+    initializeNotifications();
+    tz.initializeTimeZones();
+>>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
   }
 
   String formatDateRange(DateTimeRange range) {
@@ -169,6 +181,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   Widget build(BuildContext context) {
     
     Stream<QuerySnapshot> itineraryStream = context.read<TravelPlanProvider>().getItineraryItems;
+    Stream<QuerySnapshot> sharedUserStream = context.read<UserProvider>().getSharedUsers;
 
     return Scaffold(
       appBar: AppBar(
@@ -219,7 +232,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
         child: const Icon(Icons.add),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,35 +240,35 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               // Destination
               Row(
                 children: [
-                  const Icon(Icons.location_on, color: Colors.white70),
-                  const SizedBox(width: 8),
+                  Icon(Icons.location_on, color: Colors.white70),
+                  SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       travelPlan.location,
-                      style: const TextStyle(fontSize: 16, color: Colors.white70),
+                      style: TextStyle(fontSize: 16, color: Colors.white70),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
 
               // Dates
               Row(
                 children: [
-                  const Icon(Icons.calendar_today, color: Colors.white70),
-                  const SizedBox(width: 8),
+                  Icon(Icons.calendar_today, color: Colors.white70),
+                  SizedBox(width: 8),
                   Text(
                     formatDateRange(travelPlan.travelDate),
-                    style: const TextStyle(fontSize: 16, color: Colors.white70),
+                    style: TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: 24),
 
-              // Details
+              // Details (if there are any)
               if (travelPlan.details != null && travelPlan.details!.isNotEmpty) ...[
                 Row(
-                  children: const [
+                  children: [
                     Icon(Icons.notes, color: Colors.white70),
                     SizedBox(width: 8),
                     Text(
@@ -264,12 +277,12 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   travelPlan.details!,
-                  style: const TextStyle(fontSize: 16, color: Colors.white70),
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
               ],
               ElevatedButton.icon(
                 icon: Icon(Icons.notifications_active_outlined),
@@ -279,12 +292,74 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 label: (Text("Sample notif")),
               ),
 
+              // Shared With Users Section (If there are any)
+              StreamBuilder<QuerySnapshot>(
+                stream: sharedUserStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator(color: Colors.white,));
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return SizedBox();
+                  }
+
+                  final users = snapshot.data!.docs.map((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    return AppUser.fromJson(data);
+                  }).toList();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Shared With",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                      SizedBox(height: 8),
+                      SizedBox(
+                        height: 80,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: users.length,
+                          separatorBuilder: (context, index) => Divider(),
+                          itemBuilder: (context, index) {
+                            final user = users[index];
+                            return Column(
+                              children: [
+                                CircleAvatar(
+                                  radius: 24,
+                                  backgroundColor: Colors.grey[800],
+                                  backgroundImage: user.profilePic != null
+                                      ? MemoryImage(base64Decode(user.profilePic!))
+                                      : null,
+                                  child: user.profilePic == null
+                                      ? const Icon(Icons.person, color: Colors.white)
+                                      : null,
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  user.username,
+                                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                  overflow: TextOverflow.fade,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  );
+                },
+              ),
+
               // Itinerary Section
-              const Text(
+              Text(
                 "Itinerary",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
 
                 StreamBuilder<QuerySnapshot>(
                   stream: itineraryStream,
@@ -292,9 +367,9 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                   if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
                   } else if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator());
                   } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Padding(
+                    return Padding(
                       padding: EdgeInsets.all(12),
                       child: Text("No itinerary items yet.", style: TextStyle(color: Colors.white70)),
                     );
@@ -305,8 +380,8 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                     return ItineraryItem.fromJson(data);
                   }).where((item) {
                     // Only show items where the date is within the travel date range
-                    return item.date.isAfter(travelPlan.travelDate.start.subtract(const Duration(days: 1))) &&
-                    item.date.isBefore(travelPlan.travelDate.end.add(const Duration(days: 1)));
+                    return item.date.isAfter(travelPlan.travelDate.start.subtract(Duration(days: 1))) &&
+                    item.date.isBefore(travelPlan.travelDate.end.add(Duration(days: 1)));
                   }).toList()
                     ..sort((a, b) {
                     final dateCompare = a.date.compareTo(b.date);
@@ -315,7 +390,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                     });
 
                     if (items.isEmpty) {
-                      return const Padding(
+                      return Padding(
                       padding: EdgeInsets.all(12),
                       child: Text("No itinerary items within travel dates.", style: TextStyle(color: Colors.white70)),
                       );
@@ -365,11 +440,11 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                           icon: const Icon(Icons.delete, color: Colors.redAccent),
 =======
                           color: Theme.of(context).cardColor,
-                          margin: const EdgeInsets.symmetric(vertical: 6),
+                          margin: EdgeInsets.symmetric(vertical: 6),
                           elevation: 2,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           child: ListTile(
-                            title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                            title: Text(item.name, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -382,23 +457,27 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                             ),
                             onTap: () => context.push('/edit-itinerary', extra: {'item': item, 'travelPlan': travelPlan}),
                             trailing: IconButton(
+<<<<<<< HEAD
                             icon: const Icon(Icons.delete, color: Colors.redAccent),
 >>>>>>> 0c826f7 (fix: display only the itineraries that are within the range of travel plan)
+=======
+                            icon: Icon(Icons.delete, color: Colors.redAccent),
+>>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
                             tooltip: 'Delete',
                             onPressed: () async {
                               final confirm = await showDialog<bool>(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Delete Itinerary Item'),
-                                  content: const Text('Are you sure you want to delete this itinerary item?'),
+                                  title: Text('Delete Itinerary Item'),
+                                  content: Text('Are you sure you want to delete this itinerary item?'),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.of(context).pop(false),
-                                      child: const Text('Cancel'),
+                                      child: Text('Cancel'),
                                     ),
                                     TextButton(
                                       onPressed: () => Navigator.of(context).pop(true),
-                                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                      child: Text('Delete', style: TextStyle(color: Colors.red)),
                                     ),
                                   ],
                                 ),
@@ -416,7 +495,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                                 await context.read<TravelPlanProvider>().deleteItinerary(item.id!);
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Itinerary item deleted')),
+                                    SnackBar(content: Text('Itinerary item deleted')),
                                   );
                                 }
                               }

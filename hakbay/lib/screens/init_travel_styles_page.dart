@@ -146,6 +146,9 @@ class _InitTravelStylesScreenState extends State<InitTravelStylesScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.all(16),
+                ),
                 onPressed: () async {
                   if (user != null) {
                     await Provider.of<UserProvider>(

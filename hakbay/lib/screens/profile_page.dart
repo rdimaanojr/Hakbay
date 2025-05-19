@@ -207,13 +207,9 @@ class _ProfileState extends State<ProfilePage> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
                       vertical: 10,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   child: const Text(

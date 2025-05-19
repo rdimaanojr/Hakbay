@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hakbay/api/firebase_user_api.dart';
 import 'package:hakbay/models/user_model.dart';
@@ -19,8 +20,16 @@ class UserProvider with ChangeNotifier {
   bool get loadingSimilarUsers => _loadingSimilarUsers;
   String? get similarUsersError => _similarUsersError;
 
+  late Stream<QuerySnapshot> _sharedUserStream;
+
   UserProvider() {
     userAPI = FirebaseUserAPI();
+  }
+
+  Stream<QuerySnapshot> get getSharedUsers => _sharedUserStream;
+
+  void fetchSharedUsers(List<String> uids) {
+    _sharedUserStream = userAPI.fetchSharedUsers(uids);
   }
 
   // Get user data from Firestore

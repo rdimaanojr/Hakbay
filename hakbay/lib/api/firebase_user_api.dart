@@ -18,6 +18,12 @@ class FirebaseUserAPI {
     }
   }
 
+  Stream<QuerySnapshot> fetchSharedUsers(List<String> uids) {
+    if(uids.isEmpty) return Stream.empty();
+
+    return db.collection('users').where(FieldPath.documentId, whereIn: uids).snapshots();
+  }
+
   // Check if a username already exists in the database
   Future<bool> isUsernameTaken(String username) async {
     try {
