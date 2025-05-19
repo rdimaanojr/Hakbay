@@ -131,23 +131,14 @@ class FriendRequest {
   final String? requestId;
   final String senderId;
   final String receiverId;
-  final String status;
   final DateTime timestamp;
-
-  static const String pending = "pending";
-  static const String accepted = "accepted";
-  static const String rejected = "rejected";
 
   FriendRequest({
     this.requestId,
     required this.senderId,
     required this.receiverId,
-    required this.status,
     required this.timestamp,
   });
-
-  bool get isPending => status == FriendRequest.pending;
-  bool get isAccepted => status == FriendRequest.accepted;
 
   static const _undefined = Object();
 
@@ -155,7 +146,6 @@ class FriendRequest {
     Object? requestId = _undefined,
     String? senderId,
     String? receiverId,
-    String? status,
     String? type,
     DateTime? timestamp,
   }) {
@@ -163,7 +153,6 @@ class FriendRequest {
       requestId: requestId == _undefined ? this.requestId : requestId as String?,
       senderId: senderId ?? this.senderId,
       receiverId: receiverId ?? this.receiverId,
-      status: status ?? this.status,
       timestamp: timestamp ?? this.timestamp,
     );
   }
@@ -173,7 +162,6 @@ class FriendRequest {
       requestId: json['requestId'],
       senderId: json['senderId'],
       receiverId: json['receiverId'],
-      status: json['status'],
       timestamp: DateTime.parse(json['timestamp']),
     );
   }
@@ -183,7 +171,6 @@ class FriendRequest {
       'requestId': requestId,
       'senderId': senderId,
       'receiverId': receiverId,
-      'status': status,
       'timestamp': timestamp.toIso8601String(),
     };
   }
