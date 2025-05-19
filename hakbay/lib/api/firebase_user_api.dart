@@ -121,4 +121,42 @@ class FirebaseUserAPI {
       logger.e("Error updating profile picture", error: e);
     }
   }
+
+  Future<List<Map<String, dynamic>>> getSimilarUsers(String userId) async {
+    try {
+      // Get current user's data
+      final currentUserDoc = await db.collection('users').doc(userId).get();
+      if (!currentUserDoc.exists) {
+        throw 'User not found';
+      }
+
+      final currentUserData = currentUserDoc.data()!;
+      final currentUserInterests = List<String>.from(currentUserData['interests'] ?? []);
+      final currentUserStyles = List<String>.from(currentUserData['travelStyles'] ?? []);
+      
+      // Get all users
+      final usersQuery = await db.collection('users').get();
+      
+      // Filter and map to raw data
+      final similarUsers = usersQuery.docs
+          .where((doc) {
+            if (doc.id == userId) return false;
+            
+            final userData = doc.data();
+            final userInterests = List<String>.from(userData['interests'] ?? []);
+            final userStyles = List<String>.from(userData['travelStyles'] ?? []);
+            
+            // Check for any common interests or styles
+            return userInterests.any((i) => currentUserInterests.contains(i)) ||
+                   userStyles.any((s) => currentUserStyles.contains(s));
+          })
+          .map((doc) => doc.data())
+          .toList();
+
+      return similarUsers;
+    } catch (e) {
+      logger.e('Error getting similar users: $e');
+      rethrow;
+    }
+  }
 }

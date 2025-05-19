@@ -9,9 +9,15 @@ class UserProvider with ChangeNotifier {
 
   AppUser? _user;
   UserState _status = UserState.initial();
+  List<AppUser> _similarUsers = [];
+  bool _loadingSimilarUsers = false;
+  String? _similarUsersError;
 
   AppUser? get user => _user;
   UserState get status => _status;
+  List<AppUser> get similarUsers => _similarUsers;
+  bool get loadingSimilarUsers => _loadingSimilarUsers;
+  String? get similarUsersError => _similarUsersError;
 
   UserProvider() {
     userAPI = FirebaseUserAPI();
@@ -80,6 +86,36 @@ class UserProvider with ChangeNotifier {
 
   Future<void> updateUserProfilePic(String uid, String profilePic) async {
     await userAPI.updateUserProfilePic(uid, profilePic);
+    notifyListeners();
+  }
+
+  Future<void> fetchSimilarUsers(String userId) async {
+    try {
+      _loadingSimilarUsers = true;
+      _similarUsersError = null;
+      notifyListeners();
+
+      final similarUsersData = await userAPI.getSimilarUsers(userId);
+      
+      _similarUsers = similarUsersData.map((data) {
+        data['uid'] = data['uid'] ?? '';  // Ensure uid is present
+        return AppUser.fromJson(data);
+      }).toList();
+
+      _loadingSimilarUsers = false;
+      notifyListeners();
+    } catch (e) {
+      _loadingSimilarUsers = false;
+      _similarUsersError = e.toString();
+      notifyListeners();
+      logger.e('Error fetching similar users: $e');
+    }
+  }
+
+  void clearSimilarUsers() {
+    _similarUsers = [];
+    _loadingSimilarUsers = false;
+    _similarUsersError = null;
     notifyListeners();
   }
 }

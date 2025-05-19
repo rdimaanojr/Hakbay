@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hakbay/utils/logger.dart';
 import 'package:hakbay/models/user_model.dart';
-import 'dart:convert';
+import 'package:hakbay/providers/user_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SimilarPeoplePage extends StatefulWidget {
   const SimilarPeoplePage({super.key});
@@ -11,103 +14,66 @@ class SimilarPeoplePage extends StatefulWidget {
 }
 
 class _SimilarPeoplePageState extends State<SimilarPeoplePage> {
-  final List<AppUser> similarPeople = [
-    AppUser(
-      uid: "1",
-      fname: "John",
-      lname: "Doe",
-      username: "johndoe",
-      email: "johndoe@example.com",
-      interests: ["Hiking", "Photography", "Hiking", "Photography", "Hiking"],
-      travelStyles: ["Adventurer", "Planner"],
-    ),
-    AppUser(
-      uid: "2",
-      fname: "Jane",
-      lname: "Smith",
-      username: "janesmith",
-      email: "janesmith@example.com",
-      interests: ["Art", "Cooking"],
-      travelStyles: [
-        "Culture Seeker",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-      ],
-    ),
-        AppUser(
-      uid: "1",
-      fname: "John",
-      lname: "Doe",
-      username: "johndoe",
-      email: "johndoe@example.com",
-      interests: ["Hiking", "Photography", "Hiking", "Photography", "Hiking"],
-      travelStyles: ["Adventurer", "Planner"],
-    ),
-    AppUser(
-      uid: "2",
-      fname: "Jane",
-      lname: "Smith",
-      username: "janesmith",
-      email: "janesmith@example.com",
-      interests: ["Art", "Cooking"],
-      travelStyles: [
-        "Culture Seeker",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-      ],
-    ),
-        AppUser(
-      uid: "1",
-      fname: "John",
-      lname: "Doe",
-      username: "johndoe",
-      email: "johndoe@example.com",
-      interests: ["Hiking", "Photography", "Hiking", "Photography", "Hiking"],
-      travelStyles: ["Adventurer", "Planner"],
-    ),
-    AppUser(
-      uid: "2",
-      fname: "Jane",
-      lname: "Smith",
-      username: "janesmith",
-      email: "janesmith@example.com",
-      interests: ["Art", "Cooking"],
-      travelStyles: [
-        "Culture Seeker",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-        "Relaxer",
-      ],
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    // Fetch similar users when the page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId != null) {
+        context.read<UserProvider>().fetchSimilarUsers(userId);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    context.read<UserProvider>().clearSimilarUsers();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Find Similar People")),
       body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-        ), // Add 16px padding
-        child: ListView.builder(
-          itemCount: similarPeople.length,
-          itemBuilder: (context, index) {
-            return _buildSimilarPersonTile(similarPeople[index]);
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Consumer<UserProvider>(
+          builder: (context, userProvider, child) {
+            if (userProvider.loadingSimilarUsers) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (userProvider.similarUsersError != null) {
+              return Center(
+                child: Text(
+                  'Error: ${userProvider.similarUsersError}',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
+
+            if (userProvider.similarUsers.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No similar users found',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              itemCount: userProvider.similarUsers.length,
+              itemBuilder: (context, index) {
+                return _buildSimilarPersonTile(userProvider.similarUsers[index]);
+              },
+            );
           },
         ),
       ),
     );
   }
 
-  /// Widget builder for a single similar person tile
   Widget _buildSimilarPersonTile(AppUser user) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -159,15 +125,15 @@ class _SimilarPeoplePageState extends State<SimilarPeoplePage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-
+                  
                   // Interests
                   AutoScrollingTags(
                     tags: user.interests,
                     color: const Color(0xFF2D8CFF),
                   ),
-
+                  
                   const SizedBox(height: 4),
-
+                  
                   // Travel Styles
                   AutoScrollingTags(
                     tags: user.travelStyles,
