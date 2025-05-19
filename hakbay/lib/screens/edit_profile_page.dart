@@ -14,8 +14,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final _formKey = GlobalKey<FormState>(); // Form key for validation
-  // TextEditingControllers for each field
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _fnameController = TextEditingController();
   final TextEditingController _lnameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -23,7 +22,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _travelStylesController = TextEditingController();
   bool _isPrivate = false;
 
-  // Initialize the form with existing user data if available
   @override
   void initState() {
     super.initState();
@@ -37,7 +35,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  // Dispose of the controllers to free up resources
   @override
   void dispose() {
     _fnameController.dispose();
@@ -80,8 +77,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final whiteTextStyle = const TextStyle(color: Colors.white);
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Profile")),
+      appBar: AppBar(
+        title: const Text("Edit Profile", style: TextStyle(color: Colors.white)),
+        backgroundColor: Theme.of(context).primaryColor,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -90,13 +94,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               const Text(
                 "Edit your profile information",
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20, color: Colors.white),
               ),
               const SizedBox(height: 16),
               TextFormField(
-                // Text field for first name
                 controller: _fnameController,
-                decoration: const InputDecoration(labelText: "First Name"),
+                style: whiteTextStyle,
+                decoration: const InputDecoration(
+                  labelText: "First Name",
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Please enter your first name";
@@ -106,9 +119,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                // Text field for last name
                 controller: _lnameController,
-                decoration: const InputDecoration(labelText: "Last Name"),
+                style: whiteTextStyle,
+                decoration: const InputDecoration(
+                  labelText: "Last Name",
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Please enter your last name";
@@ -118,43 +140,77 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                // Text field for phone number
                 controller: _phoneController,
-                decoration: const InputDecoration(labelText: "Phone Number"),
+                style: whiteTextStyle,
+                decoration: const InputDecoration(
+                  labelText: "Phone Number",
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                ),
                 keyboardType: TextInputType.phone,
               ),
               const SizedBox(height: 16),
               TextFormField(
-                // Text field for interests
                 controller: _interestsController,
+                style: whiteTextStyle,
                 decoration: const InputDecoration(
                   labelText: "Interests (comma-separated)",
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
               TextFormField(
-                // Text field for travel styles
                 controller: _travelStylesController,
+                style: whiteTextStyle,
                 decoration: const InputDecoration(
                   labelText: "Travel Styles (comma-separated)",
+                  labelStyle: TextStyle(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
-              SwitchListTile(
-                // Switch for private account option
-                title: const Text("Private Account"),
-                value: _isPrivate,
-                onChanged: (value) {
-                  setState(() {
-                    _isPrivate = value;
-                  });
-                },
+              Theme(
+                data: Theme.of(context).copyWith(
+                  unselectedWidgetColor: Colors.white,
+                  switchTheme: SwitchThemeData(
+                    thumbColor: MaterialStateProperty.all(Colors.white),
+                    trackColor: MaterialStateProperty.all(Colors.white24),
+                  ),
+                ),
+                child: SwitchListTile(
+                  title: const Text("Private Account", style: TextStyle(color: Colors.white)),
+                  value: _isPrivate,
+                  onChanged: (value) {
+                    setState(() {
+                      _isPrivate = value;
+                    });
+                  },
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                // Button to save changes
                 onPressed: _saveChanges,
-                child: const Text("Save Changes"),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                child: const Text("Save Changes", style: TextStyle(color: Colors.white)),
               ),
             ],
           ),

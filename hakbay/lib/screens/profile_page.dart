@@ -84,17 +84,19 @@ class _ProfileState extends State<ProfilePage> {
         imageFile = file;
         base64Image = encoded;
         user = user!.copyWith(profilePic: encoded);
-
-        context
-            .read<UserProvider>()
-            .updateUserProfilePic(uid, encoded)
-            .then((_) {
-              print("Profile picture updated successfully!");
-            })
-            .catchError((error) {
-              print("Error updating profile picture: $error");
-            });
       });
+
+      context
+          .read<UserProvider>()
+          .updateUserProfilePic(uid, encoded)
+          .then((_) {
+            logger.i("Profile picture updated successfully!");
+            setState(() {}); // Optionally refresh UI after update
+          })
+          .catchError((error) {
+            logger.e("Error updating profile picture", error: error);
+            setState(() {}); // Optionally refresh UI even on error
+          });
     }
   }
 
@@ -139,7 +141,7 @@ class _ProfileState extends State<ProfilePage> {
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 5),
@@ -147,7 +149,7 @@ class _ProfileState extends State<ProfilePage> {
                         "@${user!.username}",
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.grey,
+                          color: Color.fromARGB(255, 196, 196, 196),
                         ),
                       ),
                     ],
@@ -161,7 +163,7 @@ class _ProfileState extends State<ProfilePage> {
                       "Phone Number: ${user!.phone}",
                       style: const TextStyle(
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -169,7 +171,7 @@ class _ProfileState extends State<ProfilePage> {
                       "Email: ${user!.email}",
                       style: const TextStyle(
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -177,7 +179,7 @@ class _ProfileState extends State<ProfilePage> {
                       "Interests: ${user!.interests.join(', ')}",
                       style: const TextStyle(
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -185,7 +187,7 @@ class _ProfileState extends State<ProfilePage> {
                       "Travel Styles: ${user!.travelStyles.join(', ')}",
                       style: const TextStyle(
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 20),
