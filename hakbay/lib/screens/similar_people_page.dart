@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:hakbay/utils/logger.dart';
 import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:provider/provider.dart';

@@ -128,8 +128,10 @@ final GoRouter _router = GoRouter(
 =======
       path: '/edit-itinerary',
       builder: (context, state) {
-        final itinerary = state.extra as ItineraryItem;
-        return EditItineraryPage(itinerary: itinerary);
+        final data = state.extra as Map<String, dynamic>;
+        final ItineraryItem item = data['item'];
+        final TravelPlan travelPlan = data['travelPlan'];
+        return EditItineraryPage(itinerary: item, travelPlan: travelPlan);
       },
 >>>>>>> f7a23c0 (feat: added edit and delete itinerary method)
     ),

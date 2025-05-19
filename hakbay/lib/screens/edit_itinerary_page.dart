@@ -7,8 +7,9 @@ import 'package:provider/provider.dart';
 
 class EditItineraryPage extends StatefulWidget {
   final ItineraryItem itinerary;
+  final TravelPlan travelPlan;
 
-  const EditItineraryPage({super.key, required this.itinerary});
+  const EditItineraryPage({super.key, required this.itinerary, required this.travelPlan});
 
   @override
   State<EditItineraryPage> createState() => _EditItineraryPageState();
@@ -46,8 +47,8 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
   Future<void> editDate() async {
     final newDate = await showDatePicker(
       context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(3000),
+      firstDate: widget.travelPlan.travelDate.start,
+      lastDate: widget.travelPlan.travelDate.end,
       initialDate: _selectedDate,
       builder: (context, child) {
         return Theme(

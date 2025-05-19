@@ -273,7 +273,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                                 Text("End: ${DateFormat.Hm().format(item.endTime)}", style: TextStyle(color: Colors.white70)),
                               ],
                             ),
-                            onTap: () => context.push('/edit-itinerary', extra: item),
+                            onTap: () => context.push('/edit-itinerary', extra: {'item': item, 'travelPlan': travelPlan}),
                             trailing: IconButton(
                             icon: const Icon(Icons.delete, color: Colors.redAccent),
 >>>>>>> 0c826f7 (fix: display only the itineraries that are within the range of travel plan)
