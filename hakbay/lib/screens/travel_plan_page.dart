@@ -91,17 +91,18 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
                 }
                 // Add to shared travel plans
                 final userId = context.read<UserAuthProvider>().getCurrentUserUID();
-                final result = await context.read<TravelPlanProvider>().shareTravelPlan(sharedTravel, userId!);
 
-                if(result == "Already added travel plan!"){
+                if(sharedTravel.sharedWith.contains(userId)) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(result)),
+                    SnackBar(content: Text("Already added travel plan!")),
                   );
                   return;
                 }
 
+                await context.read<TravelPlanProvider>().shareTravelPlan(sharedTravel, userId!);
+
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(result)),
+                    SnackBar(content: Text("Shared travel plan successfully!")),
                 );
 
                 context.push('/travel-details', extra: sharedTravel);

@@ -46,6 +46,7 @@ dependencies:
   mobile_scanner: ^7.0.0
   permission_handler: ^12.0.0+1
   path_provider: ^2.1.1
+<<<<<<< HEAD
   flutter_local_notifications: ^19.2.1
 <<<<<<< HEAD
   timezone: ^0.10.1
@@ -53,6 +54,9 @@ dependencies:
  
 =======
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
+=======
+  # flutter_local_notifications: ^19.2.1
+>>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
 
 dev_dependencies:
   flutter_test:

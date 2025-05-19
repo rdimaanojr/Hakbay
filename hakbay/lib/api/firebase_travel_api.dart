@@ -150,6 +150,19 @@ class FirebaseTravelApi {
     }
   }
 
+    // Delete the shared user in the travel plan
+  Future<String> removeSharedUser(String planId, String uid) async {
+    try {
+      await db.collection('travels').doc(planId).update({
+        'sharedWith': FieldValue.arrayRemove([uid])
+      });
+
+      return "Successfully removed shared user!";
+    } on FirebaseException catch (e) {
+      return 'Error on ${e.message}';
+    }
+  }
+
   // Edit the travel plan in the database
   Future<String> editTravel(String planId, Map<String, dynamic> travel) async {
     try {

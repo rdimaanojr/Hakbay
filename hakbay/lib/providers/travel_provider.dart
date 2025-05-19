@@ -44,11 +44,10 @@ class TravelPlanProvider with ChangeNotifier {
     }
   }
 
-  Future<String> shareTravelPlan(TravelPlan travel, String userUid) async {
-    if (travel.sharedWith.contains(userUid)) return "Already added travel plan!";
-    
-    final message = await firebaseService.shareTravelWithUser(travel.planId!, userUid);
-    return message;
+  Future<void> shareTravelPlan(TravelPlan travel, String userUid) async {
+    String message = await firebaseService.shareTravelWithUser(travel.planId!, userUid);
+    print(message);
+    notifyListeners();
   }
 
   // TODO: add a travel plan and store it in Firestore
@@ -68,6 +67,12 @@ class TravelPlanProvider with ChangeNotifier {
   // TODO: delete a travel plan and update it in Firestore
   Future<void> deleteTravel(String id) async {
     String message = await firebaseService.deleteTravel(id);
+    print(message);
+    notifyListeners();
+  }
+
+    Future<void> removeSharedUser(String planId, String uid) async {
+    String message = await firebaseService.removeSharedUser(planId, uid);
     print(message);
     notifyListeners();
   }

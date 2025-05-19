@@ -8,6 +8,7 @@ import 'package:hakbay/api/firebase_travel_api.dart';
 >>>>>>> 1766f4a (feat: added itinerary form)
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/models/user_model.dart';
+import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 <<<<<<< HEAD
 import 'package:hakbay/screens/notification_provider.dart';
@@ -18,9 +19,9 @@ import 'package:hakbay/screens/share_qr_code.dart';
 import 'package:hakbay/screens/travel_itinerary.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:timezone/data/latest.dart' as tz;
+// import 'package:timezone/timezone.dart' as tz;
 
 class TravelPlanDetails extends StatefulWidget {
   final TravelPlan travel;
@@ -33,7 +34,7 @@ class TravelPlanDetails extends StatefulWidget {
 
 class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   late TravelPlan travelPlan;
-  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  // late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
@@ -46,9 +47,14 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     // tz.initializeTimeZones();
 =======
     context.read<UserProvider>().fetchSharedUsers(travelPlan.sharedWith);
+<<<<<<< HEAD
     initializeNotifications();
     tz.initializeTimeZones();
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
+=======
+    // initializeNotifications();
+    // tz.initializeTimeZones();
+>>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
   }
 
   String formatDateRange(DateTimeRange range) {
@@ -91,7 +97,11 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   //   );
     
   //   // Schedule notification 1 hour before the event
+<<<<<<< HEAD
   //   final notificationTime = scheduledDate.subtract(const Duration(hours: 23));
+=======
+  //   final notificationTime = scheduledDate.subtract(const Duration(hours: 1));
+>>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
     
   //   await flutterLocalNotificationsPlugin.zonedSchedule(
   //     item.hashCode, // Unique ID for the notification
@@ -114,6 +124,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       
   //   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   // }
+<<<<<<< HEAD
 
   // Future<void> scheduleTravelPlanNotification() async {
   //   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -144,6 +155,8 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   //     androidScheduleMode: AndroidScheduleMode.exact,
   //   );
   // }
+=======
+>>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
 
   void menuOptionSelected(String choice) async {
     if (choice == 'Edit') {
@@ -155,13 +168,11 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       final shouldDelete = await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Delete Travel Plan'),
-          content: const Text('Are you sure you want to delete this travel plan?'),
+          title: Text('Delete Travel Plan'),
+          content: Text('Are you sure you want to delete this travel plan?'),
           actions: [
-            TextButton(onPressed: () => context.pop(false), child: const Text('Cancel')),
-            TextButton(
-              onPressed: () => context.pop(true),
-              child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            TextButton(onPressed: () => context.pop(false), child: Text('Cancel')),
+            TextButton(onPressed: () => context.pop(true), child: Text('Delete', style: TextStyle(color: Colors.red)),
             ),
           ],
         ),
@@ -170,16 +181,43 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       if (shouldDelete == true) {
         await context.read<TravelPlanProvider>().deleteTravel(travelPlan.planId!);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Travel Plan Deleted!')),
+          SnackBar(content: Text('Travel Plan Deleted!')),
         );
         context.pop();
       }
     }
   }
 
+  void removeUser(BuildContext context, String uid) async {
+    final confirmed = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Remove User'),
+        content: Text('Are you sure you remove this user from the travel plan?'),
+        actions: [
+          TextButton(onPressed: () => context.pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => context.pop(true), child: const Text('Remove', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await context.read<TravelPlanProvider>().removeSharedUser(travelPlan.planId!, uid);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User removed from shared list.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    
+    final currentUserUid = context.read<UserAuthProvider>().getCurrentUserUID();
+    var isOwner = false;
+
+    if(currentUserUid == travelPlan.uid) isOwner = true;
+
     Stream<QuerySnapshot> itineraryStream = context.read<TravelPlanProvider>().getItineraryItems;
     Stream<QuerySnapshot> sharedUserStream = context.read<UserProvider>().getSharedUsers;
 
@@ -187,50 +225,52 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       appBar: AppBar(
         title: Text(travelPlan.name),
         actions: [
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: () {
-              showModalBottomSheet(
-                backgroundColor: Theme.of(context).cardColor,
-                context: context, 
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                builder: (context) => ShareQrCode(planId: travelPlan.planId!),
-              );
-            },
-          ),
-          PopupMenuButton<String>(
-            onSelected: menuOptionSelected,
-            itemBuilder: (context) => const [
-              PopupMenuItem(value: 'Edit', child: Text('Edit')),
-              PopupMenuItem(value: 'Delete', child: Text('Delete')),
-            ],
-          ),
-          
+          if (isOwner)
+            IconButton(
+              icon: Icon(Icons.share),
+              onPressed: () {
+                showModalBottomSheet(
+                  backgroundColor: Theme.of(context).cardColor,
+                  context: context, 
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  builder: (context) => ShareQrCode(planId: travelPlan.planId!),
+                );
+              },
+            ),
+          if (isOwner)
+            PopupMenuButton<String>(
+              onSelected: menuOptionSelected,
+              itemBuilder: (context) => const [
+                PopupMenuItem(value: 'Edit', child: Text('Edit')),
+                PopupMenuItem(value: 'Delete', child: Text('Delete')),
+              ],
+            ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MultiProvider(
-                providers: [
-                  Provider<FirebaseTravelApi>.value(value: FirebaseTravelApi()),
-                  ChangeNotifierProvider<TravelPlanProvider>.value(
-                    value: Provider.of<TravelPlanProvider>(context, listen: false),
-                  ),
-                ],
-                child: AddItineraryPage(travelPlan: travelPlan),
+      floatingActionButton: isOwner
+        ? FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MultiProvider(
+                  providers: [
+                    Provider<FirebaseTravelApi>.value(value: FirebaseTravelApi()),
+                    ChangeNotifierProvider<TravelPlanProvider>.value(
+                      value: Provider.of<TravelPlanProvider>(context, listen: false),
+                    ),
+                  ],
+                  child: AddItineraryPage(travelPlan: travelPlan),
+                ),
               ),
-            ),
-          );
-        },
-        tooltip: 'Add Itinerary',
-        child: const Icon(Icons.add),
-      ),
+            );
+          },
+          tooltip: 'Add Itinerary',
+          child: const Icon(Icons.add),
+        ) : null,
       body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
@@ -322,33 +362,41 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: users.length,
-                          separatorBuilder: (context, index) => Divider(),
+                          separatorBuilder: (context, index) => SizedBox(width: 16),
                           itemBuilder: (context, index) {
                             final user = users[index];
+
                             return Column(
                               children: [
-                                CircleAvatar(
-                                  radius: 24,
-                                  backgroundColor: Colors.grey[800],
-                                  backgroundImage: user.profilePic != null
-                                      ? MemoryImage(base64Decode(user.profilePic!))
-                                      : null,
-                                  child: user.profilePic == null
-                                      ? const Icon(Icons.person, color: Colors.white)
-                                      : null,
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  user.username,
-                                  style: const TextStyle(color: Colors.white70, fontSize: 12),
-                                  overflow: TextOverflow.fade,
-                                ),
+                                GestureDetector(
+                                  onLongPress: isOwner
+                                    ? () => removeUser(context, user.uid!)
+                                    : null,
+                                  child: Column(children: [
+                                    CircleAvatar(
+                                      radius: 24,
+                                      backgroundColor: Colors.grey[800],
+                                      backgroundImage: user.profilePic != null
+                                          ? MemoryImage(base64Decode(user.profilePic!))
+                                          : null,
+                                      child: user.profilePic == null
+                                          ? const Icon(Icons.person, color: Colors.white)
+                                          : null,
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      user.username,
+                                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ],)
+                                )
                               ],
                             );
                           },
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24),
                     ],
                   );
                 },
@@ -367,7 +415,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                   if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
                   } else if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator(color: Colors.white,));
                   } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                     return Padding(
                       padding: EdgeInsets.all(12),
@@ -455,12 +503,18 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                                 Text("End: ${DateFormat.Hm().format(item.endTime)}", style: TextStyle(color: Colors.white70)),
                               ],
                             ),
+<<<<<<< HEAD
                             onTap: () => context.push('/edit-itinerary', extra: {'item': item, 'travelPlan': travelPlan}),
                             trailing: IconButton(
 <<<<<<< HEAD
                             icon: const Icon(Icons.delete, color: Colors.redAccent),
 >>>>>>> 0c826f7 (fix: display only the itineraries that are within the range of travel plan)
 =======
+=======
+                            onTap: isOwner ? () => context.push('/edit-itinerary', extra: {'item': item, 'travelPlan': travelPlan})
+                            : null,
+                            trailing: isOwner ? IconButton(
+>>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
                             icon: Icon(Icons.delete, color: Colors.redAccent),
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
                             tooltip: 'Delete',
@@ -500,8 +554,12 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                                 }
                               }
                             },
+<<<<<<< HEAD
 >>>>>>> 0c826f7 (fix: display only the itineraries that are within the range of travel plan)
                           ),
+=======
+                          ) : null,
+>>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
                         ),
                       );
                     },
