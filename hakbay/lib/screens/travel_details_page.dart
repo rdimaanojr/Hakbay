@@ -84,9 +84,10 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               showModalBottomSheet(
                 backgroundColor: Theme.of(context).cardColor,
                 context: context, 
-                // shape: const RoundedRectangleBorder(
-                //   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                // ),
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
                 builder: (context) => ShareQrCode(planId: travelPlan.planId!),
               );
             },
@@ -182,33 +183,45 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               ),
               const SizedBox(height: 12),
 
-              StreamBuilder<QuerySnapshot>(
-                stream: itineraryStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error}");
-                  } else if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Text("No itinerary items yet.", style: TextStyle(color: Colors.white70)),
-                    );
-                  }
+                StreamBuilder<QuerySnapshot>(
+                  stream: itineraryStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text("Error: ${snapshot.error}");
+                    } else if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Text("No itinerary items yet.", style: TextStyle(color: Colors.white70)),
+                      );
+                    }
 
-                  final items = snapshot.data!.docs.map((doc) {
+                    final items = snapshot.data!.docs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
-                    return ItineraryItem.fromJson(data);
-                  }).toList();
+                      return ItineraryItem.fromJson(data);
+                    }).where((item) {
+                    // Only show items where the date is within the travel date range
+                      return item.date.isAfter(travelPlan.travelDate.start.subtract(const Duration(days: 1))) &&
+                        item.date.isBefore(travelPlan.travelDate.end.add(const Duration(days: 1)));
+                    }).toList();
 
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
+                    if (items.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Text("No itinerary items within travel dates.", style: TextStyle(color: Colors.white70)),
+                      );
+                    }
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
 
                         return Card(
+<<<<<<< HEAD
                         color: Theme.of(context).cardColor,
                         margin: const EdgeInsets.symmetric(vertical: 6),
                         elevation: 2,
@@ -238,26 +251,48 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                           onTap: () => context.push('/edit-itinerary', extra: item),
                           trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.redAccent),
+=======
+                          color: Theme.of(context).cardColor,
+                          margin: const EdgeInsets.symmetric(vertical: 6),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          child: ListTile(
+                            title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (item.location != null)
+                                Text("Location: ${item.location}", style: TextStyle(color: Colors.white70)),
+                                Text("Date: ${DateFormat.yMMMMd().format(item.date)}", style: TextStyle(color: Colors.white70)),
+                                Text("Start: ${DateFormat.Hm().format(item.startTime)}", style: TextStyle(color: Colors.white70)),
+                                Text("End: ${DateFormat.Hm().format(item.endTime)}", style: TextStyle(color: Colors.white70)),
+                              ],
+                            ),
+                            onTap: () => context.push('/edit-itinerary', extra: item),
+                            trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.redAccent),
+>>>>>>> 0c826f7 (fix: display only the itineraries that are within the range of travel plan)
                             tooltip: 'Delete',
                             onPressed: () async {
                               final confirm = await showDialog<bool>(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Delete Itinerary Item'),
-                                content: const Text('Are you sure you want to delete this itinerary item?'),
-                                actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(false),
-                                  child: const Text('Cancel'),
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Delete Itinerary Item'),
+                                  content: const Text('Are you sure you want to delete this itinerary item?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(true),
+                                      child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
                                 ),
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(true),
-                                  child: const Text('Delete', style: TextStyle(color: Colors.red)),
-                                ),
-                                ],
-                              ),
                               );
                               if (confirm == true) {
+<<<<<<< HEAD
                               await context.read<TravelPlanProvider>().deleteItinerary(item.id!);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Itinerary item deleted')),
@@ -265,17 +300,26 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                             }
                           },
 >>>>>>> f7a23c0 (feat: added edit and delete itinerary method)
+=======
+                                await context.read<TravelPlanProvider>().deleteItinerary(item.id!);
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Itinerary item deleted')),
+                                  );
+                                }
+                              }
+                            },
+>>>>>>> 0c826f7 (fix: display only the itineraries that are within the range of travel plan)
                           ),
                         ),
-                        );
+                      );
                     },
                   );
                 },
               ),
-              const SizedBox(height: 80),
             ],
           ),
-        ]
+        ],
       ),
     );
   }
