@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/user_provider.dart';
+import 'package:hakbay/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -16,11 +17,17 @@ class _SimilarPeoplePageState extends State<SimilarPeoplePage> {
   @override
   void initState() {
     super.initState();
-    // Fetch similar users when the page loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final userId = FirebaseAuth.instance.currentUser?.uid;
+    // fetch user data and similar users when the page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final userProvider = context.read<UserProvider>();
+      final authProvider = context.read<UserAuthProvider>();
+      final userId = authProvider.getCurrentUserUID();
+
       if (userId != null) {
-        context.read<UserProvider>().fetchSimilarUsers(userId);
+        if (userProvider.user == null) {
+          await userProvider.fetchUserData(userId);
+        }
+        await userProvider.fetchSimilarUsers(userId);
       }
     });
   }
