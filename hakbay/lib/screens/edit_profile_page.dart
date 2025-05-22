@@ -3,7 +3,6 @@ import 'package:hakbay/commons/constants.dart';
 import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
 
 class EditProfilePage extends StatefulWidget {
   final AppUser? user;
@@ -37,6 +36,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   @override
+  void didUpdateWidget(EditProfilePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.user != oldWidget.user) {
+      _updateFormFields();
+    }
+  }
+
+  void _updateFormFields() {
+    _fnameController.text = widget.user?.fname ?? '';
+    _lnameController.text = widget.user?.lname ?? '';
+    _phoneController.text = widget.user?.phone ?? '';
+    _selectedInterests = List.from(widget.user?.interests ?? []);
+    _selectedTravelStyles = List.from(widget.user?.travelStyles ?? []);
+    _isPrivate = widget.user?.isPrivate ?? false;
+    if (mounted) setState(() {});
+  }
+
+  @override
   void dispose() {
     _fnameController.dispose();
     _lnameController.dispose();
@@ -64,31 +81,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
-  void _saveChanges() {
-    if (_formKey.currentState!.validate()) {
-      final updatedUser = widget.user!.copyWith(
-        fname: _fnameController.text,
-        lname: _lnameController.text,
-        phone: _phoneController.text,
-        interests: _selectedInterests,
-        travelStyles: _selectedTravelStyles,
-        isPrivate: _isPrivate,
-      );
+  Future<void> _saveChanges() async {
+    if (_formKey.currentState!.validate() && widget.user != null) {
+      try {
+        final updatedUser = widget.user!.copyWith(
+          fname: _fnameController.text,
+          lname: _lnameController.text,
+          phone: _phoneController.text,
+          interests: _selectedInterests,
+          travelStyles: _selectedTravelStyles,
+          isPrivate: _isPrivate,
+        );
 
-      Provider.of<UserProvider>(context, listen: false).updateUser(
-        uid: updatedUser.uid!,
-        fname: updatedUser.fname,
-        lname: updatedUser.lname,
-        phone: updatedUser.phone,
-        interests: updatedUser.interests,
-        travelStyles: updatedUser.travelStyles,
-        isPrivate: updatedUser.isPrivate,
-      );
+        await Provider.of<UserProvider>(context, listen: false).updateUser(
+          uid: updatedUser.uid!,
+          fname: updatedUser.fname,
+          lname: updatedUser.lname,
+          phone: updatedUser.phone,
+          interests: updatedUser.interests,
+          travelStyles: updatedUser.travelStyles,
+          isPrivate: updatedUser.isPrivate,
+        );
 
-      context.pop(updatedUser);
+        if (!mounted) return;
+        Navigator.of(context).pop(updatedUser);
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error updating profile: ${e.toString()}')),
+        );
+      }
     }
   }
 
+  
   @override
   Widget build(BuildContext context) {
     final whiteTextStyle = const TextStyle(color: Colors.white);
