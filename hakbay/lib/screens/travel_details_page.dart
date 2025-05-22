@@ -7,6 +7,7 @@ import 'package:hakbay/api/firebase_travel_api.dart';
 >>>>>>> 1766f4a (feat: added itinerary form)
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/travel_provider.dart';
+import 'package:hakbay/screens/notification_provider.dart';
 import 'package:hakbay/screens/share_qr_code.dart';
 import 'package:hakbay/screens/travel_itinerary.dart';
 import 'package:intl/intl.dart';
@@ -34,8 +35,8 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     travelPlan = widget.travel;
     context.read<TravelPlanProvider>().fetchItineraries(travelPlan.planId!);
 
-    initializeNotifications();
-    tz.initializeTimeZones();
+    // initializeNotifications();
+    // tz.initializeTimeZones();
   }
 
   String formatDateRange(DateTimeRange range) {
@@ -44,63 +45,93 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     return "$start - $end";
   }
 
-  void checkForUpcomingItineraries(List<ItineraryItem> items) {
-    final now = DateTime.now();
+  // void checkForUpcomingItineraries(List<ItineraryItem> items) {
+  //   final now = DateTime.now();
     
-    for (final item in items) {
-      // Check if the itinerary is within the next 24 hours
-      if (item.date.isAfter(now.subtract(const Duration(days: 1))) && 
-          item.date.isBefore(now.add(const Duration(days: 1)))) {
-        scheduleNotification(item);
-      }
-    }
-  }
+  //   for (final item in items) {
+  //     // Check if the itinerary is within the next 24 hours
+  //     if (item.date.isAfter(now.subtract(const Duration(days: 1))) && 
+  //         item.date.isBefore(now.add(const Duration(days: 1)))) {
+  //       scheduleNotification(item);
+  //     }
+  //   }
+  // }
 
-  Future<void> scheduleNotification(ItineraryItem item) async {
-    final androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'itinerary_channel',
-      'Itinerary Notifications',
-      channelDescription: 'Notifications for upcoming itinerary items',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'ticker',
-    );
+  // Future<void> scheduleNotification(ItineraryItem item) async {
+  //   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
+  //     'itinerary_channel',
+  //     'Itinerary Notifications',
+  //     channelDescription: 'Notifications for upcoming itinerary items',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //     ticker: 'ticker',
+  //   );
     
-    final platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
+  //   final platformChannelSpecifics = NotificationDetails(
+  //     android: androidPlatformChannelSpecifics,
+  //   );
     
-    // Convert the item's date and time to local timezone
-    final scheduledDate = tz.TZDateTime.from(
-      DateTime(item.date.year, item.date.month, item.date.day, 
-              item.startTime.hour, item.startTime.minute),
-      tz.local,
-    );
+  //   // Convert the item's date and time to local timezone
+  //   final scheduledDate = tz.TZDateTime.from(
+  //     DateTime(item.date.year, item.date.month, item.date.day, 
+  //             item.startTime.hour, item.startTime.minute),
+  //     tz.local,
+  //   );
     
-    // Schedule notification 1 hour before the event
-    final notificationTime = scheduledDate.subtract(const Duration(hours: 1));
+  //   // Schedule notification 1 hour before the event
+  //   final notificationTime = scheduledDate.subtract(const Duration(hours: 23));
     
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-      item.hashCode, // Unique ID for the notification
-      'Upcoming Itinerary: ${item.name}',
-      'Starts at ${DateFormat.Hm().format(item.startTime)} at ${item.location ?? "unknown location"}',
-      notificationTime,
-      platformChannelSpecifics,
-      matchDateTimeComponents: DateTimeComponents.time, androidScheduleMode: AndroidScheduleMode.exact,
-    );
-  }
+  //   await flutterLocalNotificationsPlugin.zonedSchedule(
+  //     item.hashCode, // Unique ID for the notification
+  //     'Upcoming Itinerary: ${item.name}',
+  //     'Starts at ${DateFormat.Hm().format(item.startTime)} at ${item.location ?? "unknown location"}',
+  //     notificationTime,
+  //     platformChannelSpecifics,
+  //     matchDateTimeComponents: DateTimeComponents.time, androidScheduleMode: AndroidScheduleMode.exact,
+  //   );
+  // }
 
-  Future<void> initializeNotifications() async {
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  // Future<void> initializeNotifications() async {
+  //   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     
-    const AndroidInitializationSettings initializationSettingsAndroid = 
-      AndroidInitializationSettings('app_icon');
+  //   const AndroidInitializationSettings initializationSettingsAndroid = 
+  //     AndroidInitializationSettings('app_icon');
       
-    final InitializationSettings initializationSettings = 
-      InitializationSettings(android: initializationSettingsAndroid);
+  //   final InitializationSettings initializationSettings = 
+  //     InitializationSettings(android: initializationSettingsAndroid);
       
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
+  //   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // }
+
+  // Future<void> scheduleTravelPlanNotification() async {
+  //   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
+  //     'travel_plan_channel',
+  //     'Travel Plan Notifications',
+  //     channelDescription: 'Notifications for upcoming travel plans',
+  //     importance: Importance.max,
+  //     priority: Priority.high,
+  //     ticker: 'ticker',
+  //   );
+
+  //   final platformChannelSpecifics = NotificationDetails(
+  //     android: androidPlatformChannelSpecifics,
+  //   );
+
+  //   final scheduledDate = tz.TZDateTime.from(
+  //     DateTime(travelPlan.travelDate.start.year, travelPlan.travelDate.start.month, travelPlan.travelDate.start.day),
+  //     tz.local,
+  //   ).subtract(const Duration(days: 1)); // 1 day before
+
+  //   await flutterLocalNotificationsPlugin.zonedSchedule(
+  //     travelPlan.planId.hashCode, // Unique ID
+  //     'Upcoming Travel: ${travelPlan.name}',
+  //     'Your trip to ${travelPlan.location} starts soon!',
+  //     scheduledDate,
+  //     platformChannelSpecifics,
+  //     matchDateTimeComponents: DateTimeComponents.dateAndTime,
+  //     androidScheduleMode: AndroidScheduleMode.exact,
+  //   );
+  // }
 
   void menuOptionSelected(String choice) async {
     if (choice == 'Edit') {
@@ -240,6 +271,13 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 ),
                 const SizedBox(height: 24),
               ],
+              ElevatedButton.icon(
+                icon: Icon(Icons.notifications_active_outlined),
+                onPressed: () {
+                  NotificationProvider().showNotification(title: "Travel Plan", body: "Upcoming in 3 days", payload: "simple");
+                },
+                label: (Text("Sample notif")),
+              ),
 
               // Itinerary Section
               const Text(
@@ -283,9 +321,9 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                       );
                     }
 
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      checkForUpcomingItineraries(items);
-                    });
+                    // WidgetsBinding.instance.addPostFrameCallback((_) {
+                    //   checkForUpcomingItineraries(items);
+                    // });
 
                     return ListView.builder(
                       shrinkWrap: true,

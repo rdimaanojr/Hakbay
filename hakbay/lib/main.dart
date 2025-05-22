@@ -3,6 +3,7 @@ import 'package:hakbay/commons/bottom_navbar.dart';
 import 'package:hakbay/firebase_options.dart';
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
+import 'package:hakbay/screens/notification_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:hakbay/screens/edit_itinerary_page.dart';
@@ -25,6 +26,9 @@ import 'package:go_router/go_router.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await NotificationProvider().initNotification();
+
   runApp(
     MultiProvider(
       providers: [
