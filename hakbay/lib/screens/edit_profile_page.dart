@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hakbay/commons/constants.dart';
 import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -18,9 +19,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _fnameController = TextEditingController();
   final TextEditingController _lnameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _interestsController = TextEditingController();
-  final TextEditingController _travelStylesController = TextEditingController();
   bool _isPrivate = false;
+  List<String> _selectedInterests = [];
+  List<String> _selectedTravelStyles = [];
 
   @override
   void initState() {
@@ -29,8 +30,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       _fnameController.text = widget.user!.fname;
       _lnameController.text = widget.user!.lname;
       _phoneController.text = widget.user!.phone;
-      _interestsController.text = widget.user!.interests.join(', ');
-      _travelStylesController.text = widget.user!.travelStyles.join(', ');
+      _selectedInterests = List.from(widget.user!.interests);
+      _selectedTravelStyles = List.from(widget.user!.travelStyles);
       _isPrivate = widget.user!.isPrivate;
     }
   }
@@ -40,9 +41,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _fnameController.dispose();
     _lnameController.dispose();
     _phoneController.dispose();
-    _interestsController.dispose();
-    _travelStylesController.dispose();
     super.dispose();
+  }
+
+  void _toggleInterest(String interest) {
+    setState(() {
+      if (_selectedInterests.contains(interest)) {
+        _selectedInterests.remove(interest);
+      } else {
+        _selectedInterests.add(interest);
+      }
+    });
+  }
+
+  void _toggleTravelStyle(String travelStyle) {
+    setState(() {
+      if (_selectedTravelStyles.contains(travelStyle)) {
+        _selectedTravelStyles.remove(travelStyle);
+      } else {
+        _selectedTravelStyles.add(travelStyle);
+      }
+    });
   }
 
   void _saveChanges() {
@@ -51,13 +70,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         fname: _fnameController.text,
         lname: _lnameController.text,
         phone: _phoneController.text,
-        interests:
-            _interestsController.text.split(',').map((e) => e.trim()).toList(),
-        travelStyles:
-            _travelStylesController.text
-                .split(',')
-                .map((e) => e.trim())
-                .toList(),
+        interests: _selectedInterests,
+        travelStyles: _selectedTravelStyles,
         isPrivate: _isPrivate,
       );
 
@@ -154,37 +168,106 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
                 keyboardType: TextInputType.phone,
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _interestsController,
-                style: whiteTextStyle,
-                decoration: const InputDecoration(
-                  labelText: "Interests (comma-separated)",
-                  labelStyle: TextStyle(color: Colors.white),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                ),
+              const Text(
+                "Select Interests",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _travelStylesController,
-                style: whiteTextStyle,
-                decoration: const InputDecoration(
-                  labelText: "Travel Styles (comma-separated)",
-                  labelStyle: TextStyle(color: Colors.white),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
-                  ),
-                ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: Interests.all.map((interest) {
+                  final isSelected = _selectedInterests.contains(interest);
+                  return GestureDetector(
+                    onTap: () => _toggleInterest(interest),
+                    child: Chip(
+                      label: Text(
+                        interest,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      backgroundColor: isSelected
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).cardColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: isSelected
+                            ? BorderSide(color: Theme.of(context).primaryColor, width: 1)
+                            : const BorderSide(color: Colors.transparent),
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              if (_selectedInterests.isNotEmpty) ...[
+                const Text(
+                  "Interests:",
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _selectedInterests.map((interest) => Chip(
+                    label: Text(interest, style: const TextStyle(color: Colors.white)),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  )).toList(),
+                ),
+                const SizedBox(height: 24),
+              ],
+              const Text(
+                "Select Travel Styles",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: TravelStyles.all.map((travelStyle) {
+                  final isSelected = _selectedTravelStyles.contains(travelStyle);
+                  return GestureDetector(
+                    onTap: () => _toggleTravelStyle(travelStyle),
+                    child: Chip(
+                      label: Text(
+                        travelStyle,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      backgroundColor: isSelected
+                          ? Theme.of(context).primaryColor
+                          : Theme.of(context).cardColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: isSelected
+                            ? BorderSide(color: Theme.of(context).primaryColor, width: 1)
+                            : const BorderSide(color: Colors.transparent),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 24),
+              if (_selectedTravelStyles.isNotEmpty) ...[
+                const Text(
+                  "Travel Styles:",
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _selectedTravelStyles.map((style) => Chip(
+                    label: Text(style, style: const TextStyle(color: Colors.white)),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  )).toList(),
+                ),
+                const SizedBox(height: 24),
+              ],
               Theme(
                 data: Theme.of(context).copyWith(
                   unselectedWidgetColor: Colors.white,
