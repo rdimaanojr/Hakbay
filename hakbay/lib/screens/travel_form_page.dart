@@ -129,10 +129,15 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
                 child: GestureDetector(
                   onTap: () async {
                     final result = await context.push<LocationResult>('/location_picker');
+
+                    if (result != null) {
+                      final adminArea2 = result.subLocalityLevel2?.longName;
+                      final adminArea = result.administrativeAreaLevel1?.longName;
+                      final country = result.country?.longName ?? result.name;
+
+                      final resolvedLocation = adminArea2 ?? adminArea ?? '';
                     
-                    if(result != null){
-                      locationController.text = "${result.administrativeAreaLevel1?.longName}, ${result.country!.longName}";
-                      
+                      locationController.text = "$resolvedLocation, $country";
                     }
                   },
                   child: AbsorbPointer(

@@ -93,6 +93,15 @@ class UserProvider with ChangeNotifier {
     return await userAPI.getEmailByUsername(username);
   }
 
+  // Get uid by username
+  Future<String?> getUidByUsername(String username) async {
+    return await userAPI.getUidByUsername(username);
+  }
+
+  Future<AppUser?> getUserbyUid(String uid) async {
+    return await userAPI.getUserbyUid(uid);
+  }
+
   // Update user data in Firestore
   Future<void> updateUser({
     required String uid,

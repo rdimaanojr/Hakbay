@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hakbay/models/user_model.dart';
 import '../utils/logger.dart';
 
 // This API manages our users collection data
@@ -59,6 +60,25 @@ class FirebaseUserAPI {
     }
   }
 
+  // Get uid by the username
+  Future<String?> getUidByUsername(String username) async {
+    try {
+      final querySnapshot =
+          await db
+              .collection('users')
+              .where('username', isEqualTo: username)
+              .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first['uid']; // Return the uid if found
+      }
+      return null;
+    } on FirebaseException catch (e) {
+      logger.e("Error retrieving email by username", error: e);
+      return null;
+    }
+  }
+
   // Return the UID of the current user
   // returns null if the user is not logged in
   Future<String?> getCurrentUserUID() async {
@@ -67,6 +87,21 @@ class FirebaseUserAPI {
       return user?.uid;
     } on FirebaseException catch (e) {
       logger.e("Error retrieving current user UID", error: e);
+      return null;
+    }
+  }
+
+  Future<AppUser?> getUserbyUid(String uid) async {
+    try {
+      final docSnapshot = await db.collection('users').doc(uid).get();
+      if (docSnapshot.exists) {
+        return AppUser.fromJson(docSnapshot.data()!);
+      } else {
+        logger.w("User with UID $uid does not exist");
+        return null;
+      }
+    } on FirebaseException catch (e) {
+      logger.e("Error retrieving user data", error: e);
       return null;
     }
   }

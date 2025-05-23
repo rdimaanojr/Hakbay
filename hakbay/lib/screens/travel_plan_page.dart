@@ -64,7 +64,7 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
   Widget build(BuildContext context) {
     if (user == null) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: CircularProgressIndicator(color: Colors.white,)),
       );
     }
 
@@ -81,12 +81,18 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
           title: const Text("My Travels"),
           actions: [
             IconButton(
+
               // Scan QR logic
               icon: const Icon(Icons.qr_code_scanner),
               tooltip: 'Scan QR Code',
               onPressed: () async {
                 final scannedPlanId = await context.push('/qr-scanner');
-                if (scannedPlanId == null || scannedPlanId is! String) return;
+                if (scannedPlanId == null || scannedPlanId is! String) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Invalid QR Code.")),
+                  );
+                  return;
+                }
                 
                 final sharedTravel = await context.read<TravelPlanProvider>().fetchTravelById(scannedPlanId);
 
@@ -96,12 +102,20 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
                   );
                   return;
                 }
+
                 // Add to shared travel plans
                 final userId = context.read<UserAuthProvider>().getCurrentUserUID();
 
                 if(sharedTravel.sharedWith.contains(userId)) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Already added travel plan!")),
+                  );
+                  return;
+                }
+
+                if(userId == sharedTravel.uid) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("You cannot share with yourself.")),
                   );
                   return;
                 }

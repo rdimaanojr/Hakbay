@@ -40,12 +40,19 @@ class TravelPlanDetails extends StatefulWidget {
 
 class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   late TravelPlan travelPlan;
+<<<<<<< HEAD
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+=======
+  AppUser? owner;
+  bool isLoading = true;
+  // late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+>>>>>>> 3276602 (feat: Sharing Travel Plan by username implemented)
 
   @override
   void initState() {
     super.initState();
     travelPlan = widget.travel;
+    fetchOwner();
     context.read<TravelPlanProvider>().fetchItineraries(travelPlan.planId!);
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -68,10 +75,18 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
 >>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
 =======
     context.read<UserProvider>().fetchSharedUsers(travelPlan.sharedWith);
-
     // initializeNotifications();
     // tz.initializeTimeZones();
 >>>>>>> 1145b1d (chore: shared users feature from last commmit)
+  }
+
+  void fetchOwner() async {
+    final user = await context.read<UserProvider>().getUserbyUid(travelPlan.uid!);
+    setState(() {
+      owner = user;
+      isLoading = false;
+    });
+
   }
 
   String formatDateRange(DateTimeRange range) {
@@ -405,6 +420,12 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
 
   @override
   Widget build(BuildContext context) {
+    if(isLoading){
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator(color: Colors.white,),),
+      );
+    }
+
     final currentUserUid = context.read<UserAuthProvider>().getCurrentUserUID();
     var isOwner = false;
 
@@ -415,7 +436,18 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(travelPlan.name),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(travelPlan.name),
+            Text(
+              '@${owner!.username}',
+              style: TextStyle(fontSize: 12, color: Colors.white70),
+            )
+
+          ],
+        ),
+        
         actions: [
           if(!isOwner)
             IconButton(
@@ -433,7 +465,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                   ),
-                  builder: (context) => ShareQrCode(planId: travelPlan.planId!),
+                  builder: (context) => ShareQrCode(travelPlan: travelPlan),
                 );
               },
             ),
