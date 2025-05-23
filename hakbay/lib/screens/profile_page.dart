@@ -342,56 +342,84 @@ class _ProfileState extends State<ProfilePage> {
   }
 
   Widget _buildInterestsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Interests",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 8),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    color: const Color.fromARGB(255, 102, 207, 120).withOpacity(0.1),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Interests",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: user!.interests.map((interest) => Chip(
-            label: Text(interest),
-            backgroundColor: const Color.fromARGB(255, 22, 85, 55).withOpacity(0.5),
-            labelStyle: const TextStyle(color: Color(0xFF101F1B)),
-          )).toList(),
-        ),
-      ],
-    );
-  }
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: user!.interests.map((interest) => Chip(
+              label: Text(
+                interest,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: const Color.fromARGB(255, 22, 85, 55).withOpacity(0.5),
+            )).toList(),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
-  Widget _buildTravelStylesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Travel Styles",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+Widget _buildTravelStylesSection() {
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 8),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    color: const Color.fromARGB(255, 102, 207, 120).withOpacity(0.1),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Travel Styles",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: user!.travelStyles.map((style) => Chip(
-            label: Text(style),
-            backgroundColor: const Color.fromARGB(255, 22, 85, 55).withOpacity(0.5),
-            labelStyle: const TextStyle(color: Color(0xFF101F1B)),
-          )).toList(),
-        ),
-      ],
-    );
-  }
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: user!.travelStyles.map((style) => Chip(
+              label: Text(
+                style,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              backgroundColor: const Color.fromARGB(255, 22, 85, 55).withOpacity(0.5),
+            )).toList(),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -469,7 +497,7 @@ class _ProfileState extends State<ProfilePage> {
                   );
                   if (confirmed == true) {
                     await context.read<UserAuthProvider>().signOut();
-                    if (mounted) context.go('/');
+                    if (mounted) context.go('/login');
                   }
                 },
                 child: const Text(
