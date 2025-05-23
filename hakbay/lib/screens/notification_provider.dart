@@ -1,5 +1,6 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,6 +20,9 @@ class NotificationProvider {
   }
 
   Future<bool> _isAndroid13OrHigher() async {
+    if (kIsWeb) {
+      return false; // Web platform doesn't support Android version checks
+    }
     try {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       return androidInfo.version.sdkInt >= 33;
