@@ -10,9 +10,13 @@ import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import 'package:hakbay/screens/notification_provider.dart';
 <<<<<<< HEAD
 =======
+=======
+// import 'package:hakbay/screens/notification_provider.dart';
+>>>>>>> 1145b1d (chore: shared users feature from last commmit)
 import 'package:hakbay/providers/user_provider.dart';
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
 =======
@@ -44,6 +48,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     context.read<TravelPlanProvider>().fetchItineraries(travelPlan.planId!);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     // initializeNotifications();
     // tz.initializeTimeZones();
@@ -60,6 +65,12 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     // initializeNotifications();
     // tz.initializeTimeZones();
 >>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
+=======
+    context.read<UserProvider>().fetchSharedUsers(travelPlan.sharedWith);
+
+    // initializeNotifications();
+    // tz.initializeTimeZones();
+>>>>>>> 1145b1d (chore: shared users feature from last commmit)
   }
 
   String formatDateRange(DateTimeRange range) {
@@ -94,12 +105,17 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   //     tz.local,
   //   );
     
+<<<<<<< HEAD
   //   // Schedule notification 1 hour before the event
 <<<<<<< HEAD
   //   final notificationTime = scheduledDate.subtract(const Duration(hours: 23));
 =======
   //   final notificationTime = scheduledDate.subtract(const Duration(hours: 1));
 >>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
+=======
+    // Schedule notification 1 hour before the event
+    // final notificationTime = scheduledDate.subtract(const Duration(hours: 1));
+>>>>>>> 1145b1d (chore: shared users feature from last commmit)
     
   //   await flutterLocalNotificationsPlugin.zonedSchedule(
   //     item.hashCode, // Unique ID for the notification
@@ -129,6 +145,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       
   //   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   // }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
   // Future<void> scheduleTravelPlanNotification() async {
@@ -162,6 +179,8 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   // }
 =======
 >>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
+=======
+>>>>>>> 1145b1d (chore: shared users feature from last commmit)
 
   void menuOptionSelected(String choice) async {
     if (choice == 'Edit') {
@@ -482,12 +501,90 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 ),
                 SizedBox(height: 24),
               ],
+<<<<<<< HEAD
               ElevatedButton.icon(
                 icon: Icon(Icons.notifications_active_outlined),
                 onPressed: () {
                   NotificationProvider().showNotification(title: "Travel Plan", body: "Upcoming in 3 days", payload: "simple");
                 },
                 label: (Text("Sample notif")),
+=======
+
+              // Shared With Users Section (If there are any)
+              StreamBuilder<QuerySnapshot>(
+                stream: sharedUserStream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator(color: Colors.white,));
+                  } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return SizedBox();
+                  }
+
+                  final users = snapshot.data!.docs.map((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    return AppUser.fromJson(data);
+                  }).toList();
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Shared With",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                      SizedBox(height: 8),
+                      SizedBox(
+                        height: 80,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: users.length,
+                          separatorBuilder: (context, index) => SizedBox(width: 16),
+                          itemBuilder: (context, index) {
+                            final user = users[index];
+
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onLongPress: isOwner
+                                    ? () => removeUser(context, user.uid!)
+                                    : null,
+                                  child: Column(children: [
+                                    CircleAvatar(
+                                      radius: 24,
+                                      backgroundColor: Colors.grey[800],
+                                      backgroundImage: user.profilePic != null
+                                          ? MemoryImage(base64Decode(user.profilePic!))
+                                          : null,
+                                      child: user.profilePic == null
+                                          ? const Icon(Icons.person, color: Colors.white)
+                                          : null,
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      user.username,
+                                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ],)
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(height: 24),
+                    ],
+                  );
+                },
+              ),
+
+              // Itinerary Section
+              Text(
+                "Itinerary",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+>>>>>>> 1145b1d (chore: shared users feature from last commmit)
               ),
 
               // Shared With Users Section (If there are any)
