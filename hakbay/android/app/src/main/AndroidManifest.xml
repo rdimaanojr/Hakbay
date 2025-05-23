@@ -4,9 +4,14 @@
 <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 <<<<<<< HEAD
+<<<<<<< HEAD
 <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 =======
+=======
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+>>>>>>> 589da18 (feat: Google Maps Location feature implemented)
 <!-- for below android 13-->
 <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -15,13 +20,20 @@
 <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+<<<<<<< HEAD
 
 >>>>>>> d3f43ad (feat: Downloading QR implemented)
+=======
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+>>>>>>> 589da18 (feat: Google Maps Location feature implemented)
     <application
         android:requestLegacyExternalStorage="true"
         android:label="hakbay"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCSkKaEZZDUQkfWIMh_fdTTgtV5eflwwFA"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

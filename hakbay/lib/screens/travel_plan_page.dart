@@ -216,7 +216,7 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              const Icon(Icons.calendar_today,
+                              const Icon(Icons.date_range,
                                   size: 16, color: Colors.white70),
                               const SizedBox(width: 4),
                               Expanded(

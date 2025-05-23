@@ -3,6 +3,7 @@ import 'package:hakbay/commons/bottom_navbar.dart';
 import 'package:hakbay/firebase_options.dart';
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
+import 'package:hakbay/screens/location_page.dart';
 import 'package:hakbay/screens/notification_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
@@ -139,6 +140,10 @@ final GoRouter _router = GoRouter(
       },
 >>>>>>> f7a23c0 (feat: added edit and delete itinerary method)
     ),
+    GoRoute(
+      path: '/location_picker',
+      builder: (context, state) => LocationPickerPage(),
+    ),
   ],
 );
 
@@ -172,6 +177,11 @@ class RootWidget extends StatelessWidget {
           ),
           labelStyle: TextStyle(color: Colors.white70),
           hintStyle: TextStyle(color: Colors.white60),
+        ),
+        textTheme: TextTheme(
+          bodySmall: TextStyle(color: Colors.white),
+          displaySmall: TextStyle(color: Colors.white),
+          labelSmall: TextStyle(color: Colors.white)
         ),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: Color(0xFF1A2E28),

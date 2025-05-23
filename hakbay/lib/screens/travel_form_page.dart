@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
+import 'package:place_picker_google/place_picker_google.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -24,6 +25,9 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
   final TextEditingController detailsController = TextEditingController();
   DateTimeRange? travelDate;
 
+  double? selectedLat;
+  double? selectedLng;
+
   // Something to hold our new travelplan for the provider
   late TravelPlan newTravelPlan;
 
@@ -40,11 +44,11 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
 
       // Create an instance of a travel plan
       newTravelPlan = TravelPlan(
-        name: nameController.text,
+        name: nameController.text.trim(),
         travelDate: travelDate!,
-        location: locationController.text,
+        location: locationController.text.trim(),
         details: detailsController.text,
-        uid: userUID
+        uid: userUID,
       );
       
       // I forgot to add it in the database lmaoo (spent 6 minutes debugging)
@@ -105,7 +109,10 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
               Padding(
                 padding: EdgeInsets.only(bottom: 16),
                 child: TextFormField(
-                  decoration: InputDecoration(labelText: "Trip Name"),
+                  decoration: InputDecoration(
+                    labelText: "Trip Name",
+                    suffixIcon: Icon(Icons.flight, color: Colors.white70)
+                  ),
                   style: TextStyle(color: Colors.white),
                   controller: nameController,
                   validator: (value) {
@@ -115,21 +122,38 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
                     return null;
                   },),
               ),
+
               // Location field
               Padding(
                 padding: EdgeInsets.only(bottom: 16),
-                child: TextFormField(
-                decoration: InputDecoration(labelText: "Location",),
-                  style: TextStyle(color: Colors.white),
-                  controller: locationController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter a location.";
+                child: GestureDetector(
+                  onTap: () async {
+                    final result = await context.push<LocationResult>('/location_picker');
+                    
+                    if(result != null){
+                      locationController.text = "${result.administrativeAreaLevel1?.longName}, ${result.country!.longName}";
+                      
                     }
-                    return null;
                   },
-                ),
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: "Location", 
+                        suffixIcon: Icon(Icons.location_on, color: Colors.white70)
+                      ),
+                      style: TextStyle(color: Colors.white),
+                      controller: locationController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter a location.";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                )
               ),
+
               // Travel Date Range field
               Padding(
                 padding: EdgeInsets.only(bottom: 16),
@@ -169,7 +193,8 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
                     child: TextFormField(
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: "Date"
+                        labelText: "Date",
+                        suffixIcon: Icon(Icons.date_range, color: Colors.white70)
                       ),
                       controller: TextEditingController(
                         text: travelDate != null ? formatDateRange(travelDate!) : '',

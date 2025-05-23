@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:intl/intl.dart';
+import 'package:place_picker_google/place_picker_google.dart';
 import 'package:provider/provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 
@@ -122,18 +123,41 @@ class _EditTravelPlanPageState extends State<EditTravelPlanPage> {
               TextFormField(
                 style: TextStyle(color: Colors.white),
                 controller: nameController,
-                decoration: InputDecoration(labelText: "Name"),
+                decoration: InputDecoration(
+                  labelText: "Name",
+                  suffixIcon: Icon(Icons.flight, color: Colors.white70)
+                ),
                 validator: (value) => value == null || value.trim().isEmpty ? "Please enter a name" : null,
               ),
               SizedBox(height: 12),
 
               // Location
-              TextFormField(
-                style: TextStyle(color: Colors.white),
-                controller: locationController,
-                decoration: InputDecoration(labelText: "Location"),
-                validator: (value) => value == null || value.trim().isEmpty ? "Please enter a location" : null,
+              GestureDetector(
+                onTap: () async {
+                  final result = await context.push<LocationResult>('/location_picker');
+                  
+                  if(result != null){
+                    locationController.text = "${result.administrativeAreaLevel1?.longName}, ${result.country!.longName}";
+                  }
+                },
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Location",
+                      suffixIcon: Icon(Icons.location_on, color: Colors.white70)
+                    ),
+                    style: TextStyle(color: Colors.white),
+                    controller: locationController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter a location.";
+                      }
+                      return null;
+                    },
+                  ),
+                )
               ),
+
               SizedBox(height: 12),
 
               // Date Range Picker
@@ -142,17 +166,12 @@ class _EditTravelPlanPageState extends State<EditTravelPlanPage> {
                 child: InputDecorator(
                   decoration: InputDecoration(
                     labelText: "Travel Dates",
+                    suffixIcon: Icon(Icons.date_range, color: Colors.white70),
                     labelStyle: TextStyle(color: Colors.white70),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        formatDateRange(dateRange),
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                      Icon(Icons.calendar_today, color: Colors.white70),
-                    ],
+                  child: Text(
+                    formatDateRange(dateRange),
+                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),

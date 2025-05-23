@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hakbay/api/firebase_travel_api.dart';
 import 'package:hakbay/models/travel_plan_model.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:place_picker_google/place_picker_google.dart';
 import 'package:provider/provider.dart';
 
 class AddItineraryPage extends StatefulWidget {
@@ -122,7 +124,8 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
                     child: TextFormField(
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: "Itinerary Date"
+                        labelText: "Itinerary Date",
+                        suffixIcon: Icon(Icons.date_range, color: Colors.white70) 
                       ),
                       controller: TextEditingController(
                         text: formatDate(_selectedDate)
@@ -135,21 +138,46 @@ class _AddItineraryPageState extends State<AddItineraryPage> {
                 controller: _nameController,
                 style: const TextStyle(color: Colors.white),
                 decoration: const InputDecoration(
-                  labelText: 'Activity Name*',
+                  labelText: 'Activity Name',
+                  suffixIcon: Icon(Icons.map, color: Colors.white70)
                 ),
                 validator: (value) => value?.isEmpty ?? true ? 'Required field' : null,
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _locationController,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Location',
-                  suffixIcon: Icon(Icons.location_on, color: Colors.white70),
-                ),
-                onTap: () {
-                  // TODO: Location Picker
+              GestureDetector(
+                onTap: () async {
+
+                  final result = await context.push<LocationResult>('/location_picker');
+
+                  if (result != null) {
+                    final locality = result.locality?.longName;
+                    final sublocality2 = result.subLocalityLevel2?.longName;
+                    final sublocality = result.subLocalityLevel1?.longName;
+                    final adminArea2 = result.subLocalityLevel2?.longName;
+                    final adminArea = result.administrativeAreaLevel1?.shortName;
+
+                    // Prefer locality > sublocality > admin area
+                    final resolvedLocation = sublocality2 ?? sublocality ?? locality ?? adminArea2 ?? '';
+
+                    _locationController.text = "$resolvedLocation, $adminArea";
+                  }
                 },
+                child: AbsorbPointer(
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      labelText: "Location",
+                      suffixIcon: Icon(Icons.location_on, color: Colors.white70)
+                    ),
+                    style: TextStyle(color: Colors.white),
+                    controller: _locationController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Please enter a location.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               _buildTimePicker(

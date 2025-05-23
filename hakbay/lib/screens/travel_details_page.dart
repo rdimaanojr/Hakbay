@@ -485,6 +485,21 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Travel Plan Name
+              Row(
+                children: [
+                  Icon(Icons.flight, color: Colors.white70),
+                  SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      travelPlan.name,
+                      style: TextStyle(fontSize: 16, color: Colors.white70),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+
               // Destination
               Row(
                 children: [
@@ -503,8 +518,13 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               // Dates
               Row(
                 children: [
+<<<<<<< HEAD
                   const Icon(Icons.calendar_today, color: Colors.white70),
                   const SizedBox(width: 8),
+=======
+                  Icon(Icons.date_range, color: Colors.white70),
+                  SizedBox(width: 8),
+>>>>>>> 589da18 (feat: Google Maps Location feature implemented)
                   Text(
                     formatDateRange(travelPlan.travelDate),
                     style: const TextStyle(fontSize: 16, color: Colors.white70),
@@ -612,11 +632,25 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               ),
 
               // Itinerary Section
+<<<<<<< HEAD
               Text(
                 "Itinerary",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
 >>>>>>> 1145b1d (chore: shared users feature from last commmit)
               ),
+=======
+              Row(
+                  children: [
+                    Icon(Icons.map, color: Colors.white70),
+                    SizedBox(width: 8),
+                    Text(
+                      "Itinerary",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              SizedBox(height: 12),
+>>>>>>> 589da18 (feat: Google Maps Location feature implemented)
 
               // Shared With Users Section (If there are any)
               StreamBuilder<QuerySnapshot>(

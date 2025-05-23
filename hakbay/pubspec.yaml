@@ -52,7 +52,12 @@ dependencies:
 <<<<<<< HEAD
   timezone: ^0.10.1
   rxdart: ^0.28.0
+<<<<<<< HEAD
   device_info_plus: ^11.4.0
+=======
+  place_picker_google: ^0.0.16
+  google_maps_flutter: ^2.12.2
+>>>>>>> 589da18 (feat: Google Maps Location feature implemented)
  
 =======
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
