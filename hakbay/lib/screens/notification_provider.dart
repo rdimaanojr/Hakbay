@@ -1,120 +1,180 @@
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter/foundation.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationProvider {
   final FlutterLocalNotificationsPlugin notificationPlugin =
       FlutterLocalNotificationsPlugin();
   bool _isInitialized = false;
+  static final onClickNotification = BehaviorSubject<String>();
 
-  bool get isInitialized => _isInitialized;
+  // on tap notif
+  static void onNotificationTap(NotificationResponse notificationResponse){
+    onClickNotification.add(notificationResponse.payload!);
+  }
 
-  /// Requests notification permissions (only needed for iOS/macOS).
-  Future<bool> requestPermissions() async {
+  Future<bool> _isAndroid13OrHigher() async {
     try {
-      if (kIsWeb) return false; // Not supported on web
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      return androidInfo.version.sdkInt >= 33;
+    } on PlatformException {
+      return false;
+    }
+  }
 
-      // iOS
-      final bool? iosResult = await notificationPlugin
+  Future<bool> _requestPermissions() async {
+    try {
+      if (await _isAndroid13OrHigher()) {
+        // Request notification permission for Android 13+
+        final status = await Permission.notification.request();
+        if (!status.isGranted) {
+          debugPrint('Notification permission denied on Android 13+');
+          return false;
+        }
+      }
+
+      // For iOS/macOS - request permissions
+      final bool? result = await notificationPlugin
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(alert: true, badge: true, sound: true);
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
+          await notificationPlugin
+              .resolvePlatformSpecificImplementation<
+                  MacOSFlutterLocalNotificationsPlugin>()
+              ?.requestPermissions(
+                alert: true,
+                badge: true,
+                sound: true,
+              );
 
-      // macOS
-      final bool? macosResult = await notificationPlugin
-          .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(alert: true, badge: true, sound: true);
-
-      return (iosResult ?? false) || (macosResult ?? false);
-    } catch (e) {
-      debugPrint("Failed to request notification permissions: $e");
+      return result ?? false;
+    } on PlatformException catch (e) {
+      debugPrint('Error requesting notification permissions: $e');
       return false;
     }
   }
 
-  /// Initializes notifications with platform-specific settings.
-  Future<bool> initNotification() async {
-    if (_isInitialized) return true;
+  Future<void> initialize() async {
+    if (_isInitialized) return;
 
-    try {
-      const AndroidInitializationSettings androidSettings =
-          AndroidInitializationSettings('@mipmap/ic_launcher');
-
-      const DarwinInitializationSettings darwinSettings =
-          DarwinInitializationSettings(
-        requestAlertPermission: false, // Manually handled via requestPermissions()
-        requestBadgePermission: false,
-        requestSoundPermission: false,
-      );
-
-      const InitializationSettings initializationSettings =
-          InitializationSettings(
-        android: androidSettings,
-        iOS: darwinSettings,
-        macOS: darwinSettings,
-      );
-
-      await notificationPlugin.initialize(
-        initializationSettings,
-        onDidReceiveNotificationResponse: (_) {},
-        onDidReceiveBackgroundNotificationResponse: (_) {},
-      );
-
-      _isInitialized = true;
-      return true;
-    } catch (e) {
-      debugPrint("Failed to initialize notifications: $e");
-      return false;
+    final hasPermission = await _requestPermissions();
+    if (!hasPermission) {
+      debugPrint('Notification permissions not granted');
+      return;
     }
+
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
+      requestAlertPermission: false, // We handle this manually
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsDarwin,
+      macOS: initializationSettingsDarwin,
+    );
+
+    await notificationPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: onNotificationTap,
+      onDidReceiveBackgroundNotificationResponse: onNotificationTap
+    );
+
+    _isInitialized = true;
   }
 
-  /// Shows a notification with customizable details.
-  Future<void> showNotification({
+  String formatRemainingTime(Duration time) {
+    if (time.inDays > 0) {
+      return '${time.inDays} ${time.inDays == 1 ? 'day' : 'days'}';
+    } else if (time.inHours > 0) {
+      return '${time.inHours} ${time.inHours == 1 ? 'hour' : 'hours'}';
+    } else if (time.inMinutes > 0) {
+      return '${time.inMinutes} ${time.inMinutes == 1 ? 'minute' : 'minutes'}';
+    }
+    return 'less than a minute';
+  }
+
+  Future<void> showNotifications({
     required String title,
     required String body,
-    String? payload,
-    String channelId = 'default_channel',
-    String channelName = 'Default Channel',
-    String channelDescription = 'Default Notification Channel',
+    required String payload,
+    required travelDate,
+    required List<Duration> reminders
   }) async {
-    if (!_isInitialized) {
-      final bool initialized = await initNotification();
-      if (!initialized) throw Exception("Notifications not initialized");
+    tz.initializeTimeZones();
+    final localTime = tz.local;
+    
+    for (final reminder in reminders) {
+      final notifTime = travelDate.subtract(reminder);
+      if (notifTime.isAfter(DateTime.now())) {
+        final remainingTime = travelDate.difference(DateTime.now());
+        final remainingTimeMessage = formatRemainingTime(remainingTime); 
+
+        await scheduleNotif(
+          title: title,
+          body: 'Your trip to $body $remainingTimeMessage!',
+          payload: payload,
+          scheduledDate: tz.TZDateTime.from(notifTime, localTime),        );
+      }
     }
+  }
+
+  Future<void> scheduleNotif({
+    required String title,
+    required String body,
+    required String payload,
+    required tz.TZDateTime scheduledDate,
+  }) async {
+    if (!_isInitialized) await initialize();
+
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      'travel_reminders',
+      'Travel Reminders',
+      channelDescription: 'Notifications for upcoming travel plans',
+      importance: Importance.high,
+      priority: Priority.high,
+      showWhen: true,
+      icon: '@mipmap/ic_launcher', // Make sure this icon exists
+    );
+
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+    );
 
     try {
-      const Importance importance = Importance.max;
-      const Priority priority = Priority.high;
-
-      final AndroidNotificationDetails androidDetails =
-          AndroidNotificationDetails(
-        channelId,
-        channelName,
-        channelDescription: channelDescription,
-        importance: importance,
-        priority: priority,
-        ticker: 'ticker',
-      );
-
-      const DarwinNotificationDetails darwinDetails =
-          DarwinNotificationDetails();
-
-      final NotificationDetails platformDetails = NotificationDetails(
-        android: androidDetails,
-        iOS: darwinDetails,
-        macOS: darwinDetails,
-      );
-
-      await notificationPlugin.show(
-        0, // Notification ID
+      await notificationPlugin.zonedSchedule(
+        scheduledDate.millisecondsSinceEpoch ~/ 1000, // Unique ID
         title,
         body,
-        platformDetails,
+        scheduledDate,
+        notificationDetails,
         payload: payload,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       );
     } catch (e) {
-      debugPrint("Failed to show notification: $e");
+      debugPrint('Error scheduling notification: $e');
       rethrow;
     }
   }
+
+  Future<void> cancelTravelNotifications(int travelId) async {
+    await notificationPlugin.cancel(travelId);
+  }
+
 }

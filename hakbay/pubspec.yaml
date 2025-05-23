@@ -51,6 +51,7 @@ dependencies:
 <<<<<<< HEAD
   timezone: ^0.10.1
   rxdart: ^0.28.0
+  device_info_plus: ^11.4.0
  
 =======
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)

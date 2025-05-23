@@ -68,6 +68,7 @@ class TravelPlan {
   // final Location location;
   final String? details;
   final List<String> sharedWith;
+  final List<Duration> reminders;
 
   TravelPlan({
     required this.uid,
@@ -77,6 +78,7 @@ class TravelPlan {
     required this.location,
     this.details,
     this.sharedWith = const [],
+    this.reminders = const [],
   });
 
   static const _undefined = Object();
@@ -90,6 +92,7 @@ class TravelPlan {
     // Location? location,
     Object? details = _undefined,
     Object? itinerary = _undefined,
+    Object? reminders = _undefined,
   }) {
     return TravelPlan(
       uid: uid ?? this.uid,
@@ -98,6 +101,7 @@ class TravelPlan {
       travelDate: travelDate ?? this.travelDate,
       location: location ?? this.location,
       details: details == _undefined ? this.details : details as String?,
+      reminders: reminders == _undefined ? this.reminders : reminders as List<Duration>,
     );
   }
 
@@ -113,7 +117,10 @@ class TravelPlan {
       location: json['location'],
       // location: Location.fromJson(json['location']),
       details: json['details'],
-      sharedWith: List<String>.from(json['sharedWith'])
+      sharedWith: List<String>.from(json['sharedWith']),
+      reminders: (json['reminders'] as List<dynamic>?)?.map((e) => 
+        Duration(seconds: e as int)
+      ).toList() ?? [],
     );
   }
 
@@ -127,7 +134,8 @@ class TravelPlan {
       'location': location,
       // 'location': location.toJson(),
       'details': details,
-      'sharedWith': sharedWith
+      'sharedWith': sharedWith,
+      'reminders': reminders.map((e) => e.inSeconds).toList(),
     };
   }
 }

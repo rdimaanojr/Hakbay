@@ -6,6 +6,7 @@ import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 import 'package:hakbay/providers/user_provider.dart';
+import 'package:hakbay/screens/notification_provider.dart';
 import 'package:hakbay/utils/logger.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,12 @@ class _TravelPlanPageState extends State<TravelPlanPage> {
     super.initState();
     uid = context.read<UserAuthProvider>().getCurrentUserUID() ?? '';
     _loadUserData();
+    listenToNotif();
+  }
+
+  listenToNotif() {
+    print("Listening to notif");
+    NotificationProvider.onClickNotification.listen((payload) {});
   }
 
   Future<void> _loadUserData() async {

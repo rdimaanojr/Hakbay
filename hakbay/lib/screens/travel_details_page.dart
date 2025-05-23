@@ -7,21 +7,22 @@ import 'package:go_router/go_router.dart';
 import 'package:hakbay/api/firebase_travel_api.dart';
 >>>>>>> 1766f4a (feat: added itinerary form)
 import 'package:hakbay/models/travel_plan_model.dart';
-import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 <<<<<<< HEAD
 import 'package:hakbay/screens/notification_provider.dart';
+<<<<<<< HEAD
 =======
 import 'package:hakbay/providers/user_provider.dart';
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
+=======
+>>>>>>> 68c877a (feat: added scheduled notification)
 import 'package:hakbay/screens/share_qr_code.dart';
 import 'package:hakbay/screens/travel_itinerary.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:timezone/data/latest.dart' as tz;
-// import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 class TravelPlanDetails extends StatefulWidget {
   final TravelPlan travel;
@@ -34,7 +35,7 @@ class TravelPlanDetails extends StatefulWidget {
 
 class _TravelPlanDetailsState extends State<TravelPlanDetails> {
   late TravelPlan travelPlan;
-  // late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
@@ -42,12 +43,16 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     travelPlan = widget.travel;
     context.read<TravelPlanProvider>().fetchItineraries(travelPlan.planId!);
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     // initializeNotifications();
     // tz.initializeTimeZones();
 =======
     context.read<UserProvider>().fetchSharedUsers(travelPlan.sharedWith);
 <<<<<<< HEAD
+=======
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+>>>>>>> 68c877a (feat: added scheduled notification)
     initializeNotifications();
     tz.initializeTimeZones();
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
@@ -63,18 +68,11 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     return "$start - $end";
   }
 
-  // void checkForUpcomingItineraries(List<ItineraryItem> items) {
-  //   final now = DateTime.now();
-    
-  //   for (final item in items) {
-  //     // Check if the itinerary is within the next 24 hours
-  //     if (item.date.isAfter(now.subtract(const Duration(days: 1))) && 
-  //         item.date.isBefore(now.add(const Duration(days: 1)))) {
-  //       scheduleNotification(item);
-  //     }
-  //   }
-  // }
+  Future<void> initializeNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid = 
+      AndroidInitializationSettings('@mipmap/ic_launcher');
 
+<<<<<<< HEAD
   // Future<void> scheduleNotification(ItineraryItem item) async {
   //   final androidPlatformChannelSpecifics = AndroidNotificationDetails(
   //     'itinerary_channel',
@@ -118,9 +116,16 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     
   //   const AndroidInitializationSettings initializationSettingsAndroid = 
   //     AndroidInitializationSettings('app_icon');
+=======
+    const DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings();
+>>>>>>> 68c877a (feat: added scheduled notification)
       
-  //   final InitializationSettings initializationSettings = 
-  //     InitializationSettings(android: initializationSettingsAndroid);
+    final InitializationSettings initializationSettings = 
+      InitializationSettings(
+        android: initializationSettingsAndroid,
+        iOS: initializationSettingsIOS,
+      );
       
   //   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   // }
@@ -168,11 +173,13 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       final shouldDelete = await showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Delete Travel Plan'),
-          content: Text('Are you sure you want to delete this travel plan?'),
+          title: const Text('Delete Travel Plan'),
+          content: const Text('Are you sure you want to delete this travel plan?'),
           actions: [
-            TextButton(onPressed: () => context.pop(false), child: Text('Cancel')),
-            TextButton(onPressed: () => context.pop(true), child: Text('Delete', style: TextStyle(color: Colors.red)),
+            TextButton(onPressed: () => context.pop(false), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => context.pop(true), 
+              child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
           ],
         ),
@@ -180,10 +187,12 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
 
       if (shouldDelete == true) {
         await context.read<TravelPlanProvider>().deleteTravel(travelPlan.planId!);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Travel Plan Deleted!')),
-        );
-        context.pop();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Travel Plan Deleted!')),
+          );
+          context.pop();
+        }
       }
     }
   }
@@ -192,11 +201,13 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     final confirmed = await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Remove User'),
-        content: Text('Are you sure you remove this user from the travel plan?'),
+        title: const Text('Remove User'),
+        content: const Text('Are you sure you remove this user from the travel plan?'),
         actions: [
           TextButton(onPressed: () => context.pop(false), child: const Text('Cancel')),
-          TextButton(onPressed: () => context.pop(true), child: const Text('Remove', style: TextStyle(color: Colors.red)),
+          TextButton(
+            onPressed: () => context.pop(true), 
+            child: const Text('Remove', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -205,9 +216,129 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     if (confirmed == true) {
       await context.read<TravelPlanProvider>().removeSharedUser(travelPlan.planId!, uid);
 
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User removed from shared list.')),
+        );
+      }
+    }
+  }
+
+  Future<void> scheduleNotifications() async {
+    final notificationProvider = NotificationProvider();
+    final reminders = [
+      const Duration(days: 30),    // 1 month before
+      const Duration(days: 7),     // 1 week before
+      const Duration(days: 3),     // 3 days before
+      const Duration(days: 1),
+      const Duration(hours: 2, minutes:45), // 3 minutes before
+      const Duration(hours: 1), // 1 hour before
+    ];
+
+    await notificationProvider.showNotifications(
+      title: 'Upcoming Travel: ${travelPlan.name}',
+      body: '${travelPlan.location} is coming up in',
+      payload: jsonEncode(travelPlan.toJson()),
+      travelDate: travelPlan.travelDate.start,
+      reminders: reminders,
+    );
+
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User removed from shared list.')),
+        const SnackBar(content: Text('Notifications scheduled!')),
       );
+    }
+  }
+
+  Future<void> showReminderOptions() async {
+    final notificationProvider = NotificationProvider();
+    final reminders = {
+      '1 Month Before': const Duration(days: 30),
+      '1 Week Before': const Duration(days: 7),
+      '3 Days Before': const Duration(days: 3),
+      '1 Day Before': const Duration(days: 1),
+      '2 hrs Before': const Duration(hours: 2, minutes:45),
+      '1 hour Before': const Duration(hours: 1),
+    };
+
+    final currentlySelected = {
+      for (final entry in reminders.entries)
+        if (travelPlan.reminders.contains(entry.value)) entry.key: entry.value
+    };
+
+
+    final tempSelectedReminders = Map<String, Duration>.from(currentlySelected);
+
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Reminders'),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            return SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: reminders.entries.map((entry) {
+                  return CheckboxListTile(
+                    title: Text(entry.key),
+                    value: tempSelectedReminders.containsKey(entry.key),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == true) {
+                          tempSelectedReminders[entry.key] = entry.value;
+                        } else {
+                          tempSelectedReminders.remove(entry.key);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldSave == true) {
+      final newReminders = tempSelectedReminders.values.toList();
+      final updatedTravel = travelPlan.copyWith(reminders: newReminders);
+
+      await context.read<TravelPlanProvider>().editTravel(
+        travelPlan.planId!,
+        updatedTravel,
+      );
+
+      setState(() {
+        travelPlan = updatedTravel;
+      });
+
+      if (newReminders.isNotEmpty) {
+        await notificationProvider.showNotifications(
+          title: 'Upcoming Travel: ${travelPlan.name}',
+          body: '${travelPlan.location} is coming up in',
+          payload: jsonEncode(travelPlan.toJson()),
+          travelDate: travelPlan.travelDate.start,
+          reminders: newReminders,
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Reminders updated!')),
+          );
+        }
+      }
     }
   }
 
@@ -216,10 +347,9 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     final currentUserUid = context.read<UserAuthProvider>().getCurrentUserUID();
     var isOwner = false;
 
-    if(currentUserUid == travelPlan.uid) isOwner = true;
+    if (currentUserUid == travelPlan.uid) isOwner = true;
 
     Stream<QuerySnapshot> itineraryStream = context.read<TravelPlanProvider>().getItineraryItems;
-    Stream<QuerySnapshot> sharedUserStream = context.read<UserProvider>().getSharedUsers;
 
     return Scaffold(
       appBar: AppBar(
@@ -227,7 +357,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
         actions: [
           if (isOwner)
             IconButton(
-              icon: Icon(Icons.share),
+              icon: const Icon(Icons.share),
               onPressed: () {
                 showModalBottomSheet(
                   backgroundColor: Theme.of(context).cardColor,
@@ -251,26 +381,38 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
         ],
       ),
       floatingActionButton: isOwner
-        ? FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MultiProvider(
-                  providers: [
-                    Provider<FirebaseTravelApi>.value(value: FirebaseTravelApi()),
-                    ChangeNotifierProvider<TravelPlanProvider>.value(
-                      value: Provider.of<TravelPlanProvider>(context, listen: false),
-                    ),
-                  ],
-                  child: AddItineraryPage(travelPlan: travelPlan),
+          ? Column (
+              mainAxisSize:  MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  onPressed: showReminderOptions,
+                  heroTag: 'notifications',
+                  tooltip: 'Schedule Notifications',
+                  child: const Icon(Icons.notifications),
                 ),
-              ),
-            );
-          },
-          tooltip: 'Add Itinerary',
-          child: const Icon(Icons.add),
-        ) : null,
+                SizedBox(height: 5),
+                FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MultiProvider(
+                          providers: [
+                            Provider<FirebaseTravelApi>.value(value: FirebaseTravelApi()),
+                            ChangeNotifierProvider<TravelPlanProvider>.value(
+                              value: Provider.of<TravelPlanProvider>(context, listen: false),
+                            ),
+                          ],
+                          child: AddItineraryPage(travelPlan: travelPlan),
+                        ),
+                      ),
+                    );
+                  },
+                  tooltip: 'Add Itinerary',
+                  child: const Icon(Icons.add),
+                )
+              ],
+          ) : null,
       body: ListView(
         padding: const EdgeInsets.all(12),
         children: [
@@ -280,44 +422,44 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               // Destination
               Row(
                 children: [
-                  Icon(Icons.location_on, color: Colors.white70),
-                  SizedBox(width: 8),
+                  const Icon(Icons.location_on, color: Colors.white70),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       travelPlan.location,
-                      style: TextStyle(fontSize: 16, color: Colors.white70),
+                      style: const TextStyle(fontSize: 16, color: Colors.white70),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Dates
               Row(
                 children: [
-                  Icon(Icons.calendar_today, color: Colors.white70),
-                  SizedBox(width: 8),
+                  const Icon(Icons.calendar_today, color: Colors.white70),
+                  const SizedBox(width: 8),
                   Text(
                     formatDateRange(travelPlan.travelDate),
-                    style: TextStyle(fontSize: 16, color: Colors.white70),
+                    style: const TextStyle(fontSize: 16, color: Colors.white70),
                   ),
                 ],
               ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
 
               // Details (if there are any)
               if (travelPlan.details != null && travelPlan.details!.isNotEmpty) ...[
                 Row(
                   children: [
-                    Icon(Icons.notes, color: Colors.white70),
-                    SizedBox(width: 8),
-                    Text(
+                    const Icon(Icons.notes, color: Colors.white70),
+                    const SizedBox(width: 8),
+                    const Text(
                       "Details",
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   travelPlan.details!,
                   style: TextStyle(fontSize: 16, color: Colors.white70),
@@ -403,21 +545,21 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
               ),
 
               // Itinerary Section
-              Text(
+              const Text(
                 "Itinerary",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-                StreamBuilder<QuerySnapshot>(
-                  stream: itineraryStream,
-                  builder: (context, snapshot) {
+              StreamBuilder<QuerySnapshot>(
+                stream: itineraryStream,
+                builder: (context, snapshot) {
                   if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
                   } else if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator(color: Colors.white,));
+                    return const Center(child: CircularProgressIndicator(color: Colors.white));
                   } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Padding(
+                    return const Padding(
                       padding: EdgeInsets.all(12),
                       child: Text("No itinerary items yet.", style: TextStyle(color: Colors.white70)),
                     );
@@ -428,26 +570,30 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                     return ItineraryItem.fromJson(data);
                   }).where((item) {
                     // Only show items where the date is within the travel date range
-                    return item.date.isAfter(travelPlan.travelDate.start.subtract(Duration(days: 1))) &&
-                    item.date.isBefore(travelPlan.travelDate.end.add(Duration(days: 1)));
+                    return item.date.isAfter(travelPlan.travelDate.start.subtract(const Duration(days: 1))) &&
+                        item.date.isBefore(travelPlan.travelDate.end.add(const Duration(days: 1)));
                   }).toList()
                     ..sort((a, b) {
-                    final dateCompare = a.date.compareTo(b.date);
-                    if (dateCompare != 0) return dateCompare;
-                    return a.startTime.compareTo(b.startTime);
+                      final dateCompare = a.date.compareTo(b.date);
+                      if (dateCompare != 0) return dateCompare;
+                      return a.startTime.compareTo(b.startTime);
                     });
 
-                    if (items.isEmpty) {
-                      return Padding(
+                  if (items.isEmpty) {
+                    return const Padding(
                       padding: EdgeInsets.all(12),
                       child: Text("No itinerary items within travel dates.", style: TextStyle(color: Colors.white70)),
-                      );
-                    }
+                    );
+                  }
 
-                    // WidgetsBinding.instance.addPostFrameCallback((_) {
-                    //   checkForUpcomingItineraries(items);
-                    // });
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
 
+<<<<<<< HEAD
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -457,6 +603,9 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
 
                         return Card(
 <<<<<<< HEAD
+=======
+                      return Card(
+>>>>>>> 68c877a (feat: added scheduled notification)
                         color: Theme.of(context).cardColor,
                         margin: const EdgeInsets.symmetric(vertical: 6),
                         elevation: 2,
@@ -464,6 +613,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                         child: ListTile(
                           title: Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                           subtitle: Column(
+<<<<<<< HEAD
 <<<<<<< HEAD
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -560,6 +710,57 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
 =======
                           ) : null,
 >>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
+=======
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (item.location != null)
+                                Text("Location: ${item.location}", style: const TextStyle(color: Colors.white70)),
+                              Text("Date: ${DateFormat.yMMMMd().format(item.date)}", style: const TextStyle(color: Colors.white70)),
+                              Text("Start: ${DateFormat.Hm().format(item.startTime)}", style: const TextStyle(color: Colors.white70)),
+                              Text("End: ${DateFormat.Hm().format(item.endTime)}", style: const TextStyle(color: Colors.white70)),
+                            ],
+                          ),
+                          onTap: isOwner 
+                              ? () => context.push('/edit-itinerary', extra: {'item': item, 'travelPlan': travelPlan})
+                              : null,
+                          trailing: isOwner 
+                              ? IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.redAccent),
+                                  tooltip: 'Delete',
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Delete Itinerary Item'),
+                                        content: const Text('Are you sure you want to delete this itinerary item?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(false),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              // Cancel notifications 
+                                              await NotificationProvider().cancelTravelNotifications(travelPlan.planId!.hashCode);
+                                              context.pop(true);
+                                            }, 
+                                            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      await context.read<TravelPlanProvider>().deleteItinerary(item.id!);
+                                      if (mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Itinerary item deleted')),
+                                        );
+                                      }
+                                    }
+                                  },
+                                )
+                              : null,
+>>>>>>> 68c877a (feat: added scheduled notification)
                         ),
                       );
                     },
