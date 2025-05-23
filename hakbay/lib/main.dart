@@ -20,6 +20,7 @@ import 'package:hakbay/screens/signin_page.dart';
 import 'package:hakbay/screens/signup_page.dart';
 import 'package:hakbay/screens/similar_people_page.dart';
 import 'package:hakbay/screens/travel_plan_page.dart';
+import 'package:hakbay/screens/user_profile_page.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:go_router/go_router.dart';
@@ -107,6 +108,13 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: "/init-travel-styles",
       builder: (context, state) => const InitTravelStylesScreen(),
+    ),
+    GoRoute(
+      path: "/user/:uid",
+      builder: (context, state) {
+        final uid = state.pathParameters['uid']!;
+        return UserProfilePage(uid: uid);
+      },
     ),
     GoRoute(
       path: "/add-travel",

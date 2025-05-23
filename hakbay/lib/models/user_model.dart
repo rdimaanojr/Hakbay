@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AppUser {
   final String? uid;
@@ -50,7 +51,6 @@ class AppUser {
     List<String>? incomingFriendRequests,
     Object? profilePic = _undefined,
     bool? isPrivate,
-    String? profilePicUrl,
   }) {
     return AppUser(
       uid: uid == _undefined ? this.uid : uid as String?,
@@ -63,12 +63,9 @@ class AppUser {
       travelStyles: travelStyles ?? this.travelStyles,
       travelPlans: travelPlans ?? this.travelPlans,
       friends: friends ?? this.friends,
-      outgoingFriendRequests:
-          outgoingFriendRequests ?? this.outgoingFriendRequests,
-      incomingFriendRequests:
-          incomingFriendRequests ?? this.incomingFriendRequests,
-      profilePic:
-          profilePic == _undefined ? this.profilePic : profilePic as String?,
+      outgoingFriendRequests: outgoingFriendRequests ?? this.outgoingFriendRequests,
+      incomingFriendRequests: incomingFriendRequests ?? this.incomingFriendRequests,
+      profilePic: profilePic == _undefined ? this.profilePic : profilePic as String?,
       isPrivate: isPrivate ?? this.isPrivate,
     );
   }
@@ -86,12 +83,8 @@ class AppUser {
       travelStyles: List<String>.from(json['travelStyles'] ?? []),
       travelPlans: List<String>.from(json['travelPlans'] ?? []),
       friends: List<String>.from(json['friends'] ?? []),
-      outgoingFriendRequests: List<String>.from(
-        json['outgoingFriendRequests'] ?? [],
-      ),
-      incomingFriendRequests: List<String>.from(
-        json['incomingFriendRequests'] ?? [],
-      ),
+      outgoingFriendRequests: List<String>.from(json['outgoingFriendRequests'] ?? []),
+      incomingFriendRequests: List<String>.from(json['incomingFriendRequests'] ?? []),
       profilePic: json['profilePic'],
       isPrivate: json['isPrivate'] ?? false,
     );
@@ -118,55 +111,6 @@ class AppUser {
       'incomingFriendRequests': incomingFriendRequests,
       'profilePic': profilePic,
       'isPrivate': isPrivate,
-    };
-  }
-}
-
-class FriendRequest {
-  final String? requestId;
-  final String senderId;
-  final String receiverId;
-  final DateTime timestamp;
-
-  FriendRequest({
-    this.requestId,
-    required this.senderId,
-    required this.receiverId,
-    required this.timestamp,
-  });
-
-  static const _undefined = Object();
-
-  FriendRequest copyWith({
-    Object? requestId = _undefined,
-    String? senderId,
-    String? receiverId,
-    String? type,
-    DateTime? timestamp,
-  }) {
-    return FriendRequest(
-      requestId: requestId == _undefined ? this.requestId : requestId as String?,
-      senderId: senderId ?? this.senderId,
-      receiverId: receiverId ?? this.receiverId,
-      timestamp: timestamp ?? this.timestamp,
-    );
-  }
-
-  factory FriendRequest.fromJson(Map<String, dynamic> json) {
-    return FriendRequest(
-      requestId: json['requestId'],
-      senderId: json['senderId'],
-      receiverId: json['receiverId'],
-      timestamp: DateTime.parse(json['timestamp']),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'requestId': requestId,
-      'senderId': senderId,
-      'receiverId': receiverId,
-      'timestamp': timestamp.toIso8601String(),
     };
   }
 }

@@ -4,28 +4,15 @@ import 'package:hakbay/api/firebase_user_api.dart';
 import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/utils/logger.dart';
 
-// Our provider class
 class UserProvider with ChangeNotifier {
-  late FirebaseUserAPI userAPI;
-
-  AppUser? _user;
+  final FirebaseUserAPI userAPI = FirebaseUserAPI();
+  AppUser? user;
   UserState _status = UserState.initial();
-  List<AppUser> _similarUsers = [];
-  bool _loadingSimilarUsers = false;
-  String? _similarUsersError;
 
-  AppUser? get user => _user;
+  AppUser? get userData => user;
   UserState get status => _status;
-  List<AppUser> get similarUsers => _similarUsers;
-  bool get loadingSimilarUsers => _loadingSimilarUsers;
-  String? get similarUsersError => _similarUsersError;
 
   late Stream<QuerySnapshot> _sharedUserStream;
-
-  UserProvider() {
-    userAPI = FirebaseUserAPI();
-  }
-
   Stream<QuerySnapshot> get getSharedUsers => _sharedUserStream;
 
   void fetchSharedUsers(List<String> uids) {
@@ -37,19 +24,56 @@ class UserProvider with ChangeNotifier {
     _status = UserState.loading();
     notifyListeners();
 
-    final data = await userAPI.getUser(uid);
-
-    if (data != null) {
-      data['uid'] = uid;
-      _user = AppUser.fromJson(data);
-      _status = UserState.success();
-      logger.d('User data fetched successfully: ${_user?.toJson()}');
-    } else {
-      _status = UserState.error('User not found');
-      logger.e('User Not Found', error: 'No user data found for uid: $uid');
+    try {
+      final userData = await userAPI.getUser(uid);
+      if (userData != null) {
+        user = AppUser.fromJson(userData);
+        _status = UserState.success();
+        logger.d('User data fetched successfully: ${user?.toJson()}');
+      } else {
+        _status = UserState.error('User not found');
+        logger.e('User Not Found', error: 'No user data found for uid: $uid');
+      }
+    } catch (e) {
+      _status = UserState.error('Error fetching user data');
+      logger.e('Error fetching user data', error: e);
     }
 
     notifyListeners();
+  }
+
+  // Streams for friend system
+  Stream<List<String>> getFriendsStream() {
+    if (user == null) return Stream.value([]);
+    return userAPI.getFriendsStream(user!.uid!);
+  }
+
+  Stream<List<String>> getIncomingFriendRequestsStream() {
+    if (user == null) return Stream.value([]);
+    return userAPI.getIncomingFriendRequestsStream(user!.uid!);
+  }
+
+  Stream<List<String>> getOutgoingFriendRequestsStream() {
+    if (user == null) return Stream.value([]);
+    return userAPI.getOutgoingFriendRequestsStream(user!.uid!);
+  }
+
+  Stream<List<Map<String, dynamic>>> getSimilarUsersStream() {
+    if (user == null) return Stream.value([]);
+    return userAPI.getSimilarUsersStream(user!.uid!);
+  }
+
+  Future<AppUser?> getUserDataById(String uid) async {
+    try {
+      final userData = await userAPI.getUser(uid);
+      if (userData != null) {
+        return AppUser.fromJson(userData);
+      }
+      return null;
+    } catch (e) {
+      logger.e('Error getting user data by ID', error: e);
+      return null;
+    }
   }
 
   // Save a new user and store it in Firestore
@@ -98,33 +122,43 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchSimilarUsers(String userId) async {
-    try {
-      _loadingSimilarUsers = true;
-      _similarUsersError = null;
-      notifyListeners();
-
-      final similarUsersData = await userAPI.getSimilarUsers(userId);
-      
-      _similarUsers = similarUsersData.map((data) {
-        data['uid'] = data['uid'] ?? '';  // Ensure uid is present
-        return AppUser.fromJson(data);
-      }).toList();
-
-      _loadingSimilarUsers = false;
-      notifyListeners();
-    } catch (e) {
-      _loadingSimilarUsers = false;
-      _similarUsersError = e.toString();
-      notifyListeners();
-      logger.e('Error fetching similar users: $e');
-    }
+  // Friend System Methods
+  Future<String> sendFriendRequest(String currentUserId, String receiverId) async {
+    final result = await userAPI.sendFriendRequest(currentUserId, receiverId);
+    await fetchUserData(currentUserId); // Refresh user data to get updated request lists
+    notifyListeners();
+    return result;
   }
 
-  void clearSimilarUsers() {
-    _similarUsers = [];
-    _loadingSimilarUsers = false;
-    _similarUsersError = null;
+  Future<String> acceptFriendRequest(String currentUserId, String requesterId) async {
+    final result = await userAPI.acceptFriendRequest(currentUserId, requesterId);
+    await fetchUserData(currentUserId); // Refresh user data to get updated friend list
     notifyListeners();
+    return result;
+  }
+
+  Future<String> rejectFriendRequest(String currentUserId, String senderId) async {
+    final result = await userAPI.rejectFriendRequest(currentUserId, senderId);
+    await fetchUserData(currentUserId); // Refresh user data to get updated request lists
+    notifyListeners();
+    return result;
+  }
+
+  Future<String> cancelFriendRequest(String currentUserId, String receiverId) async {
+    final result = await userAPI.cancelFriendRequest(currentUserId, receiverId);
+    await fetchUserData(currentUserId); // Refresh user data to get updated request lists
+    notifyListeners();
+    return result;
+  }
+
+  Future<String> unfriend(String currentUserId, String friendId) async {
+    final result = await userAPI.unfriend(currentUserId, friendId);
+    await fetchUserData(currentUserId); // Refresh user data to get updated friend list
+    notifyListeners();
+    return result;
+  }
+
+  Future<Map<String, dynamic>> getFriendStatus(String currentUserId, String otherUserId) async {
+    return await userAPI.getFriendStatus(currentUserId, otherUserId);
   }
 }
