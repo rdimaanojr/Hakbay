@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hakbay/api/firebase_travel_api.dart';
 >>>>>>> 1766f4a (feat: added itinerary form)
 import 'package:hakbay/models/travel_plan_model.dart';
+import 'package:hakbay/models/user_model.dart';
 import 'package:hakbay/providers/auth_provider.dart';
 import 'package:hakbay/providers/travel_provider.dart';
 <<<<<<< HEAD
@@ -317,7 +318,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       '1 Week Before': const Duration(days: 7),
       '3 Days Before': const Duration(days: 3),
       '1 Day Before': const Duration(days: 1),
-      '2 hrs Before': const Duration(hours: 2, minutes:45),
+      '2 hrs and 45 mins Before': const Duration(hours: 2, minutes:45),
       '1 hour Before': const Duration(hours: 1),
     };
 
@@ -410,6 +411,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     if (currentUserUid == travelPlan.uid) isOwner = true;
 
     Stream<QuerySnapshot> itineraryStream = context.read<TravelPlanProvider>().getItineraryItems;
+    Stream<QuerySnapshot> sharedUserStream = context.read<UserProvider>().getSharedUsers;
 
     return Scaffold(
       appBar: AppBar(
@@ -553,6 +555,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 SizedBox(height: 24),
               ],
 <<<<<<< HEAD
+<<<<<<< HEAD
               ElevatedButton.icon(
                 icon: Icon(Icons.notifications_active_outlined),
                 onPressed: () {
@@ -561,6 +564,8 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 label: (Text("Sample notif")),
 =======
 
+=======
+>>>>>>> 892f280 (fix: stream for shared with because it was gone after merging)
               // Shared With Users Section (If there are any)
               StreamBuilder<QuerySnapshot>(
                 stream: sharedUserStream,
