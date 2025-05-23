@@ -304,6 +304,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 child: SwitchListTile(
                   title: const Text("Private Account", style: TextStyle(color: Colors.white)),
                   value: _isPrivate,
+                  activeColor: Theme.of(context).primaryColor,
+                  inactiveTrackColor: Colors.white24,        
                   onChanged: (value) {
                     setState(() {
                       _isPrivate = value;

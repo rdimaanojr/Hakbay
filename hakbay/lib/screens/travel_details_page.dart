@@ -216,6 +216,30 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     }
   }
 
+  void leaveTravel(BuildContext context, String currentUid) async {
+    final confirmed = await showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        title: Text("Leave Plan"),
+        content: Text('Are you sure you want to leave from the travel plan?'),
+        actions: [
+          TextButton(onPressed: () => context.pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => context.pop(true), child: const Text('Leave', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true){
+      await context.read<TravelPlanProvider>().removeSharedUser(travelPlan.planId!, currentUid);
+
+      context.pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Left the travel plan!')),
+      ); 
+    }
+  }
+
   void removeUser(BuildContext context, String uid) async {
     final confirmed = await showDialog(
       context: context,
@@ -235,6 +259,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     if (confirmed == true) {
       await context.read<TravelPlanProvider>().removeSharedUser(travelPlan.planId!, uid);
 
+<<<<<<< HEAD
 <<<<<<< HEAD
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -276,9 +301,10 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
         travelPlan = updatedPlan!;
       });
 
+=======
+>>>>>>> 6216aad (feat: Leave option from shared travel plans)
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('User removed from shared list.')),
-      
+        SnackBar(content: Text('User removed from shared list.')),
       );      
 >>>>>>> d3f43ad (feat: Downloading QR implemented)
     }
@@ -389,6 +415,11 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       appBar: AppBar(
         title: Text(travelPlan.name),
         actions: [
+          if(!isOwner)
+            IconButton(
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () => leaveTravel(context, currentUserUid!),
+            ),
           if (isOwner)
             IconButton(
               icon: const Icon(Icons.share),
