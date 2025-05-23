@@ -51,30 +51,33 @@ class _ProfileState extends State<ProfilePage> {
   Future<void> pickImage() async {
     final image = await ImagePicker().pickImage(
       source:
-          await showDialog<ImageSource>(
-            context: context,
-            builder:
-                (context) => AlertDialog(
-                  title: const Text("Select Image Source"),
-                  actions: [
-                    TextButton(
-                      onPressed:
-                          () => context.pop(ImageSource.camera),
-                      child: const Text("Camera"),
-                    ),
-                    TextButton(
-                      onPressed:
-                          () => context.pop(ImageSource.gallery),
-                      child: const Text("Gallery"),
-                    ),
-                    TextButton(
-                      onPressed: () => context.pop(),
-                      child: const Text("Cancel"),
-                    ),
-                  ],
-                ),
-          ) ??
-          ImageSource.camera,
+        await showDialog<ImageSource>(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text("Select Image Source"),
+                actions: [
+                  TextButton(
+                    onPressed:
+                        () => context.pop(ImageSource.camera),
+                    child: const Text("Camera"),
+                  ),
+                  TextButton(
+                    onPressed:
+                        () => context.pop(ImageSource.gallery),
+                    child: const Text("Gallery"),
+                  ),
+                  TextButton(
+                    onPressed: () => context.pop(),
+                    child: const Text("Cancel"),
+                  ),
+                ],
+              ),
+        ) ??
+        ImageSource.camera,
+        imageQuality: 50,
+        maxHeight: 800,
+        maxWidth: 800,
     );
 
     if (image != null) {

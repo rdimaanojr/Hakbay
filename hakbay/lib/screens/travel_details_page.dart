@@ -216,6 +216,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
     if (confirmed == true) {
       await context.read<TravelPlanProvider>().removeSharedUser(travelPlan.planId!, uid);
 
+<<<<<<< HEAD
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('User removed from shared list.')),
@@ -247,6 +248,20 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Notifications scheduled!')),
       );
+=======
+      // call fetchSharedUsers again with updated list
+      final updatedPlan = await context.read<TravelPlanProvider>().fetchTravelById(travelPlan.planId!);
+      context.read<UserProvider>().fetchSharedUsers(travelPlan.sharedWith);
+
+      setState(() {
+        travelPlan = updatedPlan!;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User removed from shared list.')),
+      
+      );      
+>>>>>>> d3f43ad (feat: Downloading QR implemented)
     }
   }
 
@@ -378,6 +393,7 @@ class _TravelPlanDetailsState extends State<TravelPlanDetails> {
                 PopupMenuItem(value: 'Delete', child: Text('Delete')),
               ],
             ),
+
         ],
       ),
       floatingActionButton: isOwner

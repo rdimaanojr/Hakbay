@@ -47,6 +47,7 @@ dependencies:
   permission_handler: ^12.0.0+1
   path_provider: ^2.1.1
 <<<<<<< HEAD
+<<<<<<< HEAD
   flutter_local_notifications: ^19.2.1
 <<<<<<< HEAD
   timezone: ^0.10.1
@@ -56,6 +57,9 @@ dependencies:
 =======
 >>>>>>> ea9343f (feat: Shared Users can be viewed on each travel plan)
 =======
+=======
+  image_gallery_saver_plus: ^4.0.1
+>>>>>>> d3f43ad (feat: Downloading QR implemented)
   # flutter_local_notifications: ^19.2.1
 >>>>>>> 7abb6be (feat: remove shared users from travel plan and disable edit access from shared users)
 

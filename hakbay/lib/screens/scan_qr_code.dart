@@ -15,9 +15,33 @@ class _QrScannerPageState extends State<QrScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Scan QR Code')),
-      body: MobileScanner(
-        onDetect: (capture) {
-          context.pop(capture.barcodes.first.rawValue);
+      body: Builder(
+        builder: (context) {
+          final size = MediaQuery.of(context).size;
+          return Stack(
+            children: [
+              MobileScanner(
+                onDetect: (capture) {
+                  context.pop(capture.barcodes.first.rawValue);
+                },
+                scanWindow: Rect.fromCenter(
+                  center: Offset(size.width / 2, size.height / 2),
+                  width: size.width * 0.8,
+                  height: size.height * 0.8,
+                ),
+              ),
+              Center(
+                child: Container(
+                  width: size.width * 0.8,
+                  height: size.width * 0.8,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              )
+            ],
+          );
         },
       ),
     );
