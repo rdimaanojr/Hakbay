@@ -16,7 +16,7 @@ class EditTravelPlanPage extends StatefulWidget {
 }
 
 class _EditTravelPlanPageState extends State<EditTravelPlanPage> {
-  final formGlobalKey = GlobalKey<FormState>();
+  final editTravelFormKey = GlobalKey<FormState>();
 
   late TextEditingController nameController;
   late TextEditingController locationController;
@@ -78,7 +78,7 @@ class _EditTravelPlanPageState extends State<EditTravelPlanPage> {
   }
 
   void _saveChanges() {
-    if (formGlobalKey.currentState!.validate()) {
+    if (editTravelFormKey.currentState!.validate()) {
       final updatedTravel = TravelPlan(
         uid: widget.travel.uid,
         planId: widget.travel.planId,
@@ -116,7 +116,7 @@ class _EditTravelPlanPageState extends State<EditTravelPlanPage> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
-          key: formGlobalKey,
+          key: editTravelFormKey,
           child: ListView(
             children: [
               // Name

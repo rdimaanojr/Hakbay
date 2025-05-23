@@ -17,7 +17,7 @@ class TravelPlanFormPage extends StatefulWidget {
 
 class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
   // GlobalKey for our form validation later
-  final formGlobalKey = GlobalKey<FormState>();
+  final travelFormGlobalKey = GlobalKey<FormState>();
   
   // Using controllers for the text fields
   final TextEditingController nameController = TextEditingController();
@@ -34,10 +34,10 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
   // Function for the onPressed() add expense button
   void saveForm() async {
     // We first validate,
-    if (formGlobalKey.currentState!.validate()) {
+    if (travelFormGlobalKey.currentState!.validate()) {
       // then set state (wow rhymes)
       setState(() {
-        formGlobalKey.currentState?.save(); 
+        travelFormGlobalKey.currentState?.save(); 
       });
       // Let's check and see which user is signed in
       final userUID = context.read<UserAuthProvider>().getCurrentUserUID();
@@ -67,7 +67,7 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
   // Function to reset the form
   void resetForm() {
     setState(() {
-      formGlobalKey.currentState!.reset();
+      travelFormGlobalKey.currentState!.reset();
       // Clear the values of the textfields
       nameController.clear();
       locationController.clear();
@@ -102,7 +102,7 @@ class _TravelPlanFormPageState extends State<TravelPlanFormPage> {
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Form(
-          key: formGlobalKey,
+          key: travelFormGlobalKey,
           child: ListView(
             children: [
               // Trip name field

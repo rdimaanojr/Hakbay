@@ -17,7 +17,7 @@ class EditItineraryPage extends StatefulWidget {
 }
 
 class _EditItineraryPageState extends State<EditItineraryPage> {
-  final formGlobalKey = GlobalKey<FormState>();
+  final editItineraryFormKey = GlobalKey<FormState>();
 
   late TextEditingController nameController;
   late TextEditingController locationController;
@@ -130,7 +130,7 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
   }
 
   void _saveChanges() {
-    if (formGlobalKey.currentState!.validate()) {
+    if (editItineraryFormKey.currentState!.validate()) {
       final updatedItinerary = ItineraryItem(
         id: widget.itinerary.id,
         name: nameController.text.trim(),
@@ -178,7 +178,7 @@ class _EditItineraryPageState extends State<EditItineraryPage> {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
-          key: formGlobalKey,
+          key: editItineraryFormKey,
           child: ListView(
             children: [
               // Name
